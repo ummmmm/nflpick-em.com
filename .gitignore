@@ -1,3 +1,4 @@
 data/db.php
 data/backups/*
 error_log
+sftp-config.json
