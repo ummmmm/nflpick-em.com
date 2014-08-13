@@ -1,0 +1,548 @@
+/*#############################################################
+Name: Coffee N Cream
+Date: 2006-08-24
+Description: A smooth coffee style template.
+Author: Viktor Persson
+URL: http://templates.arcsin.se
+
+Feel free to use and modify but please provide credits.
+#############################################################*/
+
+/* standard elements */
+* {
+	margin: 0;
+	padding: 0;
+}
+a {
+	color: #963;
+}
+a:hover {
+	color: #C60;
+}
+body {
+	background: #655A46 url('http://www.nflpick-em.com/images/bg.gif');
+	color: #543;
+	font-style:normal; 
+	font-variant:normal; 
+	font-weight:normal; 
+	font-size:62.5%; 
+	font-family:Lucida Sans Unicode, sans-serif;
+}
+input, textarea {
+	color: #555;
+	font: normal 1.1em "Lucida Sans Unicode",sans-serif;
+}
+p, cite, code, ul {
+	font-size: 1.2em;
+	padding-bottom: 1.2em;
+}
+h1 {
+	text-align: left;
+	font-size: 16px;
+	margin-bottom: 4px;
+}
+
+code {
+	background: #FFE;
+	border: 1px solid #EED;
+	border-left: 6px solid #938262;
+	color: #554;
+	display: block;
+	font: normal 1.1em "Lucida Sans Unicode",serif;
+	margin-bottom: 12px;
+	padding: 8px 10px;
+	white-space: pre;
+}
+blockquote {
+	background: url('http://www.nflpick-em.com/images/quote.gif') no-repeat;
+	color: #666;
+	display: block;
+	padding-left: 28px; 
+	font-style:normal; 
+	font-variant:normal; 
+	font-weight:normal; 
+	font-size:1.3em; 
+	font-family:Lucida Sans Unicode, serif
+}
+h1, h2, h3 {
+	color: #654;
+	padding-top: 6px;
+}
+
+/* misc */
+.clearer {
+	clear: both;
+}
+
+/* structure */
+.container {
+	background: url('http://www.nflpick-em.com/images/bgcontainer.gif') repeat-y;
+	margin: 0 auto;
+	width: 780px
+}
+
+/* header */
+.header {
+	background: url('http://www.nflpick-em.com/images/bgheader.gif') repeat-x;
+	height: 120px;
+	margin: 0 auto;
+	width: 760px;
+}
+
+.header a {
+	color: #E4DBCF;
+	text-decoration: none;
+}
+
+/* title */
+.title {
+	padding: 32px;
+}
+.title h1 {
+	color: #E4DBCF;
+	font: normal 3.4em "Lucida Sans Unicode","Trebuchet MS",sans-serif;
+}
+
+/* navigation */
+.navigation {
+	background: #FFF url('http://www.nflpick-em.com/images/bgnavigation.gif') repeat-x;
+	height: 44px;
+	margin: 0 auto;
+	width: 725px; 
+	font-style:normal; 
+	font-variant:normal; 
+	font-weight:bold; 
+	font-size:1.2em; 
+	font-family:Verdana, sans-serif; 
+	padding: 0px 18px 0px 18px;
+}
+.navigation span {
+	color: #543;
+	text-decoration: none;
+	padding: 3px 4px;
+	margin-right: 12px;
+	line-height: 44px;
+}
+
+.navigation a:hover {
+	background: #CEBDA1;
+	color: #420;
+}
+
+/* main */
+.main {
+	clear: both;
+	padding: 0 10px 12px 28px;
+}
+
+/* sub navigation */
+.sidenav {
+	float: right;
+	width: 218px;
+}
+.sidenav h1 {
+	background: #BCB39F url('http://www.nflpick-em.com/images/sidenavh1.gif') repeat-x;
+	border-bottom: 1px solid #999;
+	border-top: 1px solid #CCC;
+	color: #4A4A44;
+	font-size: 1.2em;
+	height: 22px;
+	margin: 0;
+	padding-left: 12px
+}
+.sidenav ul {
+	margin: 0;
+	padding: 0;
+}
+.sidenav li {
+	border-bottom: 1px solid #A98;
+	border-top: 1px solid #DDC;
+	list-style: none;
+}
+.sidenav li a {
+	background: #CCC3AF;
+	color: #554;
+	display: block;
+	padding: 8px 4px 8px 12px;
+	text-decoration: none;
+}
+.sidenav li a:hover {
+	background: #D6CCB9;
+	color: #654;
+}
+
+/* content */
+.content {
+	padding-top: 12px;
+	float: left;
+	width: 68%;
+}
+.content .descr {
+	color: #987E57;
+	font-size: 1.1em;
+	margin-bottom: 6px;
+}
+.content li {
+	margin-left: 18px; list-style-image:url('http://www.nflpick-em.com/images/li.gif')
+}
+
+#error
+{
+	padding-top: 12px;
+	float: left;
+	width: 68%;
+}
+
+/* footer */
+.footer {
+	border-bottom: solid 1px #000000;
+	background: #958463 url('http://www.nflpick-em.com/images/bgfooter.gif') repeat-x;
+	color: #FED;
+	font-size: 1.1em;
+	line-height: 40px;
+	margin: 0 auto;
+	text-align: center;
+	width: 760px
+}
+.footer a {
+	color: #FFD;
+	text-decoration: none;
+}
+.footer a:hover {
+	color: #FFF;
+	text-decoration: underline;
+}
+
+input, textarea, select, option, radio, checkbox {
+	font-size: 17px;
+	padding: 3px 7px;
+	margin-bottom: 8px;
+}
+
+textarea {
+	font-family:Lucida Sans Unicode, sans-serif;
+}
+
+select {
+	font-size: 17px;
+	padding: 3px 7px;
+	padding-right: 0px;
+	margin-bottom: 8px;
+}
+
+label {
+	font-size: 14px;
+	font-weight: lighter;
+	display: block;
+}
+
+legend {
+	font-size: 13px;
+	font-weight: bold;
+	color: #000000;
+}
+
+fieldset {
+	padding: 6px 6px 10px 15px;
+	margin-bottom: 13px;
+}
+
+.error {
+	background: lightyellow;
+	border: 1px #000000 solid;
+	padding: 10px;
+	margin-top: 2px;
+	margin-right: 2px;
+	margin-bottom: 6px;
+	margin-left: 2px;
+	letter-spacing: 0px;
+	text-indent: 0px;
+	word-spacing: 0px;
+}
+
+.error_text {
+	font-size: 12px;
+	font-weight: lighter;
+	color: #000000;
+}
+
+.error_text_top {
+	font-size: 15px;
+	font-weight: bold;
+}
+
+.teams img {
+	vertical-align: middle;
+	border: 1px dashed #CCCCCC;
+	height: 40px;
+	width: 40px;
+	padding: 2px;
+}
+
+.record {
+	font-size: 9px;
+}
+
+.make_picks
+{
+	padding: 10px;
+	margin: 2px 2px 6px 2px;
+	letter-spacing: 0px;
+	text-indent: 0px;
+	word-spacing: 0px;
+}
+
+.notMade {
+	background-color: #FCDADA;
+	border: 1px #000000 solid;
+}
+
+.made {
+	background-color: #FFFFE0;
+	border: 1px #000000 solid;
+}
+
+.past {
+	background-color: #EEE;
+	border: 1px #BBB solid;
+}
+
+.bold {
+   font-weight: bold;
+}
+
+.italic {
+   font-style: italic;
+}
+
+.underline {
+   text-decoration: underline;
+}
+
+.strike {
+   text-decoration: line-through;
+}
+
+.picks table, .picks td {
+	text-align: center;
+	padding-right: 2px;
+	padding-bottom: 6px;
+	cursor: default;
+
+}
+
+.border {
+	border: 1px solid #000000;
+}
+
+#lightbox{
+	position: fixed;
+	left:25%;
+	top:25%;
+	width:50%;
+	height:70%;
+	border:1px solid #fff;
+	background:#FDFCE9;
+	text-align:left;
+	padding: 0px 10px 0px 10px;
+	font-size: 12px;
+	border: 2px solid #666666;
+	overflow: scroll;
+}
+#overlay{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #000;
+	opacity: .70;
+	filter: alpha(opacity=70);
+}
+#box img{
+	vertical-align: middle;
+	border: 1px dashed #CCCCCC;
+	height: 40px;
+	width: 40px;
+	margin: 6px;
+	padding: 2px;
+}
+
+#chats{
+	width: 100%;
+	height: 500px;
+	overflow: auto;
+	border: 1px solid #000000;
+	padding: 3px;
+}
+
+#chats div{
+	margin: 0 0 3px 3px;
+}
+
+.highlight
+{
+	border: 1px solid red;
+}
+
+.sortby a
+{
+	margin-right: 5px;
+}
+
+.sortby
+{
+	margin-bottom: 15px;
+}
+
+.buttons_left
+{
+	float: left;
+	text-align: left;
+	margin-top: 20px;
+	white-space: nowrap;
+}
+
+.buttons_left input,
+.buttons_right input
+{
+	font-size: 12px;
+}
+
+.buttons_right
+{
+	text-align: right;
+	margin-top: 20px;
+	white-space: nowrap;
+	font-size: 12px;
+}
+
+.modal
+{
+	width: 100%;
+	background-color: #000;
+	display: none;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: 1;
+	opacity: 0.6;
+}
+
+#polls_addedit
+{
+	border: 1px solid #AAA;
+	height: auto;
+	position: absolute;
+	display: none;
+	z-index: 2;
+	background-color: #FCFAEA;
+	padding: 6px;
+}
+
+#polls_addedit_dialog
+{
+	font-weight: bold;
+	padding: 4px 0 4px 4px;
+	margin-bottom: 16px;
+	color: white;
+	background-color: #2C3065;
+}
+
+#news_addedit
+{
+	border: 1px solid #AAA;
+	height: auto;
+	position: absolute;
+	display: none;
+	z-index: 2;
+	background-color: #FCFAEA;
+	padding: 6px;
+}
+
+#news_addedit_dialog
+{
+	font-weight: bold;
+	padding: 4px 0 4px 4px;
+	margin-bottom: 16px;
+	color: white;
+	background-color: #2C3065;
+}
+
+#games_addedit
+{
+	border: 1px solid #AAA;
+	height: auto;
+	position: absolute;
+	display: none;
+	z-index: 2;
+	background-color: #FCFAEA;
+	padding: 6px;
+	border-radius: 10px;
+}
+
+#games_addedit_dialog
+{
+	font-weight: bold;
+	padding: 4px;
+	margin-bottom: 16px;
+	color: white;
+	background-color: #2C3065;
+}
+
+.picks_day
+{
+	margin-bottom: 0px;
+	display: block;
+}
+
+.picks_date
+{
+	font-size: 9px;
+	font-weight: bold;
+}
+
+.poll_question
+{
+	text-align: center;
+	padding: 5px 0;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.poll_answer
+{
+	font-weight: bold;
+	vertical-align: top;
+}
+
+.poll_percentage_container
+{
+	height: 6px;
+	width: 100%;
+	border: 1px solid #000;
+	margin-bottom: 5px;
+}
+
+.poll_percentage
+{
+	height: 100%;
+	background-color: #8a7c61;
+	width: 0%;
+}
+
+#loading_polls_nav
+{
+	padding-left: 5px;
+	margin-bottom: 5px;
+}
+
+#loading_polls_nav div
+{
+	width: 95%;
+}
+
+#loading_polls_nav input
+{
+	font-size: 9px;
+}
