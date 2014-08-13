@@ -1,0 +1,3 @@
+#!/bin/bash
+
+/usr/bin/mysqldump -u [username] -p [password] [table] > [path_to_backups]/database-$(date +%m-%d-%y:%H:%M).sql

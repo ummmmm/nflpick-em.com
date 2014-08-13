@@ -1,4 +1,5 @@
 data/db.php
 data/backups/*
+data/crons/backup.sh
 error_log
 sftp-config.json
