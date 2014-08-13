@@ -3,7 +3,7 @@ header( 'Content-type: application/json' );
 
 $document_root = $_SERVER[ 'DOCUMENT_ROOT' ];
 
-require_once( '/home1/dcarver/data/db.php' );
+require_once( '/home4/dcarver/data/db.php' );
 require_once( $document_root . '/includes/classes/functions.php' );
 require_once( $document_root . '/includes/classes/database.php' );
 require_once( $document_root . '/includes/classes/validation.php' );
