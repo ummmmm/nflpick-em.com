@@ -1,0 +1,33 @@
+<Files .htaccess>
+	order allow,deny
+	deny from all
+</Files>
+
+Options -Indexes
+
+<Limit GET POST>
+	order allow,deny
+	allow from all
+</Limit>
+
+<Limit PUT DELETE>
+	order deny,allow
+	deny from all
+</Limit>
+
+Options +FollowSymLinks
+RewriteEngine On
+
+RewriteCond %{HTTP_HOST} ^nflpick-em.com [NC] 
+RewriteRule ^(.*)$ http://www.nflpick-em.com/$1 [L,R=301]
+
+RewriteRule ^robots.txt$ static/robots.txt [L]
+
+RewriteRule ^favicon.ico$ static/favicon.ico [L]
+
+RewriteRule ^images/(.*)$ static/images/$1 [L]
+
+<Files 403.shtml>
+	order allow,deny
+	allow from all
+</Files>
