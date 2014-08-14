@@ -35,7 +35,7 @@ function Module_Content( &$db, &$user )
 function OnlineUsersList_Load( &$db, &$list, &$online_time )
 {
 	$date 	= Functions::Timestamp();
-	$online = $db->select( 'SELECT CONCAT( fname, \' \', lname ) AS name, last_on FROM users WHERE last_on > ( ? - INTERVAL ? MINUTE ) ORDER BY last_on DESC, name', &$list, $date, $online_time );
+	$online = $db->select( 'SELECT CONCAT( fname, \' \', lname ) AS name, last_on FROM users WHERE last_on > ( ? - INTERVAL ? MINUTE ) ORDER BY last_on DESC, name', $list, $date, $online_time );
 	
 	if ( $online === false )
 	{
