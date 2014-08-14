@@ -424,6 +424,24 @@ class News
 
 class Games
 {
+	public static function Create( &$db )
+	{
+		$sql = "CREATE TABLE `games` (
+					id 			int(3) AUTO_INCREMENT,
+					away 		int(2),
+					home 		int(2),
+					date 		datetime,
+					week 		int(2),
+					winner 		int(2),
+					loser 		int(2),
+					homeScore 	int(2),
+					awayScore 	int(2),
+					PRIMARY KEY ( id )
+				)";
+
+		return $db->query( $sql );
+	}
+
 	public static function List_Load( &$db, $week, &$games )
 	{
 		return $db->select( 	'SELECT
@@ -710,6 +728,24 @@ class Weeks
 
 class Teams
 {
+	public static function Create( &$db )
+	{
+		$sql = "CREATE TABLE teams
+				(
+					id 		int( 11 ) AUTO_INCREMENT,
+					team 	varchar( 255 ),
+					picture varchar( 20 ),
+					conf 	varchar( 15 ),
+					stadium varchar( 255 ),
+					wins 	int( 2 ),
+					losses 	int( 2 ),
+					abbr 	varchar( 10 ),
+					PRIMARY KEY ( id )
+				)";
+
+		return $db->query( $sql );
+	}
+
 	public static function Update_Wins( &$db, $teamid )
 	{
 		return $db->query( 'UPDATE teams SET wins = wins + 1 WHERE id = ?', $teamid );
@@ -780,6 +816,20 @@ class Teams
 
 class FailedLogin
 {
+	public static function Create( &$db )
+	{
+		$sql = "CREATE TABLE failed_logins
+				(
+			  		id 		int(11) AUTO_INCREMENT,
+			  		email 	varchar(50),
+			  		date 	datetime,
+			  		ip 		varchar(255),
+			  		PRIMARY KEY ( id )
+			  	)";
+
+		return $db->query( $sql );
+	}
+
 	public static function Insert( &$db, $email )
 	{
 		$ip		= $_SERVER[ 'REMOTE_ADDR' ];
