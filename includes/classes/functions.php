@@ -144,6 +144,34 @@ class Users
 
 class Settings
 {
+	public static function Create( &$db )
+	{
+		$sql = "CREATE TABLE settings
+				(
+					poll_options 		tinyint( 3 ),
+					email_validation 	tinyint( 1 ),
+					registration 		tinyint( 1 ),
+					max_news 			tinyint(3),
+					domain_url 			char( 255 ),
+					domain_email 		char( 255 ),
+					online 				int( 11 ),
+					site_title 			char( 255 ),
+					login_sleep 		int( 11 ),
+					PRIMARY KEY ( registration )
+				)";
+
+		if ( $db->query( $sql ) === false )
+		{
+			return false;
+		}
+
+		return $db->query( 'INSERT INTO settings
+							( poll_options, email_validation, registration, max_news, domain_url, domain_email, online, site_title, login_sleep )
+							VALUES
+							( ?, ?, ?, ?, ?, ?, ?, ?, ? )',
+							10, 0, 0, 4, 'http://www.nflpick-em.com', 'davidcarver88@gmail.com', 30, 'NFL Pick-Em 2014', 3000 );
+	}
+
 	public static function Load( &$db, &$settings )
 	{
 		return $db->single( 'SELECT * FROM settings', $settings );
