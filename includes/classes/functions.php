@@ -1137,13 +1137,13 @@ EOT;
 			{
 				return Functions::Error( 'NFL-FUNCTIONS-5', "The module '{$module}' is missing the Module_Update function." );
 			}
-			
-			if ( !call_user_func( 'Module_Validate', $db, $user, &$validation ) )
+
+			if ( !Module_Validate( $db, $user, $validation ) )
 			{
 				return true;
 			}
-			
-			if ( !call_user_func( 'Module_Update', $db, $user, &$validation ) )
+
+			if ( !Module_Update( $db, $user, $validation ) )
 			{
 				return false;
 			}
