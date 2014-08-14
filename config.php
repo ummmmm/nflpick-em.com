@@ -14,7 +14,8 @@ if ( Settings::Load( $db, $null ) === 1 )
 
 if ( FailedLogin::Create( $db ) !== true ||
 	 Games::Create( $db )		!== true ||
-	 Teams::Create( $db )		!== true )
+	 Teams::Create( $db )		!== true ||
+   Settings::Create( $db ) !== true )
 {
 	global $error_message;
 	die( $error_message );
