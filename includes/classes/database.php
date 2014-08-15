@@ -1,23 +1,32 @@
 <?php
+include_once( 'Definitions.php' );
+
 class Database extends mysqli
 {
-	private $connected = false;
+	private $_connected = false;
 	
-	public function __construct( $connection )
+	public function __construct()
 	{
-		parent::__construct( $connection[ 'host' ], $connection[ 'user' ],  $connection[ 'pass' ], $connection[ 'table' ] );
+		$settings = parse_ini_file( DB_CONFIG, true );
+
+		if ( $settings === false )
+		{
+			die( 'Failed to parse the configuration file' );
+		}
+
+		parent::__construct( $settings[ 'database' ][ 'host' ], $settings[ 'database' ][ 'username' ],  $settings[ 'database' ][ 'password' ], $settings[ 'database' ][ 'schema' ] );
 		
 		if ( mysqli_connect_error() )
 		{
 			die( 'Database error: ' . mysqli_connect_error() );
 		}
 		
-		$this->connected = true;
+		$this->_connected = true;
 	}
 	
 	public function __destruct()
 	{
-		if ( $this->connected )
+		if ( $this->_connected )
 		{
 			parent::close();
 		}	
@@ -27,7 +36,7 @@ class Database extends mysqli
 	{
 		$args = func_get_args();
 		
-		return $this->RunStatement( $query, $args );
+		return $this->_Run_Statement( $query, $args );
 	}
 	
 	public function select( $query, &$results )
@@ -35,7 +44,7 @@ class Database extends mysqli
 		$results 	= array();
 		$args		= func_get_args();
 		
-		if ( !$this->RunStatement( $query, $args, true, $results, $count ) )
+		if ( !$this->_Run_Statement( $query, $args, true, $results, $count ) )
 		{
 			return false;
 		}
@@ -48,7 +57,7 @@ class Database extends mysqli
 		$results 	= array();
 		$args		= func_get_args();	
 		
-		if ( !$this->RunStatement( $query, $args, false, $results, $count ) )
+		if ( !$this->_Run_Statement( $query, $args, false, $results, $count ) )
 		{
 			return false;
 		}
@@ -56,7 +65,7 @@ class Database extends mysqli
 		return $count;
 	}
 	
-	private function RunStatement( &$query, $arg_list, $multiple_results = false, &$results = null, &$count = 0 )
+	private function _Run_Statement( &$query, $arg_list, $multiple_results = false, &$results = null, &$count = 0 )
 	{
 		$count 			= 0;
 		$arg_count 		= count( $arg_list );
