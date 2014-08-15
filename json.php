@@ -27,7 +27,7 @@ if ( $view === 'admin' )
 	{
 		return JSON_Response_Error( 'NFL-JSON-1', 'You must be an administrator to complete this action.' );
 	}
-	
+
 	$module_path = sprintf( '%s/admin/ajax/%s.php', $document_root, $module );
 } else {
 	$module_path = sprintf( '%s/includes/ajax/%s.php', $document_root, $module );
@@ -45,7 +45,7 @@ if ( !function_exists( 'Module_JSON' ) )
 	return JSON_Response_Error( 'NFL-JSON-3', "Module '{$module}' does not implement Module_JSON" );
 }
 
-call_user_func( 'Module_JSON', &$db, &$user );
+Module_JSON( $db, $user );
 
 function JSON_Response_Error( $error_code = null, $error_message = null )
 {
@@ -56,9 +56,9 @@ function JSON_Response_Error( $error_code = null, $error_message = null )
 	}
 
 	print json_encode( array( 'success' => 0, 'error_code' => $error_code, 'error_message' => $error_message ) );
-	
+
 	@error_log( $_SERVER[ 'REMOTE_ADDR' ] . ' - ' . $error_code . ': ' . $error_message );
-	
+
 	return false;
 }
 
@@ -75,7 +75,7 @@ function JSON_Response_Success( $data = null )
 	} else {
 		print json_encode( array( 'success' => 1, 'data' => $data ) );
 	}
-	
+
 	return true;
 }
 ?>
