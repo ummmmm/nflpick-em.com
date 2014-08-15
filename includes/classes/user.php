@@ -1,4 +1,7 @@
 <?php
+include_once( 'database.php' );
+include_once( 'Sessions.php' );
+
 class User
 {
 	public $id 			= 0;
@@ -8,9 +11,9 @@ class User
 	
 	private $db;
 	
-	public function __construct( $database )
+	public function __construct()
 	{
-		$this->db = $database;
+		$this->db = new Database();
 		$this->ValidateSession();
 	}
 	
