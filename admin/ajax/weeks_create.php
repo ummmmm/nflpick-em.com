@@ -15,7 +15,7 @@ function Module_JSON( &$db, &$user )
 		return JSON_Response_Error( 'NFL-WEEKS_CREATE-0', 'The weeks table must be empty' );
 	}
 	
-	$date = new DateTime( '9/8/2013 10:00am', new DateTimeZone( 'America/Los_Angeles' ) ); //starting sunday for week 1
+	$date = new DateTime( '9/7/2014 10:00am', new DateTimeZone( 'America/Los_Angeles' ) ); //starting sunday for week 1
 	
 	for( $i = 1; $i <= 17; $i++ )
 	{
