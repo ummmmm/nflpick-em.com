@@ -1,8 +1,5 @@
-<?php
-date_default_timezone_set( 'America/Los_Angeles' );
-
-$connection[ 'host' ]	 = 'localhost';
-$connection[ 'user' ]	 = '';
-$connection[ 'pass' ]	 = '';
-$connection[ 'table' ]	 = '';
-?>
+[database]
+host 		= localhost
+schema 		= database_name
+username 	= some_username
+password 	= some_password
