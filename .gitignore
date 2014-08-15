@@ -1,5 +1,5 @@
-data/db.php
 data/backups/*
 data/crons/backup.sh
 sftp-config.json
 nflpick-em.com.sublime-*
+data/config.ini
