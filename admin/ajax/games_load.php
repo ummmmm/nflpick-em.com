@@ -8,7 +8,7 @@ function Module_JSON( &$db, &$user )
 		return JSON_Response_Error( 'NFL-GAMES_LOAD-0', 'You do not have a valid token to complete this action.' );
 	}
 	
-	$count 	= Weeks::List_Load( &$db, &$weeks );
+	$count 	= Weeks::List_Load( $db, $weeks );
 	
 	if ( $count === false )
 	{
