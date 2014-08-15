@@ -112,7 +112,7 @@ function Module_Content( &$db, &$user )
 	
 	if ( $action == 'emailpreferences' )
 	{
-		return EmailPreferences( &$user );
+		return EmailPreferences( $user );
 	}
 	
 	if ( $action == 'changeemail' )
