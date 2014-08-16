@@ -1,18 +1,17 @@
 <?php
 header( 'Content-type: application/json' );
 
-$document_root = $_SERVER[ 'DOCUMENT_ROOT' ];
+require_once( 'includes/classes/functions.php' );
+require_once( 'includes/classes/database.php' );
+require_once( 'includes/classes/validation.php' );
+require_once( 'includes/classes/user.php' );
+require_once( 'includes/classes/settings.php' );
+require_once( 'includes/classes/mail.php' );
+require_once( 'includes/classes/Authentication.php' );
 
-require_once( '/home4/dcarver/data/db.php' );
-require_once( $document_root . '/includes/classes/functions.php' );
-require_once( $document_root . '/includes/classes/database.php' );
-require_once( $document_root . '/includes/classes/validation.php' );
-require_once( $document_root . '/includes/classes/user.php' );
-require_once( $document_root . '/includes/classes/settings.php' );
-require_once( $document_root . '/includes/classes/mail.php' );
-
-$db		= new Database( $connection );
+$db		= new Database();
 $user 	= new User( $db );
+$auth 	= new Authentication();
 $module	= Functions::Post( 'module' );
 $view	= Functions::Post( 'view' );
 
@@ -28,9 +27,9 @@ if ( $view === 'admin' )
 		return JSON_Response_Error( 'NFL-JSON-1', 'You must be an administrator to complete this action.' );
 	}
 
-	$module_path = sprintf( '%s/admin/ajax/%s.php', $document_root, $module );
+	$module_path = sprintf( 'admin/ajax/%s.php', $module );
 } else {
-	$module_path = sprintf( '%s/includes/ajax/%s.php', $document_root, $module );
+	$module_path = sprintf( 'includes/ajax/%s.php', $module );
 }
 
 if ( !file_exists( $module_path ) )
