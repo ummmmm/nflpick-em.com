@@ -2,4 +2,5 @@ data/backups/*
 data/crons/backup.sh
 sftp-config.json
 nflpick-em.com.sublime-*
+nflpickem.sublime-*
 data/config.ini
