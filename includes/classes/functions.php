@@ -5,7 +5,7 @@ class Draw
 	{
 		print '<input type="hidden" id="' . htmlentities( $name ) . '" name="' . htmlentities( $name ) . '" value="' . htmlentities( $value ) . '" />';
 	}
-	
+
 	public static function Radio( $name, $value, $default, $prompt = '' )
 	{
 		if ( $value === $default )
@@ -15,7 +15,7 @@ class Draw
 			print '<input type="radio" name="' . htmlentities( $name ) . '" value="' . htmlentities( $value ) . '" /> '. $prompt;
 		}
 	}
-	
+
 	public static function Option( $value, $default, $text )
 	{
 		$output = '<option value="' . htmlentities( $value ) . '"';
@@ -23,10 +23,10 @@ class Draw
 		{
 			$output .= ' selected';
 		}
-		
+
 		print $output . '>' . $text . '</option>';
 	}
-	
+
 	public static function Months( $default = null )
 	{
 		for( $i = 1; $i <= 12; $i++ )
@@ -34,7 +34,7 @@ class Draw
 			Draw::Option( $i, $default, date( 'F', mktime( 0, 0, 0, $i ) ) );
 		}
 	}
-	
+
 	public static function Days( $default = null )
 	{
 		for( $i = 1; $i <= 31; $i++ )
@@ -42,15 +42,17 @@ class Draw
 			Draw::Option( $i, $default, str_pad( $i, 2, '0', STR_PAD_LEFT ) );
 		}
 	}
-	
+
 	public static function Years( $default = null )
 	{
-		for( $i = 2012; $i <= 2013; $i++ )
+		$year = ( int ) date( 'Y' );
+
+		for( $i = $year; $i <= $year + 1; $i++ )
 		{
 			Draw::Option( $i, $default, $i );
 		}
 	}
-	
+
 	public static function Hours( $default = null )
 	{
 		for( $i = 0; $i <= 23; $i++ )
@@ -58,7 +60,7 @@ class Draw
 			Draw::Option( $i, $default, str_pad( $i, 2, '0', STR_PAD_LEFT ) );
 		}
 	}
-	
+
 	public static function Minutes( $default = null )
 	{
 		for( $i = 0; $i <= 59; $i++ )
@@ -66,7 +68,7 @@ class Draw
 			Draw::Option( $i, $default, str_pad( $i, 2, '0', STR_PAD_LEFT ) );
 		}
 	}
-	
+
 	public static function Teams( $teams, $default = null )
 	{
 		foreach( $teams as $team )
@@ -74,7 +76,7 @@ class Draw
 			Draw::Option( $team[ 'id' ], $default, $team[ 'team' ] );
 		}
 	}
-	
+
 	public static function Weeks( $default = null )
 	{
 		for( $i = 1; $i <= 17; $i++ )
@@ -90,7 +92,7 @@ class Users
 	{
 		return $db->select( 'SELECT * FROM users', $users );
 	}
-	
+
 	public static function Recalculate_Records( &$db )
 	{
 		$query = $db->query( 'UPDATE
@@ -113,20 +115,20 @@ class Users
 		{
 			return false;
 		}
-		
+
 		foreach( $users as $user )
 		{
 			if ( !$db->single( 'SELECT COUNT( id ) + 1 AS place FROM users WHERE wins > ?', $current, $user[ 'wins' ] ) )
 			{
 				return false;
 			}
-			
+
 			if ( !$db->query( 'UPDATE users SET current_place = ? WHERE id = ?', $current[ 'place' ], $user[ 'id' ] ) )
 			{
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -176,7 +178,7 @@ class Settings
 	{
 		return $db->single( 'SELECT * FROM settings', $settings );
 	}
-	
+
 	public static function Update( &$db, &$settings )
 	{
 		return $db->query( 'UPDATE
@@ -193,7 +195,7 @@ class Settings
 								login_sleep			= ?',
 							$settings[ 'poll_options' ], $settings[ 'email_validatdion' ], $settings[ 'registration' ], $settings[ 'max_news' ],
 							$settings[ 'domain_url' ], $settings[ 'domain_email' ], $settings[ 'online' ], $settings[ 'site_title' ], $settings[ 'login_sleep' ] );
-								
+
 	}
 }
 
@@ -203,12 +205,12 @@ class Polls
 	{
 		return $db->select( 'SELECT id FROM poll_votes WHERE poll_id = ?', $null, $poll_id );
 	}
-	
+
 	public static function Votes_Total_Answer( &$db, $answer_id )
 	{
 		return $db->select( 'SELECT id FROM poll_votes WHERE answer_id = ?', $null, $answer_id );
 	}
-	
+
 	public static function Insert( &$db, $poll )
 	{
 		$date = Functions::Timestamp();
@@ -241,7 +243,7 @@ class Polls
 	{
 		return $db->query( 'INSERT INTO poll_answers ( poll_id, answer ) VALUES ( ?, ? )', $answer[ 'poll_id' ], $answer[ 'answer' ] );
 	}
-	
+
 	public static function Vote_Insert( &$db, $vote )
 	{
 		$ip	 	= $_SERVER[ 'REMOTE_ADDR' ];
@@ -250,67 +252,67 @@ class Polls
 		return $db->query( 'INSERT INTO poll_votes ( poll_id, answer_id, user_id, date, ip ) VALUES ( ?, ?, ?, ?, ? )',
 							$vote[ 'poll_id' ], $vote[ 'answer_id' ], $vote[ 'user_id' ], $date, $ip );
 	}
-	
+
 	public static function Update( &$db, $poll )
 	{
 		return $db->query( 'UPDATE polls SET active = ?, question = ? WHERE id = ?', $poll[ 'active' ], $poll[ 'question' ], $poll[ 'id' ] );
 	}
-	
+
 	public static function Answer_Update( &$db, $answer )
 	{
 		return $db->query( 'UPDATE poll_answers SET answer = ? WHERE id = ?', $answer[ 'answer' ], $answer[ 'id' ] );
 	}
-	
+
 	public static function Load( &$db, $poll_id, &$poll )
 	{
 		return $db->single( 'SELECT * FROM polls WHERE id = ?', $poll, $poll_id );
 	}
-	
+
 	public static function List_Load( &$db, &$polls )
 	{
 		return $db->select( 'SELECT * FROM polls ORDER BY id DESC', $polls );
 	}
-	
+
 	public static function AnswersList_Load_Poll( &$db, $poll_id, &$answers )
 	{
 		return $db->select( 'SELECT * FROM poll_answers WHERE poll_id = ? ORDER BY id DESC', $answers, $poll_id );
 	}
-	
+
 	public static function Answer_Load( &$db, $answer_id, &$answer )
 	{
 		return $db->single( 'SELECT * FROM poll_answers WHERE id = ?', $answer, $answer_id );
 	}
-	
+
 	public static function Answer_Load_Poll( &$db, $answer_id, $poll_id, &$answer )
 	{
 		return $db->single( 'SELECT * FROM poll_answers WHERE id = ? AND poll_id = ?', $answer, $answer_id, $poll_id );
 	}
-	
+
 	public static function VotesList_Load_Poll( &$db, $poll_id, &$votes )
 	{
 		return $db->select( 'SELECT * FROM poll_votes WHERE poll_id = ?', $votes, $poll_id );
 	}
-	
+
 	public static function Latest( &$db, &$poll )
 	{
 		return $db->select( 'SELECT * FROM polls WHERE active = 1 ORDER BY id DESC LIMIT 1', $poll );
 	}
-	
+
 	public static function Answer_Delete( &$db, $answer_id )
 	{
 		return $db->query( 'DELETE FROM poll_answers WHERE id = ?', $answer_id );
 	}
-	
+
 	public static function Votes_Delete_Answer( &$db, $answer_id )
 	{
 		return $db->query( 'DELETE FROM poll_votes WHERE answer_id = ?', $answer_id );
 	}
-	
+
 	public static function Votes_Delete_Poll( &$db, $poll_id )
 	{
 		return $db->query( 'DELETE FROM poll_votes WHERE poll_id = ?', $poll_id );
 	}
-	
+
 	public static function Answers_Delete_Poll( &$db, $poll_id )
 	{
 		return $db->query( 'DELETE FROM poll_answers WHERE poll_id = ?', $poll_id );
@@ -325,7 +327,7 @@ class ResetPassword
 
 		return $db->query( 'INSERT INTO reset_password ( userid, password, date ) VALUES ( ?, ?, ? )', $insert[ 'userid' ], $insert[ 'password' ], $date );
 	}
-	
+
 	public static function Delete_User( &$db, $userid )
 	{
 		return $db->query( 'DELETE FROM reset_password WHERE userid = ?', $userid );
@@ -358,22 +360,22 @@ class News
 		return $db->query( 'INSERT INTO news ( user_id, title, news, date, ip, active ) VALUES ( ?, ?, ?, ?, ?, ? )',
 							$news[ 'user_id' ], $news[ 'title' ], $news[ 'news' ], $date, $ip, $news[ 'active' ] );
 	}
-	
+
 	public static function Update( &$db, $news )
 	{
 		return $db->query( 'UPDATE news SET title = ?, news = ?, active = ? WHERE id = ?', $news[ 'title' ], $news[ 'news' ], $news[ 'active' ], $news[ 'id' ] );
 	}
-	
+
 	public static function Load( &$db, $newsid, &$news )
 	{
 		return $db->single( 'SELECT * FROM news WHERE id = ?', $news, $newsid );
 	}
-	
+
 	public static function List_Load( &$db, &$news )
 	{
 		return $db->select( 'SELECT * FROM news ORDER BY id DESC', $news );
 	}
-	
+
 	public static function Delete( &$db, $news_id )
 	{
 		return $db->query( 'DELETE FROM news WHERE id = ?', $news_id );
@@ -406,7 +408,7 @@ class Games
 									s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, homeTeam.stadium AS stadium,
 									awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.abbr AS awayAbbr,
 									homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.abbr AS homeAbbr
-								FROM 
+								FROM
 									games s
 								LEFT JOIN ( SELECT * FROM teams ) awayTeam ON
 									s.away = awayTeam.id
@@ -419,7 +421,7 @@ class Games
 								$games,
 								$week );
 	}
-	
+
 	public static function Insert( &$db, $game )
 	{
 		return $db->query( 'INSERT INTO
@@ -429,7 +431,7 @@ class Games
 							( ?, ?, ?, ? )',
 							$game[ 'away' ], $game[ 'home' ], $game[ 'date' ], $game[ 'week' ] );
 	}
-	
+
 	public static function Update( &$db, $game )
 	{
 		return $db->query( 'UPDATE
@@ -447,7 +449,7 @@ class Games
 								id = ?',
 							$game[ 'away' ], $game[ 'home' ], $game[ 'date' ], $game[ 'week' ], $game[ 'winner' ], $game[ 'loser' ], $game[ 'homeScore' ], $game[ 'awayScore' ], $game[ 'id' ] );
 	}
-	
+
 	public static function Delete( &$db, $gameid )
 	{
 		if ( !Picks::Delete_Game( $db, $gameid ) ||
@@ -463,14 +465,14 @@ class Games
 	{
 		return $db->query( 'DELETE FROM games WHERE id = ?', $gameid );
 	}
-	
+
 	public static function Load( &$db, $gameid, &$game )
 	{
 		return $db->single( 'SELECT
 									s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, homeTeam.stadium AS stadium,
 									awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.abbr AS awayAbbr,
 									homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.abbr AS homeAbbr
-								FROM 
+								FROM
 									games s
 								LEFT JOIN ( SELECT * FROM teams ) awayTeam ON
 									s.away = awayTeam.id
@@ -490,15 +492,15 @@ class Games
 	public static function Exists( &$db, $gameid, $weekid, $home, $away )
 	{
 		$count = $db->single( 'SELECT id FROM games WHERE id = ? AND week = ? AND ( ( away = ? AND home = ? ) OR ( away = ? AND home = ? ) )', $null, $gameid, $weekid, $home, $away, $away, $home );
-		
+
 		if ( !$count )
 		{
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	public static function Exists_Week_Teams( &$db, $weekid, $homeid, $awayid, &$game )
 	{
 		$count = $db->single( 'SELECT id FROM games WHERE week = ? AND home = ? AND away = ?', $game, $weekid, $homeid, $awayid );
@@ -516,12 +518,12 @@ class Picks
 		return $db->query( 'INSERT INTO picks ( user_id, game_id, winner_pick, loser_pick, ip, week )
 							SELECT ?, id, 0, 0, ?, week FROM games', $user_id, $ip );
 	}
-	
+
 	public static function Update( &$db, $pick )
 	{
 		$ip 	= $_SERVER[ 'REMOTE_ADDR' ];
 		$time 	= Functions::Timestamp();
-		
+
 		return $db->query( 'UPDATE
 								picks
 						    SET
@@ -536,7 +538,7 @@ class Picks
 							$pick[ 'winner_pick' ], $pick[ 'loser_pick' ], $ip, $time, $pick[ 'picked' ],
 							$pick[ 'user_id' ], $pick[ 'game_id' ] );
 	}
-	
+
 	public static function Delete( &$db, $pick_id )
 	{
 		return $db->query( 'DELETE FROM picks WHERE id = ?', $pick_id );
@@ -566,7 +568,7 @@ class Picks
 									p.game_id 		= g.id 	AND
 									g.date 			> ?',
 								$remaining, $userid, $weekid, $date );
-		
+
 		if ( $count === false )
 		{
 			return false;
@@ -591,12 +593,12 @@ class Picks
 	{
 		return $db->select( 'SELECT p.*, ( SELECT t.team FROM teams t WHERE t.id = p.winner_pick ) AS winner, ( SELECT t.team FROM teams t WHERE t.id = p.loser_pick ) AS loser FROM picks p WHERE user_id = ? AND week = ?', $picks, $userid, $week );
 	}
-	
+
 	public static function Load_User_Game( &$db, $userid, $gameid, &$pick )
 	{
 		return $db->single( 'SELECT * FROM picks WHERE user_id = ? AND game_id = ?', $pick, $userid, $gameid );
 	}
-	
+
 	public static function List_Load_User_Week( &$db, $userid, $week, &$picks )
 	{
 		return $db->select( 'SELECT * FROM picks WHERE user_id = ? AND week = ?', $picks, $userid, $week );
@@ -609,34 +611,34 @@ class Weeks
 	{
 		return $db->single( 'SELECT w.*, ( SELECT COUNT( id ) FROM games g WHERE g.week = w.id ) AS total_games FROM weeks w WHERE id = ?', $week, $weekid );
 	}
-	
+
 	public static function List_Load( &$db, &$weeks )
 	{
 		return $db->select( 'SELECT w.*, ( SELECT COUNT( id ) FROM games g WHERE g.week = w.id ) AS total_games FROM weeks w ORDER BY id', $weeks );
 	}
-	
+
 	public static function Insert( &$db, $week )
 	{
 		return $db->query( 'INSERT INTO weeks ( id, date, locked ) VALUES ( ?, ?, ? )', $week[ 'id' ], $week[ 'date' ], $week[ 'locked' ] );
 	}
-	
+
 	public static function IsLocked( &$db, $weekid )
 	{
 		$count = Weeks::Load( $db, $weekid, $week );
-		
+
 		if ( !$count || $week[ 'locked' ] === 0 )
 		{
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	public static function Update( &$db, $week )
 	{
 		return $db->query( 'UPDATE weeks SET date = ?, locked = ? WHERE id = ?', $week[ 'date' ], $week[ 'locked' ], $week[ 'id' ] );
 	}
-	
+
 	public static function Current( &$db )
 	{
 		$count = $db->single( 'SELECT id FROM weeks WHERE locked = 0 ORDER BY id', $week );
@@ -653,7 +655,7 @@ class Weeks
 
 		return $week[ 'id' ];
 	}
-	
+
 	public static function Previous( &$db )
 	{
 		$count = $db->single( 'SELECT id FROM weeks WHERE locked = 1 ORDER BY id DESC', $week );
@@ -708,32 +710,32 @@ class Teams
 	{
 		return $db->query( 'UPDATE teams SET wins = wins + 1 WHERE id = ?', $teamid );
 	}
-	
+
 	public static function Update_Losses( &$db, $teamid )
 	{
 		return $db->query( 'UPDATE teams SET losses = losses + 1 WHERE id = ?', $teamid );
 	}
-	
+
 	public static function Load( &$db, $teamid, &$team )
 	{
 		return $db->single( 'SELECT * FROM teams WHERE id = ?', $team, $teamid );
 	}
-	
+
 	public static function Load_Name( &$db, $name, &$team )
 	{
 		return $db->single( 'SELECT * FROM teams WHERE team LIKE CONCAT( \'%\', ?, \'%\' )', $team, $name );
 	}
-	
+
 	public static function List_Load( &$db, &$teams )
 	{
 		return $db->select( 'SELECT * FROM teams', $teams );
 	}
-	
+
 	public static function Delete( &$db, $teamid )
 	{
 		return $db->query( 'DELETE FROM teams WHERE id = ?', $teamid );
 	}
-	
+
 	public static function Update( &$db, $team )
 	{
 		return $db->query( 'UPDATE
@@ -751,7 +753,7 @@ class Teams
 							$team[ 'team' ], $team[ 'picture' ], $team[ 'conf' ], $team[ 'stadium' ], $team[ 'wins' ], $team[ 'losses' ], $team[ 'abbr' ],
 							$team[ 'id' ] );
 	}
-	
+
 	public static function Byes( &$db, $week_id, &$bye_teams )
 	{
 		return $db->single( 'SELECT GROUP_CONCAT( team ORDER BY team SEPARATOR \', \' ) AS bye_teams FROM teams t WHERE NOT EXISTS( SELECT g.id FROM games g WHERE ( g.away = t.id OR g.home = t.id ) AND g.week = ? )', $bye_teams, $week_id );
@@ -802,34 +804,34 @@ class Functions
 	public static function Module_Updated( $message )
 	{
 		global $updated_message;
-		
+
 		$updated_message = $message;
-		
+
 		return true;
 	}
-	
+
 	public static function HandleModuleUpdate()
 	{
 		global $updated_message;
-		
+
 		if ( !is_null( $updated_message ) && is_string( $updated_message ) && trim( $updated_message ) != '' )
 		{
 			print "<p><b>{$updated_message}</b></p>";
 			unset( $updated_message );
 		}
-		
+
 		return true;
 	}
-	
+
 	public static function HandleModuleErrors()
 	{
 		global $error_validation;
-		
+
 		if ( !is_array( $error_validation ) )
 		{
 			return false;
 		}
-		
+
 		$count = count( $error_validation );
 
 		if ( $count > 0 )
@@ -837,80 +839,80 @@ class Functions
 			$output 	= '';
 			$message	= '';
 			$title 		= ( $count === 1 ) ? 'Error Has' : $i . ' Errors Have';
-	
+
 			foreach( $error_validation as $error )
 			{
 				$message .= "- {$error}<br />";
 			}
-			
+
 			print '<div class="error">';
 			printf( '<span class="error_text_top">The Following %s Ocurred!</span><br />', htmlentities( $title ) );
 			printf( '<span class="error_text">%s</span>', $message );
 			print '</div>';
-			
+
 			unset( $error_validation );
 		}
-		
+
 		return true;
 	}
-	
+
 	public static function OutputError()
 	{
 		global $error_code;
 		global $error_message;
-		
+
 		$error_code 	= ( is_null( $error_code ) ) ? 'NFL-FUNCTIONS-0' : $error_code;
 		$error_message 	= ( is_null( $error_message ) ) ? 'An unknown error has occurred.' : $error_message;
 		print '<h1>An error has occurred</h1>';
 		print '<div>Error Code: ' . htmlentities( $error_code ) . '</div>';
 		print '<div>Error Message: ' . htmlentities( $error_message ) . '</div>';
-		
+
 		return true;
 	}
-	
+
 	public static function Error( $code, $message )
 	{
 		global $error_code;
 		global $error_message;
-		
+
 		$error_code 	= $code;
 		$error_message 	= $message;
-		
+
 		return false;
 	}
-	
+
 	public static function ValidationError( $errors )
 	{
 		global $error_validation;
-		
+
 		$error_validation = $errors;
-		
+
 		return false;
 	}
-	
+
 	public static function EmailExists( $db, $email )
 	{
 		$count = $db->single( 'SELECT id FROM users WHERE email = ?', $null, $email );
-		
+
 		if ( $count === 1 )
 		{
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public static function Random( $length )
 	{
 		$string 	= '';
 		$charset 	= 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
 		$count 		= strlen( $charset );
-		
+
 		while( $length-- )
 		{
 			$string .= $charset[ mt_rand( 0, $count - 1 ) ];
 		}
-		
+
 		return $string;
 	}
 
@@ -940,17 +942,17 @@ class Functions
 
 		return "{$number}<sup>{$s}</sup>";
 	}
-	
+
 	public static function Trim_Boolean( $value )
 	{
 		return $value ? 1 : 0;
 	}
-	
+
 	public static function Post_Int( $value )
 	{
 		return isset( $_POST[ $value ] ) ? (int)$_POST[ $value ] : 0;
 	}
-	
+
 	public static function Post_Boolean( $value )
 	{
 		if ( isset( $_POST[ $value ] ) )
@@ -960,10 +962,10 @@ class Functions
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public static function Post_Active( $value )
 	{
 		if ( isset( $_POST[ $value ] ) )
@@ -973,43 +975,43 @@ class Functions
 				return 1;
 			}
 		}
-		
+
 		return 0;
 	}
-	
+
 	public static function Post_Array( $value )
 	{
 		return isset( $_POST[ $value ] ) ? array_map( 'trim', $_POST[ $value ] ) : array();
 	}
-	
+
 	public static function Get( $value )
 	{
 		return isset( $_GET[ $value ] ) ? trim( $_GET[ $value ] ) : '';
 	}
-	
+
 	public static function Post( $value )
 	{
 		return isset( $_POST[ $value ] ) ? trim( $_POST[ $value ] ) : '';
 	}
-	
+
 	public static function Cookie( $value )
 	{
 		return isset( $_COOKIE[ $value ] ) ? trim( $_COOKIE[ $value ] ) : '';
 	}
-	
+
 	public static function Information( $h1, $p )
 	{
 		print "<h1>{$h1}</h1>";
 		print "<p>{$p}</p>";
-		
+
 		return true;
 	}
-	
+
 	public static function FormatDate( $date )
 	{
 		$date = new DateTime( $date );
 		$date->setTimezone( new DateTimezone( 'America/Los_Angeles' ) );
-		
+
 		return $date->format( 'm/d/y' ) . ' at '. $date->format( 'h:i a' );
 	}
 
@@ -1021,14 +1023,14 @@ class Functions
 
 		return $interval->format( '%d days %h hours %i minutes %s seconds' );
 	}
-	
+
 	public static function VerifyPassword( $plaintext, $hashed )
 	{
 		if ( crypt( $plaintext, $hashed ) !== $hashed )
 		{
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -1036,20 +1038,20 @@ class Functions
 	{
 		return crypt( $password, '$6$rounds=10000$' . Functions::GenerateSalt() . '$' );
 	}
-	
+
 	public static function GenerateSalt()
 	{
 		$hex_salt		= '';
 		$binary_salt 	= openssl_random_pseudo_bytes( 16 );
-		
+
 		for( $i = 0; $i < 16; $i++ )
 		{
 			$hex_salt .= bin2hex( substr( $binary_salt, $i, 1 ) );
 		}
-		
+
 		return strtoupper( $hex_salt );
 	}
-	
+
 	public static function TopNavigation( &$db, &$user )
 	{
 		if ( !$user->logged_in )
@@ -1059,14 +1061,14 @@ class Functions
 			print '<span>Welcome, ' . htmlentities( $user->account[ 'name' ] ) . '! You have ' . htmlentities( $user->account[ 'wins' ] ) . ' wins and ' . htmlentities( $user->account[ 'losses' ] ) . ' losses and currently in ' . Functions::Place( $user->account[ 'current_place' ] ) . ' place.</span>';
 		}
 	}
-	
+
 	public static function UserNavigation( &$db, &$user )
 	{
 		if ( $user->logged_in )
 		{
 			$admin 	= ( $user->account[ 'admin' ] ) ? '<li><a href="/?view=admin" title="Admin Control Panel">Admin Control Panel</a></li>' : '';
 			$weekid = Weeks::Previous( $db );
-			
+
 			print <<<EOT
 				<h1>User Links</h1>
 				<ul>
@@ -1082,21 +1084,21 @@ class Functions
 EOT;
 		}
 	}
-	
+
 	public static function ValidateScreen( &$db, &$user, &$extra_screen_content )
 	{
 		$view	= Functions::Get( 'view' );
 		$module = Functions::Get( 'module' );
-		
+
 		if ( empty( $module ) )
 		{
 			$module = 'index';
 		}
-		
+
 		if ( $user->logged_in )
 		{
 			$action = Functions::Get( 'action' );
-			
+
 			if ( $user->account[ 'force_password' ] && ( $module != 'forgotpassword' || ( $module == 'forgotpassword' &&  $action != 'changepassword' ) ) )
 			{
 				header( 'location: /?module=forgotpassword&action=changepassword' );
@@ -1108,29 +1110,29 @@ EOT;
 		{
 			return Functions::Error( 'NFL-FUNCTIONS-1', 'Invalid module name' );
 		}
-		
+
 		if ( $view === 'admin' && $user->logged_in && $user->account[ 'admin' ] )
 		{
 			$path = $_SERVER[ 'DOCUMENT_ROOT' ] . "/admin/modules/{$module}.php";
 		} else {
 			$path = $_SERVER[ 'DOCUMENT_ROOT' ] . "/includes/modules/{$module}.php";
 		}
-		
+
 		if ( !file_exists( $path ) )
 		{
 			return Functions::Error( 'NFL-FUNCTIONS-2', "Module '{$module}' does not exist." );
 		}
-		
+
 		ob_start();
 		require_once( $path );
 		$extra_screen_content = ob_get_contents();
 		ob_clean();
-		
+
 		if ( !function_exists( 'Module_Content' ) )
 		{
 			return Functions::Error( 'NFL-FUNCTIONS-3', "The module '{$module}' is missing the Module_Content function." );
 		}
-		
+
 		$validation = array();
 		$action 	= Functions::Post( 'action' );
 
@@ -1156,10 +1158,10 @@ EOT;
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	public static function PrintR( $data )
 	{
 		print '<pre>';
@@ -1195,14 +1197,14 @@ EOT;
 						     FROM
 								users u', $record, $week_id, $week_id );
 	}
-	
+
 	public static function Worst_Record_Calculated( &$db, $week_id, &$record )
-	{		
+	{
 		if ( Functions::Worst_Record( $db, $week_id, $record ) === false )
 		{
 			return false;
 		}
-		
+
 		$record[ 'total' ]	= $record[ 'wins' ] + $record[ 'losses' ];
 
 		if ( $record[ 'wins' ] < 2 )
@@ -1215,7 +1217,7 @@ EOT;
 			$record[ 'wins' ] 	-= 2;
 			$record[ 'losses' ] += 2;
 		}
-		
+
 		return true;
 	}
 
