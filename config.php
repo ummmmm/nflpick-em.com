@@ -1,11 +1,8 @@
 <?php
-$document_root = $_SERVER[ 'DOCUMENT_ROOT' ];
+require_once( 'includes/classes/functions.php' );
+require_once( 'includes/classes/database.php' );
 
-require_once( '/home4/dcarver/data/db.php' );
-require_once( $document_root . '/includes/classes/functions.php' );
-require_once( $document_root . '/includes/classes/database.php' );
-
-$db = new Database( $connection );
+$db = new Database();
 
 if ( Settings::Load( $db, $null ) === 1 )
 {

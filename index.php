@@ -2,15 +2,12 @@
 session_start();
 ob_start();
 
-$document_root = $_SERVER[ 'DOCUMENT_ROOT' ];
-
-require_once( '/home4/dcarver/data/db.php' );
-require_once( $document_root . '/includes/classes/functions.php' );
-require_once( $document_root . '/includes/classes/database.php' );
-require_once( $document_root . '/includes/classes/validation.php' );
-require_once( $document_root . '/includes/classes/user.php' );
-require_once( $document_root . '/includes/classes/settings.php' );
-require_once( $document_root . '/includes/classes/mail.php' );
+require_once( 'includes/classes/functions.php' );
+require_once( 'includes/classes/database.php' );
+require_once( 'includes/classes/validation.php' );
+require_once( 'includes/classes/user.php' );
+require_once( 'includes/classes/settings.php' );
+require_once( 'includes/classes/mail.php' );
 
 $db					= new Database( $connection );
 $user				= new User( $db );
@@ -21,7 +18,7 @@ $module_head		= true;
 $module_content		= false;
 
 if ( $screen_validation )
-{	
+{
 	if ( function_exists( 'Module_Head' ) )
 	{
 		ob_start();
@@ -29,7 +26,7 @@ if ( $screen_validation )
 		$module_head_output = ob_get_contents();
 		ob_clean();
 	}
-	
+
 	ob_start();
 	$module_content = call_user_func_array( 'Module_Content', array( &$db, &$user, &$settings ) );
 	$module_content_output = ob_get_contents();
@@ -52,12 +49,12 @@ if ( $screen_validation )
 	{
 		print '<script src="/static/javascript/admin.js" type="text/javascript"></script>';
 	}
-	
+
 	if ( $module_head === true && $module_content === true )
-	{		
+	{
 		print $module_head_output;
 	}
-	
+
 	print '<script type="text/javascript">';
 	print "\nvar json_url = '/json.php?token={$user->token}';\n";
 	print "var token = '{$user->token}';\n";
@@ -82,10 +79,10 @@ if ( $screen_validation )
     <div class="title">
       <h1><a href="/" title="<?php print $settings->site_title; ?>"><?php print $settings->site_title; ?></a></h1>
     </div>
-  </div>  
+  </div>
   <div class="navigation">
     <?php Functions::TopNavigation( $db, $user ); ?>
-  </div>  
+  </div>
   <div class="main">
     <div class="content">
 	<?php
@@ -96,8 +93,8 @@ if ( $screen_validation )
 		} else {
 			Functions::OutputError();
 		}
-	?>	  
-    </div>	
+	?>
+    </div>
     <div class="sidenav">
       <?php Functions::UserNavigation( $db, $user ); ?>
       <h1>Quick Links</h1>
@@ -110,12 +107,12 @@ if ( $screen_validation )
       </ul>
       <h1>Poll</h1>
 		<div id="loading_polls_nav"></div>
-    </div>	
-    <br clear="all" />	
-  </div>  
+    </div>
+    <br clear="all" />
+  </div>
   <div class="footer">
 	  &copy; 2007-2012 <a href="/">NFLPick-Em.com</a>. Template design by <a href="http://templates.arcsin.se" target="_blank" title="Designed By Arcsin">Arcsin</a>.
-  </div>  
+  </div>
 </div>
 </body>
 </html>
