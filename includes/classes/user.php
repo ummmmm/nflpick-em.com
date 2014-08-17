@@ -8,25 +8,25 @@ class User
 	public $account 	= array();
 	public $logged_in 	= false;
 	public $token 		= null;
-	
+
 	private $db;
-	
+
 	public function __construct()
 	{
 		$this->db = new Database();
 		$this->ValidateSession();
 	}
-	
+
 	public function List_Load( &$users )
 	{
 		return $this->db->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name FROM users ORDER BY fname', $users );
 	}
-	
+
 	public function Load( $userid, &$user )
-	{		
+	{
 		return $this->db->single( 'SELECT *, CONCAT( fname, \' \', lname ) AS name FROM users WHERE id = ?', $user, $userid );
 	}
-	
+
 	public function Load_Email( $email, &$user )
 	{
 		return $this->db->single( 'SELECT *, CONCAT( fname, \' \', lname ) AS name FROM users WHERE email = ?', $user, $email );
@@ -51,84 +51,84 @@ class User
 	{
 		return $this->db->query( 'DELETE FROM users WHERE id = ?', $userid );
 	}
-	
+
 	private function UserActive_Update()
 	{
 		$date = Functions::Timestamp();
 
 		return $this->db->query( 'UPDATE users SET last_on = ? WHERE id = ?', $date, $this->id );
 	}
-	
+
 	public function CreateSession()
 	{
 		if ( !$this->id )
 		{
 			return false;
 		}
-		
+
 		$cookieid	= sha1( session_id() );
 		$token		= sha1( uniqid( rand(), TRUE ) );
-		
-		setcookie( 'session', $cookieid, time() + 60 * 60 * 24 * 30, '/' );
-		
+
+		setcookie( 'session', $cookieid, time() + 60 * 60 * 24 * 30, INDEX, '', false, true );
+
 		if ( !Sessions::Insert( $this->db, array( 'token' => $token, 'cookieid' => $cookieid, 'userid' => $this->id ) ) )
 		{
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	public function Insert( &$user )
 	{
 		$user[ 'password' ] = Functions::HashPassword( $user[ 'password' ] );
 		$time				= Functions::Timestamp();
-		
+
 		if ( !$this->db->query( 'INSERT INTO users ( fname, lname, email, password, sign_up ) VALUES ( ?, ?, ?, ?, ? )',
 								$user[ 'fname' ], $user[ 'lname' ], $user[ 'email' ], $user[ 'password' ], $time ) )
 		{
 			return false;
 		}
-		
+
 		$this->id 		= $this->db->insert_id;
 		$user[ 'id' ] 	= $this->db->insert_id;
-		
+
 		return true;
 	}
-	
+
 	private function ValidateSession()
 	{
 		$cookieid 	= Functions::Cookie( 'session' );
 		$count 		= $this->db->single( 'SELECT s.userid, s.token FROM users u, sessions s WHERE s.cookieid = ? AND u.id = s.userid', $session, $cookieid );
-		
+
 		if ( !$count )
-		{			
+		{
 			return false;
 		}
-		
+
 		$this->id 			= $session[ 'userid' ];
 		$this->token		= $session[ 'token' ];
 		$this->logged_in 	= true;
 		$this->Load( $this->id, $this->account );
 		$this->UserActive_Update();
 		Sessions::Update_Cookie_LastActive( $this->db, $cookieid );
-		
+
 		return true;
 	}
-	
+
 	public function LoginValidate( $email, $password )
 	{
 		$count = $this->db->single( 'SELECT id, password, force_password FROM users WHERE email = ?', $login, $email );
-		
+
 		if ( !$count )
-		{			
+		{
 			return false;
 		}
-		
+
 		if ( $login[ 'force_password' ] === 1 )
 		{
 			$this->db->single( 'SELECT password FROM reset_password WHERE userid = ?', $reset, $login[ 'id' ] );
-			
+
 			if ( !Functions::VerifyPassword( $password, $reset[ 'password' ] ) )
 			{
 				return false;
@@ -138,12 +138,12 @@ class User
 		{
 			return false;
 		}
-		
+
 		$this->id = $login[ 'id' ];
-		
+
 		return true;
 	}
-	
+
 	public function Update( $user )
 	{
 		return $this->db->query( '	UPDATE

@@ -1066,20 +1066,20 @@ class Functions
 	{
 		if ( $user->logged_in )
 		{
-			$admin 	= ( $user->account[ 'admin' ] ) ? '<li><a href="/?view=admin" title="Admin Control Panel">Admin Control Panel</a></li>' : '';
+			$admin 	= ( $user->account[ 'admin' ] ) ? '<li><a href="?view=admin" title="Admin Control Panel">Admin Control Panel</a></li>' : '';
 			$weekid = Weeks::Previous( $db );
 
 			print <<<EOT
 				<h1>User Links</h1>
 				<ul>
-				  <li><a href="/" title="Home">Home Page</a></li>
-				  <li><a href="/?module=controlpanel" title="User Control Panel">User Control Panel</a></li>
+				  <li><a href="" title="Home">Home Page</a></li>
+				  <li><a href="?module=controlpanel" title="User Control Panel">User Control Panel</a></li>
 				  {$admin}
-				  <li><a href="/?module=makepicks" title="Make Picks">Make Picks</a></li>
-				  <li><a href="/?module=viewpicks&week={$weekid}" title="User Picks">View Other's Picks</a></li>
-				  <li><a href="/?module=weeklyrecords" title="Weekly User Records">View Weekly Records</a></li>
-				  <li><a href="/?module=leaderboard" title="Leader Board">View Leader Board</a></li>
-				  <li><a href="/?module=logout" title="Logout">Logout</a></li>
+				  <li><a href="?module=makepicks" title="Make Picks">Make Picks</a></li>
+				  <li><a href="?module=viewpicks&week={$weekid}" title="User Picks">View Other's Picks</a></li>
+				  <li><a href="?module=weeklyrecords" title="Weekly User Records">View Weekly Records</a></li>
+				  <li><a href="?module=leaderboard" title="Leader Board">View Leader Board</a></li>
+				  <li><a href="?module=logout" title="Logout">Logout</a></li>
 				</ul>
 EOT;
 		}
@@ -1101,7 +1101,7 @@ EOT;
 
 			if ( $user->account[ 'force_password' ] && ( $module != 'forgotpassword' || ( $module == 'forgotpassword' &&  $action != 'changepassword' ) ) )
 			{
-				header( 'location: /?module=forgotpassword&action=changepassword' );
+				header( sprintf( 'location: %s?module=forgotpassword&action=changepassword', INDEX ) );
 				return false;
 			}
 		}
@@ -1113,9 +1113,9 @@ EOT;
 
 		if ( $view === 'admin' && $user->logged_in && $user->account[ 'admin' ] )
 		{
-			$path = $_SERVER[ 'DOCUMENT_ROOT' ] . "/admin/modules/{$module}.php";
+			$path = "admin/modules/{$module}.php";
 		} else {
-			$path = $_SERVER[ 'DOCUMENT_ROOT' ] . "/includes/modules/{$module}.php";
+			$path = "includes/modules/{$module}.php";
 		}
 
 		if ( !file_exists( $path ) )

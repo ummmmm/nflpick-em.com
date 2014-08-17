@@ -2,24 +2,24 @@
 function Module_Content( &$db, &$user )
 {
 	Validation::User( $user->id );
-	
+
 	$weekid = Functions::Get( 'week' );
-	
+
 	if ( $weekid === '' )
 	{
 		return WeekList( $db );
 	}
-	
+
 	if ( !Validation::Week( $weekid ) )
 	{
 		return Functions::Information( 'Error', 'Invalid week.' );
 	}
-	
+
 	if ( !Weeks::IsLocked( $db, $weekid ) )
 	{
 		return Functions::Information( 'Error', 'Week ' . htmlentities( $weekid ) . ' is not locked yet.' );
 	}
-	
+
 	return PickLayout( $db, $user, $weekid );
 }
 
@@ -36,12 +36,12 @@ function PickLayout( &$db, $user, $weekid )
 	{
 		return false;
 	}
-	
+
 	print "<h1>Week {$weekid} User Picks</h1>";
-	print '<table class="picks" style="font-size:8px;" width="100%">';	
-	
+	print '<table class="picks" style="font-size:8px;" width="100%">';
+
 	$user_records = array();
-	
+
 	foreach( $users as $loaded_user )
 	{
 		$initials 								= strtoupper( substr( $loaded_user[ 'fname' ], 0, 1 ) . '.' . substr( $loaded_user[ 'lname' ], 0, 1 ) ) . '.';
@@ -52,7 +52,7 @@ function PickLayout( &$db, $user, $weekid )
 		{
 			return false;
 		}
-		
+
 		print '<tr>';
 		print '<td class="picks">';
 		print '<a href="javascript:;" title="' . htmlentities( $loaded_user[ 'name' ] ) . '" onclick="$.fn.highlightPicks( ' . $loaded_user[ 'id' ] . ', ' . $weekid . ');">' . htmlentities( $initials ) . '</a>';
@@ -75,16 +75,16 @@ function PickLayout( &$db, $user, $weekid )
 			} else {
 				$team = $game[ 'homeAbbr' ];
 			}
-			
+
 			if ( $pick[ 'winner_pick' ] === $game[ 'winner' ] )
 			{
 				$user_records[ $loaded_user[ 'id' ] ][ 'wins' ] += 1;
 			} else if ( $game[ 'winner' ] != 0 ){
 				$user_records[ $loaded_user[ 'id' ] ][ 'losses' ] += 1;
 			}
-			
+
 			$output = ( $pick[ 'winner_pick' ] == $game[ 'winner' ] ) ? "<b>{$team}</b>" : $team;
-			
+
 			print '<td userid="' . $loaded_user[ 'id' ] . '" gameid="' . $game[ 'id' ] . '">' . $output . '</td>';
 		}
 
@@ -95,15 +95,15 @@ function PickLayout( &$db, $user, $weekid )
 				return false;
 			}
 		}
-		
+
 		print '<td><b>' . $user_records[ $loaded_user[ 'id' ] ][ 'wins' ] . ' - ' . $user_records[ $loaded_user[ 'id' ] ][ 'losses' ] . '</b></td>';
-		
+
 		print '</tr>';
 	}
 
 	print '</table>';
 	print '<p><a href="javascript:;" id="highlightpicks" onclick="$.fn.highlightPicks( 0, ' . $weekid . ');">Highlighting On</a></p>';
-	
+
 	return true;
 }
 
@@ -114,13 +114,13 @@ function WeekList( &$db )
 	{
 		return false;
 	}
-	
+
 	foreach( $weeks as $week )
 	{
 		$locked = $week[ 'locked' ] ? '- <b>Locked</b>' : '';
-		printf( '<p><a href="/?module=viewpicks&week=%d" title="Week %d">Week %d</a> %s</p>', $week[ 'id' ], $week[ 'id' ], $week[ 'id' ], $locked );
+		printf( '<p><a href="?module=viewpicks&week=%d" title="Week %d">Week %d</a> %s</p>', $week[ 'id' ], $week[ 'id' ], $week[ 'id' ], $locked );
 	}
-	
+
 	return true;
 }
 ?>

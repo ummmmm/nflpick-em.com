@@ -38,16 +38,17 @@ if ( $screen_validation )
 <head>
 <meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
 <title><?php print $settings->site_title; ?></title>
-<link rel="icon" type="image/x-icon" href="/favicon.ico" />
-<link rel="stylesheet" type="text/css" href="/static/css/styles.css" media="screen" />
+<base href="<?php print $settings->domain_url; ?>" />
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+<link rel="stylesheet" type="text/css" href="static/css/styles.css" media="screen" />
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
-<script src="/static/javascript/jqueryui.js" type="text/javascript"></script>
-<script src="/static/javascript/javascript.js" type="text/javascript"></script>
+<script src="static/javascript/jqueryui.js" type="text/javascript"></script>
+<script src="static/javascript/javascript.js" type="text/javascript"></script>
 <script type="text/javascript">$( document ).ready( function() { $.fn.load_poll(); } );</script>
 <?php
 	if ( Functions::Get( 'view' ) === 'admin' && $user->account[ 'admin' ] )
 	{
-		print '<script src="/static/javascript/admin.js" type="text/javascript"></script>';
+		print '<script src="static/javascript/admin.js" type="text/javascript"></script>';
 	}
 
 	if ( $module_head === true && $module_content === true )
@@ -56,7 +57,7 @@ if ( $screen_validation )
 	}
 
 	print '<script type="text/javascript">';
-	print "\nvar json_url = '/json.php?token={$user->token}';\n";
+	print "\nvar json_url = 'json.php?token={$user->token}';\n";
 	print "var token = '{$user->token}';\n";
 	print "\$( document ).ready( function() { {$jquery} } );";
 	print "</script>\n";
@@ -77,7 +78,7 @@ if ( $screen_validation )
 <div class="container">
   <div class="header">
     <div class="title">
-      <h1><a href="/" title="<?php print $settings->site_title; ?>"><?php print $settings->site_title; ?></a></h1>
+      <h1><a href="" title="<?php print $settings->site_title; ?>"><?php print $settings->site_title; ?></a></h1>
     </div>
   </div>
   <div class="navigation">
@@ -99,11 +100,11 @@ if ( $screen_validation )
       <?php Functions::UserNavigation( $db, $user ); ?>
       <h1>Quick Links</h1>
       <ul>
-        <li><a href="/?module=register" title="Register">Register</a></li>
-        <li><a href="/?module=login" title="Login">Login</a></li>
-        <li><a href="/?module=schedule" title="View Schedule">Schedule</a></li>
-        <li><a href="/?module=contact" title="Contact Us">Contact Us</a></li>
-        <li><a href="/?module=online" title="Online Users">Online Users</a></li>
+        <li><a href="?module=register" title="Register">Register</a></li>
+        <li><a href="?module=login" title="Login">Login</a></li>
+        <li><a href="?module=schedule" title="View Schedule">Schedule</a></li>
+        <li><a href="?module=contact" title="Contact Us">Contact Us</a></li>
+        <li><a href="?module=online" title="Online Users">Online Users</a></li>
       </ul>
       <h1>Poll</h1>
 		<div id="loading_polls_nav"></div>
@@ -111,7 +112,7 @@ if ( $screen_validation )
     <br clear="all" />
   </div>
   <div class="footer">
-	  &copy; 2007-2012 <a href="/">NFLPick-Em.com</a>. Template design by <a href="http://templates.arcsin.se" target="_blank" title="Designed By Arcsin">Arcsin</a>.
+	  &copy; 2007-2012 <a href="">NFLPick-Em.com</a>. Template design by <a href="http://templates.arcsin.se" target="_blank" title="Designed By Arcsin">Arcsin</a>.
   </div>
 </div>
 </body>

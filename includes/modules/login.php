@@ -3,19 +3,19 @@ function Module_Validate( &$db, &$user, &$validation )
 {
 	$validation[ 'email' ] 		= Functions::Post( 'email' );
 	$validation[ 'password'] 	= Functions::Post( 'password' );
-	
+
 	if ( !$user->LoginValidate( $validation[ 'email' ], $validation[ 'password' ] ) )
-	{		
+	{
 		if ( Settings::Load( $db, $settings ) === 1 && array_key_exists( 'login_sleep', $settings ) )
 		{
 			usleep( $settings[ 'login_sleep' ] * 1000 ); // usleep uses microseconds, not milliseconds
 		}
-	
+
 		FailedLogin::Insert( $db, $validation[ 'email' ] );
-		
+
 		return Functions::ValidationError( array( 'Invalid email or password' ) );
 	}
-	
+
 	return true;
 }
 
@@ -25,9 +25,9 @@ function Module_Update( &$db, &$user, &$validation )
 	{
 		return false;
 	}
-	
-	header( 'Location: /' );
-	
+
+	header( sprintf( 'Location: %s', INDEX ) );
+
 	return true;
 }
 
@@ -42,14 +42,14 @@ function Module_Content( $db, $user, $settings )
 {
 	if ( $user->id )
 	{
-		header( 'Location: /' );
-		
+		header( sprintf( 'Location: %s', INDEX ) );
+
 		return true;
 	}
-	
+
 	Functions::HandleModuleErrors();
 ?>
-	<form action="/?module=login" method="post">
+	<form action="?module=login" method="post">
 	  <fieldset>
 			<legend>Enter Your Login Info</legend>
 			<label for="email">Email Address</label>
