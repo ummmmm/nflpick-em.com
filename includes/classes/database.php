@@ -65,7 +65,6 @@ class Database extends mysqli
 		return $count;
 	}
 
-
 	public function insert( $table, &$values )
 	{
 		if ( !is_array( $values ) || count( $values ) === 0 )
