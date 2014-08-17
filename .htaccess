@@ -18,7 +18,7 @@ Options -Indexes
 Options +FollowSymLinks
 RewriteEngine On
 
-RewriteCond %{HTTP_HOST} ^nflpick-em.com [NC] 
+RewriteCond %{HTTP_HOST} ^nflpick-em.com [NC]
 RewriteRule ^(.*)$ http://www.nflpick-em.com/$1 [L,R=301]
 
 RewriteRule ^robots.txt$ static/robots.txt [L]
@@ -31,3 +31,4 @@ RewriteRule ^images/(.*)$ static/images/$1 [L]
 	order allow,deny
 	allow from all
 </Files>
+
