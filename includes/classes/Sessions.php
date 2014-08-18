@@ -23,13 +23,13 @@ class Sessions
 		$session	= array( 'token' => $token, 'cookie_id' => $cookie_id, 'user_id' => $user_id );
 
 		setcookie( 'session', $cookie_id, time() + 60 * 60 * 24 * 30, '/' );
-		
+
 		return $this->_Insert( $session );
 	}
 
 	private function _Insert( $session )
 	{
-		return $this->_db->query( 'INSERT INTO Sessions ( token, cookie_id, user_id ) VALUES ( ?, ?, ? )', $session[ 'token' ], $session[ 'cookie_id' ], $session[ 'user_id' ] );
+		return $this->_db->insert( 'sessions', $session );
 	}
 
 	public function Load( $cookie_id, &$session )
@@ -63,26 +63,26 @@ class Sessions
 
 	public static function Insert( &$db, $session )
 	{
-		$date = Functions::Timestamp();
+		$session[ 'date' ] = Functions::Timestamp();
 
-		return $db->query( 'INSERT INTO sessions ( token, cookieid, userid, date ) VALUES( ?, ?, ?, ? )', $session[ 'token' ], $session[ 'cookieid' ], $session[ 'userid' ], $date );
+		return $db->insert( 'sessions', $session );
 	}
-	
+
 	public static function Delete( &$db, $token )
 	{
 		return $db->query( 'DELETE FROM sessions WHERE token = ?', $token );
 	}
-	
+
 	public static function Delete_User( &$db, $user_id )
 	{
 		return $db->query( 'DELETE FROM sessions WHERE userid = ?', $user_id );
 	}
-	
+
 	public static function Delete_Cookie( &$db, $cookie_id )
 	{
 		return $db->query( 'DELETE FROM sessions WHERE cookieid = ?', $cookie_id );
 	}
-	
+
 	public static function Update( &$db, $session )
 	{
 		return $db->query( 'UPDATE sessions SET token = ?, userid = ?, date = ? WHERE cookieid = ?', $session[ 'token' ], $session[ 'userid' ], $session[ 'date' ], $session[ 'cookieid' ] );
@@ -94,20 +94,20 @@ class Sessions
 
 		return $db->query( 'UPDATE sessions SET last_active = ? WHERE cookieid = ?', $date, $cookieid );
 	}
-	
+
 	public static function Validate( &$db, $userid, $token )
 	{
 		$cookieid = Functions::Cookie( 'session' );
-		
+
 		$count = $db->single( 'SELECT * FROM sessions WHERE token = ? AND cookieid = ? AND userid = ?', $null, $token, $cookieid, $userid );
-		
+
 		return $count ? true : false;
 	}
 
 	public static function Validate_Admin( &$db, $userid, $token )
 	{
 		$cookieid = Functions::Cookie( 'session' );
-		
+
 		$count = $db->single( 'SELECT
 								u.id
 							   FROM
