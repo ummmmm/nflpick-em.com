@@ -82,10 +82,8 @@ class User
 	public function Insert( &$user )
 	{
 		$user[ 'password' ] = Functions::HashPassword( $user[ 'password' ] );
-		$time				= Functions::Timestamp();
 
-		if ( !$this->db->query( 'INSERT INTO users ( fname, lname, email, password, sign_up ) VALUES ( ?, ?, ?, ?, ? )',
-								$user[ 'fname' ], $user[ 'lname' ], $user[ 'email' ], $user[ 'password' ], $time ) )
+		if ( !$this->db->insert( 'users', $user ) )
 		{
 			return false;
 		}
