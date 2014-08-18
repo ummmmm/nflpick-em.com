@@ -211,11 +211,11 @@ class Polls
 		return $db->select( 'SELECT id FROM poll_votes WHERE answer_id = ?', $null, $answer_id );
 	}
 
-	public static function Insert( &$db, $poll )
+	public static function Insert( &$db, &$poll )
 	{
-		$date = Functions::Timestamp();
+		$poll[ 'date' ] = Functions::Timestamp();
 
-		return $db->query( 'INSERT INTO polls ( question, date, active ) VALUES ( ?, ?, ? )', $poll[ 'question' ], $date, $poll[ 'active' ] );
+		return $db->insert( 'polls', $poll );
 	}
 
 	public static function Delete( &$db, $poll_id )
@@ -241,16 +241,15 @@ class Polls
 	}
 	public static function Answer_Insert( &$db, $answer )
 	{
-		return $db->query( 'INSERT INTO poll_answers ( poll_id, answer ) VALUES ( ?, ? )', $answer[ 'poll_id' ], $answer[ 'answer' ] );
+		return $db->insert( 'poll_answers', $answer );
 	}
 
-	public static function Vote_Insert( &$db, $vote )
+	public static function Vote_Insert( &$db, &$vote )
 	{
-		$ip	 	= $_SERVER[ 'REMOTE_ADDR' ];
-		$date 	= Functions::Timestamp();
+		$vote[ 'date' ] = Functions::Timestamp();
+		$vote[ 'ip' ] 	= $_SERVER[ 'REMOTE_ADDR' ];
 
-		return $db->query( 'INSERT INTO poll_votes ( poll_id, answer_id, user_id, date, ip ) VALUES ( ?, ?, ?, ?, ? )',
-							$vote[ 'poll_id' ], $vote[ 'answer_id' ], $vote[ 'user_id' ], $date, $ip );
+		return $db->insert( 'poll_votes', $vote );
 	}
 
 	public static function Update( &$db, $poll )
@@ -321,11 +320,11 @@ class Polls
 
 class ResetPassword
 {
-	public static function Insert( &$db, $insert )
+	public static function Insert( &$db, &$insert )
 	{
-		$date = Functions::Timestamp();
+		$insert[ 'date' ] = Functions::Timestamp();
 
-		return $db->query( 'INSERT INTO reset_password ( userid, password, date ) VALUES ( ?, ?, ? )', $insert[ 'userid' ], $insert[ 'password' ], $date );
+		return $db->insert( 'reset_password', $insert );
 	}
 
 	public static function Delete_User( &$db, $userid )
@@ -336,12 +335,12 @@ class ResetPassword
 
 class SentPicks
 {
-	public static function Insert( &$db, $picks )
+	public static function Insert( &$db, &$picks )
 	{
-		$ip		= $_SERVER[ 'REMOTE_ADDR' ];
-		$date 	= Functions::Timestamp();
+		$picks[ 'ip' ]		= $_SERVER[ 'REMOTE_ADDR' ];
+		$picks[ 'date' ]	= Functions::Timestamp();
 
-		return $db->query( 'INSERT INTO sent_picks ( user_id, picks, date, ip, week ) VALUES ( ?, ?, ?, ?, ? )', $picks[ 'user_id' ], $picks[ 'picks' ], $date, $ip, $picks[ 'week' ] );
+		return $db->insert( 'sent_picks', $picks );
 	}
 
 	public static function Delete_User( &$db, $picks )
@@ -352,13 +351,12 @@ class SentPicks
 
 class News
 {
-	public static function Insert( &$db, $news )
+	public static function Insert( &$db, &$news )
 	{
-		$ip		= $_SERVER[ 'REMOTE_ADDR' ];
-		$date 	= Functions::Timestamp();
+		$news[ 'ip' ]	= $_SERVER[ 'REMOTE_ADDR' ];
+		$news[ 'date' ]	= Functions::Timestamp();
 
-		return $db->query( 'INSERT INTO news ( user_id, title, news, date, ip, active ) VALUES ( ?, ?, ?, ?, ?, ? )',
-							$news[ 'user_id' ], $news[ 'title' ], $news[ 'news' ], $date, $ip, $news[ 'active' ] );
+		return $db->insert( 'news', $news );
 	}
 
 	public static function Update( &$db, $news )
@@ -422,14 +420,9 @@ class Games
 								$week );
 	}
 
-	public static function Insert( &$db, $game )
+	public static function Insert( &$db, &$game )
 	{
-		return $db->query( 'INSERT INTO
-								games
-							( away, home, date, week )
-							VALUES
-							( ?, ?, ?, ? )',
-							$game[ 'away' ], $game[ 'home' ], $game[ 'date' ], $game[ 'week' ] );
+		return $db->insert( 'games', $game );
 	}
 
 	public static function Update( &$db, $game )
@@ -617,9 +610,9 @@ class Weeks
 		return $db->select( 'SELECT w.*, ( SELECT COUNT( id ) FROM games g WHERE g.week = w.id ) AS total_games FROM weeks w ORDER BY id', $weeks );
 	}
 
-	public static function Insert( &$db, $week )
+	public static function Insert( &$db, &$week )
 	{
-		return $db->query( 'INSERT INTO weeks ( id, date, locked ) VALUES ( ?, ?, ? )', $week[ 'id' ], $week[ 'date' ], $week[ 'locked' ] );
+		return $db->insert( 'weeks', $week );
 	}
 
 	public static function IsLocked( &$db, $weekid )
@@ -792,10 +785,9 @@ class FailedLogin
 
 	public static function Insert( &$db, $email )
 	{
-		$ip		= $_SERVER[ 'REMOTE_ADDR' ];
-		$date 	= Functions::Timestamp();
+		$values = array( 'email' => $email, 'date' => Functions::Timestamp(), 'ip' => $_SERVER[ 'REMOTE_ADDR' ] );
 
-		return $db->query( 'INSERT INTO failed_logins ( email, date, ip ) VALUES ( ?, ?, ? )', $email, $date, $ip );
+		return $db->insert( 'failed_logins', $values );
 	}
 }
 
