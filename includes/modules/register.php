@@ -65,12 +65,26 @@ function Module_Validate( $db, $user, &$register )
 
 function Module_Update( $db, $user, $register_user )
 {
-	if ( !$user->Insert( $register_user ) )
+	$ruser = array( 'fname' 			=> $register_user[ 'fname' ],
+					'lname' 			=> $register_user[ 'lname' ],
+					'email' 			=> $register_user[ 'email' ],
+					'password' 			=> $register_user[ 'password' ],
+					'admin' 			=> 0,
+					'sign_up' 			=> Functions::Timestamp(),
+					'last_on' 			=> Functions::Timestamp(),
+					'wins' 				=> 0,
+					'losses' 			=> 0,
+					'paid' 				=> 0,
+					'current_place' 	=> 1,
+					'email_preference' 	=> 1,
+					'force_password' 	=> 0 );
+
+	if ( !$user->Insert( $ruser ) )
 	{
 		return Functions::Error( 'NFL-REGISTER-0', 'An error has occurred creating your account. Please try again later.' );
 	}
 
-	if ( !Picks::Insert_All( $db, $register_user[ 'id' ] ) )
+	if ( !Picks::Insert_All( $db, $ruser[ 'id' ] ) )
 	{
 		return false;
 	}
