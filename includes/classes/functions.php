@@ -98,8 +98,8 @@ class Users
 		$query = $db->query( 'UPDATE
 								users u
 							  SET
-								u.wins		= ( SELECT COUNT( p.id ) FROM picks p, games g WHERE p.game_id = g.id AND p.winner_pick = g.winner AND p.user_id = u.id ),
-								u.losses	= ( SELECT COUNT( g.id ) FROM picks p, games g WHERE p.game_id = g.id AND p.loser_pick = g.winner AND p.user_id = u.id )' );
+								u.wins		= ( SELECT COUNT( p.id ) FROM picks p, games g WHERE p.game_id = g.id AND p.winner_pick = g.winner AND p.user_id = u.id AND g.winner != 0 ),
+								u.losses	= ( SELECT COUNT( g.id ) FROM picks p, games g WHERE p.game_id = g.id AND p.loser_pick = g.winner AND p.user_id = u.id AND g.winner != 0 )' );
 
 		if ( !$query )
 		{
