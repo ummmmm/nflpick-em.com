@@ -103,7 +103,7 @@ function Module_Content( &$db, &$user )
 {
 	Validation::User( $user->id );
 
-	$action = trim( $_GET[ 'action' ] );
+	$action = Functions::Get( 'action' );
 
 	if ( empty( $action ) )
 	{
