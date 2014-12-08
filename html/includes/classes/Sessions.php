@@ -24,7 +24,7 @@ class Sessions
 
 		setcookie( 'session', $cookie_id, time() + 60 * 60 * 24 * 30, '/' );
 
-		return $this->_Insert( $session );
+		return $this->Insert( $session );
 	}
 
 	private function _Insert( $session )
