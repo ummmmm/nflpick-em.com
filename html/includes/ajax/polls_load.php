@@ -51,7 +51,7 @@ function Module_JSON( &$db, &$user )
 		{
 			$poll[ 'voted' ] = true;
 		} else {
-			$count = Vote_Casted( $db, $user->id, $poll[ 'id' ], $vote );
+			$count = Vote_Casted( $db, $user->id, $poll[ 'id' ] );
 			
 			if ( $count === false )
 			{
