@@ -1071,7 +1071,7 @@ class Functions
 				  <li><a href="?module=viewpicks&week={$weekid}" title="User Picks">View Other's Picks</a></li>
 				  <li><a href="?module=weeklyrecords" title="Weekly User Records">View Weekly Records</a></li>
 				  <li><a href="?module=leaderboard" title="Leader Board">View Leader Board</a></li>
-				  <li><a href="?module=logout" title="Logout">Logout</a></li>
+				  <li><a href="?module=logout" title="Logout" id="logout">Logout</a></li>
 				</ul>
 EOT;
 		}

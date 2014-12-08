@@ -355,4 +355,11 @@ $( document ).ready( function(){
 		alert( message );
 		return true;
 	}
+
+	$( '#logout' ).click( function( e ) { 
+		if ( !confirm( 'Are you sure you want to log out?' ) )
+		{
+			e.preventDefault();
+		}
+	} );
 });
