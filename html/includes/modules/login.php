@@ -48,12 +48,15 @@ function Module_Content( $db, $user, $settings )
 	}
 
 	Functions::HandleModuleErrors();
+
+	$email = Functions::Post( 'email' );
+
 ?>
 	<form action="?module=login" method="post">
 	  <fieldset>
 			<legend>Enter Your Login Info</legend>
 			<label for="email">Email Address</label>
-			<input type="text" name="email" id="loginEmail" value="<?=$_POST['email'];?>" />
+			<input type="text" name="email" id="loginEmail" value="<?php print $email; ?>" />
 			<br />
 			<label for="password">Password</label>
 			<input type="password" name="password" id="loginPassword" value="" autocomplete="off" />
