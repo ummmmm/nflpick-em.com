@@ -138,9 +138,10 @@ function GameLayout( &$db, &$user, $week )
 	$remaining = Picks::Remaining( $db, $user->id, $week );
 	$timeUntil = Functions::TimeUntil( $loaded_week[ 'date' ] );
 
-	$now 	= new DateTime();
-	$then	= new DateTime( $loaded_week[ 'date' ] );
-	
+	$now 		= new DateTime();
+	$then		= new DateTime( $loaded_week[ 'date' ] );
+	$time_left	= '';
+
 	if ( $now < $then )
 	{
 		$time_left .= '- You can still change your picks by clicking the team names.<br />';
