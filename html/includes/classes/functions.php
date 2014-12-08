@@ -1216,7 +1216,8 @@ EOT;
 	public static function Timestamp()
 	{
 		$date = new DateTime();
-		return $date->format( DATE_ISO8601 );
+
+		return $date->format( 'Y-m-d H:i:s' );
 	}
 
 	public static function Fix_User_Records( &$db, &$users )
