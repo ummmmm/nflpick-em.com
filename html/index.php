@@ -9,13 +9,14 @@ require_once( 'includes/classes/user.php' );
 require_once( 'includes/classes/settings.php' );
 require_once( 'includes/classes/mail.php' );
 
-$db					= new Database( $connection );
+$db					= new Database();
 $user				= new User( $db );
 $settings			= new Settings1( $db );
 
 $screen_validation 	= Functions::ValidateScreen( $db, $user, $extra_screen_content );
 $module_head		= true;
 $module_content		= false;
+$jquery				= '';
 
 if ( $screen_validation )
 {
@@ -51,7 +52,7 @@ if ( $screen_validation )
 		print '<script src="static/javascript/admin.js" type="text/javascript"></script>';
 	}
 
-	if ( $module_head === true && $module_content === true )
+	if ( $module_head === true && $module_content === true && isset( $module_head_output ) )
 	{
 		print $module_head_output;
 	}
@@ -100,8 +101,13 @@ if ( $screen_validation )
       <?php Functions::UserNavigation( $db, $user ); ?>
       <h1>Quick Links</h1>
       <ul>
-        <li><a href="?module=register" title="Register">Register</a></li>
-        <li><a href="?module=login" title="Login">Login</a></li>
+      <?php
+      	if ( $user->logged_in === false )
+      	{
+      		print '<li><a href="?module=register" title="Register">Register</a></li>';
+      		print '<li><a href="?module=login" title="Login">Login</a></li>';
+      	}
+      ?>
         <li><a href="?module=schedule" title="View Schedule">Schedule</a></li>
         <li><a href="?module=contact" title="Contact Us">Contact Us</a></li>
         <li><a href="?module=online" title="Online Users">Online Users</a></li>
