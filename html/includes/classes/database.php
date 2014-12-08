@@ -101,7 +101,7 @@ class Database extends mysqli
 
 		if ( $arg_count > $min_arg_number )
 		{
-			$bind_params = array();
+			$bind_params = array( '' ); // initialize the empty array
 
 			for( $i = $min_arg_number; $i < $arg_count; $i++ )
 			{
