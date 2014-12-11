@@ -17,6 +17,30 @@ class User
 		$this->ValidateSession();
 	}
 
+	public function Create()
+	{
+		$sql = "CREATE TABLE users
+				(
+					id 					int( 11 ) AUTO_INCREMENT,
+					fname 				varchar( 50 ),
+					lname 				varchar( 50 ),
+					email 				varchar( 255 ),
+					password 			varchar( 255 ),
+					admin 				tinyint( 1 ),
+					sign_up 			datetime,
+					last_on 			datetime,
+					wins 				int( 11 ),
+					losses 				int( 11 ),
+					paid 				tinyint( 1 ),
+					current_place 		int( 11 ),
+					email_preference 	tinyint( 1 ),
+					force_password 		tinyint( 1 ),
+					PRIMARY KEY ( id )
+				)";
+
+		return $this->db->query( $sql );
+	}
+
 	public function List_Load( &$users )
 	{
 		return $this->db->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name FROM users ORDER BY fname', $users );
