@@ -1,4 +1,5 @@
 <?php
+
 class Draw
 {
 	public static function Hidden( $name, $value )
@@ -158,8 +159,7 @@ class Settings
 					domain_email 		char( 255 ),
 					online 				int( 11 ),
 					site_title 			char( 255 ),
-					login_sleep 		int( 11 ),
-					PRIMARY KEY ( registration )
+					login_sleep 		int( 11 )
 				)";
 
 		if ( $db->query( $sql ) === false )
@@ -167,11 +167,14 @@ class Settings
 			return false;
 		}
 
-		return $db->query( 'INSERT INTO settings
-							( poll_options, email_validation, registration, max_news, domain_url, domain_email, online, site_title, login_sleep )
-							VALUES
-							( ?, ?, ?, ?, ?, ?, ?, ?, ? )',
-							10, 0, 0, 4, 'http://www.nflpick-em.com', 'davidcarver88@gmail.com', 30, 'NFL Pick-Em 2014', 3000 );
+		$settings = Settings::Default_Settings();
+
+		return $db->insert( 'settings', $settings );
+	}
+
+	public static function Default_Settings()
+	{
+		return array( 'poll_options' => 10, 'email_validation' => 0, 'registration' => 1, 'max_news' => 4, 'domain_url' => '', 'domain_email' => '', 'online' => 30, 'site_title' => '', 'login_sleep' => 3000 );
 	}
 
 	public static function Load( &$db, &$settings )
@@ -193,7 +196,7 @@ class Settings
 								online				= ?,
 								site_title			= ?,
 								login_sleep			= ?',
-							$settings[ 'poll_options' ], $settings[ 'email_validatdion' ], $settings[ 'registration' ], $settings[ 'max_news' ],
+							$settings[ 'poll_options' ], $settings[ 'email_validation' ], $settings[ 'registration' ], $settings[ 'max_news' ],
 							$settings[ 'domain_url' ], $settings[ 'domain_email' ], $settings[ 'online' ], $settings[ 'site_title' ], $settings[ 'login_sleep' ] );
 
 	}
@@ -201,6 +204,20 @@ class Settings
 
 class Polls
 {
+	public static function Create( &$db )
+	{
+		$sql = "CREATE TABLE polls
+				(
+					id 			int( 11 ) AUTO_INCREMENT,
+					active		tinyint( 1 ),
+					date 		datetime,
+					question 	varchar( 255 ),
+					PRIMARY KEY ( id )
+				)";
+
+		return $db->query( $sql );
+	}
+
 	public static function Votes_Total_Poll( &$db, $poll_id )
 	{
 		return $db->select( 'SELECT id FROM poll_votes WHERE poll_id = ?', $null, $poll_id );
@@ -318,8 +335,58 @@ class Polls
 	}
 }
 
+class PollAnswers
+{
+	public static function Create( &$db )
+	{
+		$sql = "CREATE TABLE poll_answers
+				(
+					id 		int( 11 ) AUTO_INCREMENT,
+					poll_id int( 11 ),
+					answer	varchar( 255 ),
+					PRIMARY KEY ( id )
+				)";
+
+		return $db->query( $sql );
+	}
+}
+
+class PollVotes
+{
+	public static function Create( &$db )
+	{
+		$sql = "CREATE TABLE poll_votes
+				(
+					id 			int( 11 ) AUTO_INCREMENT,
+					poll_id 	int( 11 ),
+					answer_id 	int( 11 ),
+					user_id 	int( 11 ),
+					date 		datetime,
+					ip 			varchar( 255 ),
+					PRIMARY KEY ( id ),
+					UNIQUE KEY 	poll_votes_1 ( poll_id, user_id )
+				)";
+
+		return $db->query( $sql );
+	}
+}
+
+
 class ResetPassword
 {
+	public static function Create( &$db )
+	{
+		$sql = "CREATE TABLE reset_password
+				(
+					userid 		int( 11 ),
+					password 	varchar( 255 ),
+					date 		datetime,
+					UNIQUE KEY reset_password_1 ( password )
+				)";
+
+		return $db->query( $sql );
+	}
+
 	public static function Insert( &$db, &$insert )
 	{
 		$insert[ 'date' ] = Functions::Timestamp();
@@ -335,6 +402,23 @@ class ResetPassword
 
 class SentPicks
 {
+	public static function Create( &$db )
+	{
+		$sql = "CREATE TABLE sent_picks
+				(
+					id 		int( 11 ) AUTO_INCREMENT,
+					user_id int( 11 ),
+					picks 	text,
+					date 	datetime,
+					ip 		varchar( 50 ),
+					week 	tinyint( 11 ),
+					active 	tinyint( 1 ),
+					PRIMARY KEY ( id )
+				)";
+
+		return $db->query( $sql );
+	}
+
 	public static function Insert( &$db, &$picks )
 	{
 		$picks[ 'ip' ]		= $_SERVER[ 'REMOTE_ADDR' ];
@@ -351,6 +435,23 @@ class SentPicks
 
 class News
 {
+	public static function Create( &$db )
+	{
+		$sql = "CREATE TABLE news
+				(
+					id 		int( 11 ) AUTO_INCREMENT,
+					user_id int( 11 ),
+					title 	varchar( 255 ),
+					news	text,
+					date 	datetime,
+					ip 		varchar( 255 ),
+					active 	tinyint( 1 ),
+					PRIMARY KEY (id)
+				)";
+
+		return $db->query( $sql );
+	}
+
 	public static function Insert( &$db, &$news )
 	{
 		$news[ 'ip' ]	= $_SERVER[ 'REMOTE_ADDR' ];
@@ -384,16 +485,17 @@ class Games
 {
 	public static function Create( &$db )
 	{
-		$sql = "CREATE TABLE `games` (
-					id 			int(3) AUTO_INCREMENT,
-					away 		int(2),
-					home 		int(2),
+		$sql = "CREATE TABLE games
+				(
+					id 			int( 3 ) AUTO_INCREMENT,
+					away 		int( 2 ),
+					home 		int( 2 ),
 					date 		datetime,
-					week 		int(2),
-					winner 		int(2),
-					loser 		int(2),
-					homeScore 	int(2),
-					awayScore 	int(2),
+					week 		int( 2 ),
+					winner 		int( 2 ),
+					loser 		int( 2 ),
+					homeScore 	int( 2 ),
+					awayScore 	int( 2 ),
 					PRIMARY KEY ( id )
 				)";
 
@@ -504,6 +606,28 @@ class Games
 
 class Picks
 {
+	public static function Create( &$db )
+	{
+		$sql = "CREATE TABLE `picks`
+				(
+					id 			int( 11 ) AUTO_INCREMENT,
+					user_id 	int( 11 ),
+					game_id 	int( 11 ),
+					winner_pick int( 11 ),
+					loser_pick 	int( 11 ),
+					ip 			varchar( 50 ),
+					date 		datetime,
+					updated 	datetime,
+					week 		int( 11 ),
+					picked 		tinyint( 1 ),
+					PRIMARY KEY ( id ),
+					UNIQUE KEY picks_1 ( user_id, game_id ),
+					KEY picks_2 ( user_id, week )
+				)";
+
+		return $db->query( $sql );
+	}
+
 	public static function Insert_All( &$db, $user_id )
 	{
 		$ip = $_SERVER[ 'REMOTE_ADDR' ];
@@ -600,6 +724,19 @@ class Picks
 
 class Weeks
 {
+	public static function Create( &$db )
+	{
+		$sql = "CREATE TABLE weeks
+				(
+					id 		int( 11 ),
+					date 	datetime,
+					locked 	tinyint( 1 ),
+					PRIMARY KEY ( id )
+				)";
+
+		return $db->query( $sql );
+	}
+
 	public static function Load( &$db, $weekid, &$week )
 	{
 		return $db->single( 'SELECT w.*, ( SELECT COUNT( id ) FROM games g WHERE g.week = w.id ) AS total_games FROM weeks w WHERE id = ?', $week, $weekid );
@@ -773,10 +910,10 @@ class FailedLogin
 	{
 		$sql = "CREATE TABLE failed_logins
 				(
-			  		id 		int(11) AUTO_INCREMENT,
-			  		email 	varchar(50),
+			  		id 		int( 11 ) AUTO_INCREMENT,
+			  		email 	varchar( 50 ),
 			  		date 	datetime,
-			  		ip 		varchar(255),
+			  		ip 		varchar( 255 ),
 			  		PRIMARY KEY ( id )
 			  	)";
 
@@ -1287,4 +1424,5 @@ EOT;
 		return true;
 	}
 }
+
 ?>
