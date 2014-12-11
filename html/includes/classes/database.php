@@ -3,6 +3,10 @@ include_once( 'Definitions.php' );
 
 class Database extends mysqli
 {
+	public 	$_host;
+	public 	$_user;
+	private	$_password;
+	public  $_schema;
 	private $_connected = false;
 
 	public function __construct()
@@ -14,7 +18,12 @@ class Database extends mysqli
 			die( 'Failed to parse the configuration file' );
 		}
 
-		parent::__construct( $settings[ 'database' ][ 'host' ], $settings[ 'database' ][ 'username' ],  $settings[ 'database' ][ 'password' ], $settings[ 'database' ][ 'schema' ] );
+		$this->_host		= $settings[ 'database' ][ 'host' ];
+		$this->_user		= $settings[ 'database' ][ 'username' ];
+		$this->_password	= $settings[ 'database' ][ 'password' ];
+		$this->_schema		= $settings[ 'database' ][ 'schema' ];
+
+		parent::__construct( $this->_host, $this->_user, $this->_password, $this->_schema );
 
 		if ( mysqli_connect_error() )
 		{
