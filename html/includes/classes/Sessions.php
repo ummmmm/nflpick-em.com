@@ -16,6 +16,21 @@ class Sessions
 
 	}
 
+	public function Create()
+	{
+		$sql = "CREATE TABLE sessions
+				(
+					token 		varchar( 40 ),
+					cookieid 	varchar( 40 ),
+					userid 		int( 11 ),
+					date 		datetime,
+					last_active datetime,
+					UNIQUE KEY sessions_1 ( token )
+				)";
+
+		return $this->_db->query( $sql );
+	}
+
 	public function Generate( $user_id )
 	{
 		$cookie_id	= sha1( session_id() );
