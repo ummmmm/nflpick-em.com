@@ -29,6 +29,44 @@ class Setup
 		return true;
 	}
 
+	public function Uninstall( $email, $password )
+	{
+		$users = new User();
+
+		if ( !$users->LoginValidate( $email, $password ) )
+		{
+			return $this->_Set_Error( 'Invalid email / password' );
+		}
+		else if ( !$users->Load( $users->id, $loaded_user ) || $loaded_user[ 'admin' ] !== 1 )
+		{
+			return $this->_Set_Error( 'You must be an admin to uninstall the site' );
+		}
+		else if ( !$this->_Drop_Tables() )
+		{
+			return $this->_Set_Error( 'Failed to drop database' );
+		}
+
+		return true;
+	}
+
+	private function _Drop_Tables()
+	{
+		if ( $this->_db->select( 'SHOW TABLES', $tables ) === false )
+		{
+			return $this->_Set_Error( 'Failed to load tables' );
+		}
+
+		foreach ( $tables as $table )
+		{
+			if ( $this->_db->query( sprintf( 'DROP TABLE %s', array_values( $table )[ 0 ] ) ) === false )
+			{
+				return $this->_Set_Error( sprintf( 'Failed droping table %s', $table ) );
+			}
+		}
+
+		return true;
+	}
+
 	private function _Configured()
 	{
 		if ( Settings::Load( $this->_db, $null ) )
