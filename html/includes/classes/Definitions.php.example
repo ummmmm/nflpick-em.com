@@ -1,0 +1,5 @@
+<?php
+date_default_timezone_set( 'America/Los_Angeles' );
+define( 'DB_CONFIG', '/home/dcarver/github/nflpick-em.com/data/config.ini' );
+define( 'INDEX', '/nflpickem/' );
+?>
