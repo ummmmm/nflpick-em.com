@@ -71,7 +71,8 @@ class Setup
 	{
 		if ( Settings::Load( $this->_db, $null ) )
 		{
-			return $this->_Set_Error( 'NFL Pick-Em site has already been configured' );
+			$this->_Set_Error( 'NFL Pick-Em site has already been configured' );
+			return true;
 		}
 
 		return false;
