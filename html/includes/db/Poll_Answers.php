@@ -1,4 +1,5 @@
 <?php
+
 class Poll_Answers
 {
 	private $_db;

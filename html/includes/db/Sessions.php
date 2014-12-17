@@ -137,4 +137,3 @@ class Sessions
 		return $count ? true : false;
 	}
 }
-?>

@@ -1,4 +1,5 @@
 <?php
+
 class Poll_Votes
 {
 	private $_db;
