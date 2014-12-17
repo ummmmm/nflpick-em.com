@@ -81,7 +81,12 @@ class Mail
 		
 		$message = preg_replace( "/\n/", '<br />', $this->message );
 		
-		return mail( $this->to, $this->subject, $message, $headers );
+		if ( !mail( $this->to, $this->subject, $message, $headers ) )
+		{
+			return Functions::Error( '#Error#', 'Failed to send mail' );
+		}
+
+		return true;
 	}
 }
 ?>
