@@ -1,19 +1,10 @@
 <?php
-function Module_Validate( &$db, &$user, &$validation )
-{
-
-}
-
-function Module_Update( &$db, &$user, $validation )
-{
-
-}
 
 function Module_Content( &$db, &$user )
 {
-	$count = Settings::Load( $db, $settings );
+	$db_settings = new Settings( $db );
 	
-	if ( $count === false )
+	if ( !$db_settings->Load( $settings ) )
 	{
 		return false;
 	}
@@ -73,4 +64,3 @@ function Module_Content( &$db, &$user )
 
 	return true;
 }
-?>

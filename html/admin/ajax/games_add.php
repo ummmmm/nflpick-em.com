@@ -1,6 +1,9 @@
 <?php
 function Module_JSON( &$db, &$user )
 {
+	$db_games			= new Games( $db );
+	$db_teams			= new Teams( $db );
+	$db_weeks			= new Weeks( $db );
 	$total				= 0;
 	$skipped			= 0;
 	$games 				= explode( '|', Functions::Post( 'games' ) );
@@ -32,7 +35,7 @@ function Module_JSON( &$db, &$user )
 		
 		if ( !isset( $loaded_weeks[ $weekid ] ) )
 		{
-			if ( !Weeks::Load( $db, $weekid, $week ) )
+			if ( !$db_weeks->Load( $weekid, $week ) )
 			{
 				return JSON_Response_Error( 'NFL-GAMES_ADD-3', "Failed to load week '{$weekid}'" );
 			}
@@ -42,7 +45,7 @@ function Module_JSON( &$db, &$user )
 		
 		if ( !isset( $loaded_team_ids[ $away ] ) )
 		{
-			if ( !Teams::Load_Name( $db, $away, $team ) )
+			if ( !$db_teams->Load_Name( $away, $team ) )
 			{
 				return JSON_Response_Error();
 			}
@@ -55,7 +58,7 @@ function Module_JSON( &$db, &$user )
 		
 		if ( !isset( $loaded_team_ids[ $home ] ) )
 		{
-			if ( !Teams::Load_Name( $db, $home, $team ) )
+			if ( !$db_teams->Load_Name( $home, $team ) )
 			{
 				return JSON_Response_Error();
 			}
@@ -66,7 +69,7 @@ function Module_JSON( &$db, &$user )
 			$home_id = $loaded_teams_ids[ $home ];
 		}
 		
-		if ( Games::Exists_Week_Teams( $db, $weekid, $home_id, $away_id ) )
+		if ( $db_games->Exists_Week_Teams( $weekid, $home_id, $away_id ) )
 		{
 			$skipped++;
 			continue;
@@ -75,7 +78,7 @@ function Module_JSON( &$db, &$user )
 		$gamedate = new DateTime( $date, new DateTimeZone( 'America/New_York' ) );
 		$gamedate->setTimezone( new DateTimeZone( 'America/Los_Angeles' ) );
 		
-		if ( !Games::Insert( $db, array( 'away' => $away_id, 'home' => $home_id, 'date' => $gamedate->format( 'Y-m-d H:i:s' ), 'week' => $weekid ) ) )
+		if ( !$db_games->Insert( array( 'away' => $away_id, 'home' => $home_id, 'date' => $gamedate->format( 'Y-m-d H:i:s' ), 'week' => $weekid ) ) )
 		{
 			return JSON_Response_Error();
 		}

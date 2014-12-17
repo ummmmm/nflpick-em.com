@@ -8,7 +8,8 @@ function Module_Head( &$db, &$user, &$settings, &$jquery )
 
 function Module_Content( &$db, &$user )
 {
-	$count = Teams::List_Load( $db, $teams );
+	$db_teams = new Teams( $db );
+	$count = $db_teams->List_Load( $teams );
 	
 	if ( $count === false )
 	{
@@ -86,7 +87,8 @@ function Module_Content( &$db, &$user )
 
 function EditGame( &$db, $game )
 {
-	$count 		= Teams::List_Load( $db, $teams );
+	$db_teams	= new Teams( $db );
+	$count 		= $db_teams->List_Load( $teams );
 	$gamedate 	= new DateTime( $game[ 'date' ] );
 	$gamedate->setTimezone( new DateTimeZone( 'America/Los_Angeles' ) );
 	

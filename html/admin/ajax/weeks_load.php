@@ -1,18 +1,19 @@
 <?php
 function Module_JSON( &$db, &$user )
 {
-	$token	= Functions::Get( 'token' );
+	$db_weeks	= new Weeks( $db );
+	$token		= Functions::Get( 'token' );
 	
 	if ( !Sessions::Validate( $db, $user->id, $token ) || !$user->account[ 'admin' ] )
 	{
 		return JSON_Response_Error( 'NFL-WEEKS_LOAD-0', 'You do not have a valid token to complete this action.' );
 	}
 	
-	$count 	= Weeks::List_Load( $db, $weeks );
+	$count 	= $db_weeks->List_Load( $weeks );
 	
 	if ( $count === false )
 	{
-		return JSON_Response_Global_Error();
+		return JSON_Response_Error();
 	}
 	
 	foreach( $weeks as &$week )

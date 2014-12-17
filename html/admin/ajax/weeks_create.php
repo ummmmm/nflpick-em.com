@@ -1,9 +1,10 @@
 <?php
+
 function Module_JSON( &$db, &$user )
 {
-	$token 	= Functions::Get( 'token' );
-	
-	$count = Weeks::List_Load( $db, $weeks );
+	$db_weeks	= new Weeks( $db );
+	$token 		= Functions::Get( 'token' );
+	$count 		= $db_weeks->List_Load( $weeks );
 	
 	if ( $count === false )
 	{
@@ -23,11 +24,10 @@ function Module_JSON( &$db, &$user )
 		$week[ 'date' ] 	= $date->format( DATE_ISO8601 );
 		$week[ 'locked' ] 	= 0;
 		
-		Weeks::Insert( $db, $week );
+		$db_weeks->Insert( $week );
 
 		$date->modify( '+1 week ');
 	}
 
 	return JSON_Response_Success();
 }
-?>

@@ -1,9 +1,9 @@
 <?php
+
 function Module_JSON( &$db, &$user )
 {
-	$token = Functions::Get( 'token' );
-	
-	$count = News::List_Load( $db, $news );
+	$db_news 	= new News( $db );	
+	$count 		= $db_news->List_Load( $news );
 	
 	if ( $count === false )
 	{
@@ -12,4 +12,3 @@ function Module_JSON( &$db, &$user )
 	
 	return JSON_Response_Success( $news );
 }
-?>

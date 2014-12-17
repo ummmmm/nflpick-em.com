@@ -26,7 +26,8 @@ function Module_JSON( &$db, &$user )
 
 function Load_Users( $db, $sort, $direction, &$users )
 {
-	$current	= Weeks::Current( $db );
+	$db_weeks	= new Weeks( $db );
+	$current	= $db_weeks->Current();
 	$direction 	= ( $direction === 'asc' ) ? 'ASC' : 'DESC';
 	$sql 		= "SELECT
 						u.*,

@@ -5,10 +5,14 @@ function Module_Content( &$db, &$user )
 
 	try
 	{
-		$doc 	= new SimpleXMLElement( 'http://www.nfl.com/liveupdate/scorestrip/ss.xml', 0, true );
-		$week	= (int) $doc->gms->attributes()->w;
+		$db_games	= new Games( $db );
+		$db_teams	= new Teams( $db );
+		$db_users	= new Users( $db );
+		$db_weeks	= new Weeks( $db );
+		$doc 		= new SimpleXMLElement( 'http://www.nfl.com/liveupdate/scorestrip/ss.xml', 0, true );
+		$week		= ( int ) $doc->gms->attributes()->w;
 
-		if ( !Weeks::IsLocked( $db, $week ) )
+		if ( !$db_weeks->IsLocked( $week ) )
 		{
 			printf( 'Week %d is not locked yet, no scores updated', $week );
 
@@ -24,8 +28,8 @@ function Module_Content( &$db, &$user )
 			$homeScore	= ( int ) $g->hs;
 			$awayScore	= ( int ) $g->vs;
 
-			if ( !Teams::Load_Abbr( $db, $home, $homeTeam ) ||
-				 !Teams::Load_Abbr( $db, $away, $awayTeam ) )
+			if ( !$db_teams->Load_Abbr( $home, $homeTeam ) ||
+				 !$db_teams->Load_Abbr( $away, $awayTeam ) )
 			{
 				printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the teams could not be loaded<br />', $away, $home );
 				continue;
@@ -43,7 +47,7 @@ function Module_Content( &$db, &$user )
 				continue;
 			}
 
-			if ( !Games::Load_Week_Teams( $db, $week, $awayTeam[ 'id' ], $homeTeam[ 'id' ], $game ) )
+			if ( !$db_games->Load_Week_Teams( $week, $awayTeam[ 'id' ], $homeTeam[ 'id' ], $game ) )
 			{
 				printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the game could not be found<br />', $awayTeam[ 'team' ], $homeTeam[ 'team' ] );
 				continue;
@@ -54,14 +58,13 @@ function Module_Content( &$db, &$user )
 			$game[ 'homeScore' ]	= $homeScore;
 			$game[ 'awayScore' ]	= $awayScore;
 
-			if ( !Games::Update( $db, $game ) )
+			if ( !$db_games->Update( $game ) )
 			{
 				return false;
 			}
 		}
 
-		if ( !Teams::Recalculate_Records( $db ) ||
-			 !Users::Recalculate_Records( $db )	)
+		if ( !$db_teams->Recalculate_Records() || !$db_users->Recalculate_Records()	)
 		{
 			return false;
 		}

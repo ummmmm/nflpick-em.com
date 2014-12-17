@@ -1,6 +1,7 @@
 <?php
 function Module_JSON( &$db, &$user )
 {
+	$db_games	= new Games( $db );
 	$game_id	= Functions::Post_Int( 'game_id' );
 	$scored 	= Functions::Post_Boolean( 'scored' );
 	$token 		= Functions::Post( 'token' );
@@ -10,7 +11,7 @@ function Module_JSON( &$db, &$user )
 		return JSON_Response_Error( 'NFL-GAMES_UPDATE-5', 'You do not have a valid token to complete this action' );
 	}
 	
-	if ( !Games::Load( $db, $game_id, $loaded_game ) )
+	if ( !$db_games->Load( $game_id, $loaded_game ) )
 	{
 		return JSON_Response_Error( 'NFL-GAMES_UPDATE-6', 'Failed to load game' );
 	}
@@ -25,6 +26,7 @@ function Module_JSON( &$db, &$user )
 
 function Update_Scores( &$db, &$user, &$game )
 {
+	$db_games	= new Games( $db );
 	$awayScore	= Functions::Post_Int( 'awayScore' );
 	$homeScore	= Functions::Post_Int( 'homeScore' );
 	
@@ -38,7 +40,7 @@ function Update_Scores( &$db, &$user, &$game )
 	$game[ 'homeScore' ]	= $homeScore;
 	$game[ 'awayScore' ] 	= $awayScore;
 	
-	if ( !Games::Update( $db, $game ) )
+	if ( !$db_games->Update( $game ) )
 	{
 		return JSON_Response_Error();
 	}
@@ -58,7 +60,7 @@ function Update_Scores( &$db, &$user, &$game )
 		return JSON_Response_Error();
 	}
 	
-	if ( !Games::Load( $db, $game[ 'id' ], $game ) )
+	if ( !$db_games->Load( $game[ 'id' ], $game ) )
 	{
 		return JSON_Response_Error();
 	}
@@ -78,6 +80,9 @@ function Update_Scores( &$db, &$user, &$game )
 
 function Update_Games( &$db, &$user, &$game )
 {
+	$db_games	= new Games( $db );
+	$db_teams	= new Teams( $db );
+	$db_weeks	= new Weeks( $db );
 	$week_id	= Functions::Post_Int( 'week' );
 	$away_id	= Functions::Post_Int( 'away' );
 	$home_id	= Functions::Post_Int( 'home' );
@@ -94,7 +99,7 @@ function Update_Games( &$db, &$user, &$game )
 		return JSON_Response_Error( 'NFL-GAMES_UPDATE-1', 'Invalid game date' );
 	}
 	
-	$team_count = Teams::Load( $db, $away_id, $loaded_away );
+	$team_count = $db_teams->Load( $away_id, $loaded_away );
 	
 	if ( $team_count === false )
 	{
@@ -106,7 +111,7 @@ function Update_Games( &$db, &$user, &$game )
 		return JSON_Response_Error( 'NFL-GAMES_UPDATE-2', 'Failed to load the away team' );
 	}
 	
-	$team_count = Teams::Load( $db, $home_id, $loaded_home );
+	$team_count = $db_teams->Load( $home_id, $loaded_home );
 	
 	if ( $team_count === false )
 	{
@@ -118,7 +123,7 @@ function Update_Games( &$db, &$user, &$game )
 		return JSON_Response_Error( 'NFL-GAMES_UPDATE-3', 'Failed to load the home team' );
 	}
 	
-	$week_count = Weeks::Load( $db, $week_id, $loaded_week );
+	$week_count = $db_weeks->Load( $week_id, $loaded_week );
 	
 	if ( $week_count === false )
 	{
@@ -137,12 +142,12 @@ function Update_Games( &$db, &$user, &$game )
 	$game[ 'home' ] = $home_id;
 	$game[ 'date' ] = $date->format( DATE_ISO8601 );
 	
-	if ( !Games::Update( $db, $game ) )
+	if ( !$db_games->Update( $game ) )
 	{
 		return JSON_Response_Error();
 	}
 	
-	if ( !Games::Load( $db, $game[ 'id' ], $game ) )
+	if ( !$db_games->Load( $game[ 'id' ], $game ) )
 	{
 		return JSON_Response_Error();
 	}
