@@ -4,16 +4,14 @@ header( 'Content-type: application/json' );
 require_once( 'includes/classes/functions.php' );
 require_once( 'includes/classes/database.php' );
 require_once( 'includes/classes/validation.php' );
-require_once( 'includes/classes/user.php' );
-require_once( 'includes/classes/settings.php' );
 require_once( 'includes/classes/mail.php' );
 require_once( 'includes/classes/Authentication.php' );
 
-$db		= new Database();
-$user 	= new User( $db );
-$auth 	= new Authentication();
-$module	= Functions::Post( 'module' );
-$view	= Functions::Post( 'view' );
+$db			= new Database();
+$db_users 	= new Users( $db );
+$auth 		= new Authentication();
+$module		= Functions::Post( 'module' );
+$view		= Functions::Post( 'view' );
 
 if ( !Validation::Filename( $module ) )
 {
@@ -22,7 +20,7 @@ if ( !Validation::Filename( $module ) )
 
 if ( $view === 'admin' )
 {
-	if ( !$user->logged_in || $user->account[ 'admin' ] !== 1 )
+	if ( !$db_users->logged_in || $db_users->account[ 'admin' ] !== 1 )
 	{
 		return JSON_Response_Error( 'NFL-JSON-1', 'You must be an administrator to complete this action.' );
 	}
@@ -44,7 +42,7 @@ if ( !function_exists( 'Module_JSON' ) )
 	return JSON_Response_Error( 'NFL-JSON-3', "Module '{$module}' does not implement Module_JSON" );
 }
 
-Module_JSON( $db, $user );
+Module_JSON( $db, $db_users );
 
 function JSON_Response_Error( $error_code = null, $error_message = null )
 {
