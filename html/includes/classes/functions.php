@@ -346,7 +346,7 @@ class Functions
 
 		if ( !$user->logged_in )
 		{
-			print '<span>Welcome, Guest. Please login to start making your picks for week ' . htmlentities( $weeks->Current() ) . '.</span>';
+			print '<span>Welcome, Guest. Please login to start making your picks for week ' . htmlentities( $db_weeks->Current() ) . '.</span>';
 		} else {
 			print '<span>Welcome, ' . htmlentities( $user->account[ 'name' ] ) . '! You have ' . htmlentities( $user->account[ 'wins' ] ) . ' wins and ' . htmlentities( $user->account[ 'losses' ] ) . ' losses and currently in ' . Functions::Place( $user->account[ 'current_place' ] ) . ' place.</span>';
 		}
