@@ -1,19 +1,20 @@
 <?php
 include_once( 'functions.php' );
-include_once( 'Sessions.php' );
 
 class Authentication
 {
 	private $_sessions;
 	private $_users;
+	private $_db;
 
 	public $user;
 	public $authenticated;
 
 	public function __construct()
 	{
-		$this->_sessions 		= new Sessions();
-		$this->_users			= new Users();
+		$this->_db				= new Database();
+		$this->_sessions 		= new Sessions( $this->_db );
+		$this->_users			= new Users( $this->_db );
 		$this->user				= array();
 		$this->authenticated	= false;
 	}
