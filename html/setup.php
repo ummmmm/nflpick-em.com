@@ -1,6 +1,5 @@
 <?php
 require_once( 'includes/classes/functions.php' );
-require_once( 'includes/classes/user.php' );
 require_once( 'includes/classes/database.php' );
 require_once( 'includes/classes/Setup.php' );
 
@@ -19,12 +18,18 @@ die( 'Nothing to see here' );
 
 function install()
 {
-	$install = Functions::Post( 'install' );
+	$setup		= new Setup();
+	$install 	= Functions::Post( 'install' );
+
+	if ( $setup->Configured() )
+	{
+		die( $setup->Get_Error() );
+	}
 
 	if ( $install != '' )
 	{
 		$database		= new Database();
-		$setup 			= new Setup();
+		$db_settings	= new Settings( $db );
 		$site_title		= Functions::Post( 'site_title' );
 		$domain_url 	= Functions::Post( 'domain_url' );
 		$domain_email	= Functions::Post( 'domain_email' );
@@ -38,7 +43,7 @@ function install()
 			die( $setup->Get_Error() );
 		}
 
-		if ( !Settings::Load( $database, $settings ) )
+		if ( !$db_settings->Load( $settings ) )
 		{
 			print 'Failed to load settings';
 		}
@@ -48,7 +53,7 @@ function install()
 			$settings[ 'domain_url' ] 	= $domain_url;
 			$settings[ 'domain_email' ]	= $domain_email;
 
-			if ( !Settings::Update( $database, $settings ) )
+			if ( !$db_settings->Update( $settings ) )
 			{
 				print 'Failed to update default settings';
 			}
