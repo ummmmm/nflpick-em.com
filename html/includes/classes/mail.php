@@ -1,4 +1,5 @@
 <?php
+
 class Mail
 {
 	private $to;
@@ -10,35 +11,12 @@ class Mail
 	
 	public function __construct( $to = null, $subject = null, $message = null, $from = null, $replyto = null, $headers = null )
 	{
-		if ( !is_null( $to ) )
-		{
-			$this->to = $to;
-		}
-		
-		if ( !is_null( $subject ) )
-		{
-			$this->subject = $subject;
-		}
-		
-		if ( !is_null( $message ) )
-		{
-			$this->message = $message;
-		}
-		
-		if ( !is_null( $from ) )
-		{
-			$this->from = $from;
-		}
-		
-		if ( !is_null( $replyto ) )
-		{
-			$this->replyto = $replyto;
-		}
-		
-		if ( !is_null( $headers ) )
-		{
-			$this->headers = $headers;
-		}
+		if ( !is_null( $to ) )		$this->to 		= $to;
+		if ( !is_null( $subject ) )	$this->subject 	= $subject;		
+		if ( !is_null( $message ) )	$this->message 	= $message;
+		if ( !is_null( $from ) )	$this->from 	= $from;
+		if ( !is_null( $replyto ) )	$this->replyto 	= $replyto;
+		if ( !is_null( $headers ) )	$this->headers 	= $headers;
 	}
 	
 	public function to( $to )
@@ -89,4 +67,3 @@ class Mail
 		return true;
 	}
 }
-?>
