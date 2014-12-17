@@ -1,23 +1,31 @@
 <?php
 function Module_Validate( $db, $user, &$register )
 {
-	if ( Settings::Load( $db, $settings ) === 1 && array_key_exists( 'registration', $settings ) && $settings[ 'registration' ] !== 1 )
+	$db_settings = new Settings( $db );
+
+	if ( !$db_settings->Load( $settings ) )
+	{
+		return false;
+	}
+
+	if ( $settings[ 'registration' ] !== 1 )
 	{
 		return Functions::ValidationErrors( array( 'Registration is currently disabled.' ) );
 	}
 
-	$register[ 'fname' ] 	= trim( $_POST[ 'fname' ] );
-	$register[ 'lname' ] 	= trim( $_POST[ 'lname' ] );
-	$register[ 'email' ] 	= trim( $_POST[ 'email' ] );
-	$register[ 'cemail' ] 	= trim( $_POST[ 'cemail' ] );
-	$register[ 'password' ] = trim( $_POST[ 'password' ] );
-	$register[ 'cpass' ] 	= trim( $_POST[ 'cpass' ] );
+	$register[ 'fname' ] 	= Functions::Post( 'fname' );
+	$register[ 'lname' ] 	= Functions::Post( 'lname' );
+	$register[ 'email' ] 	= Functions::Post( 'email' );
+	$register[ 'cemail' ] 	= Functions::Post( 'cemail' );
+	$register[ 'password' ] = Functions::Post( 'password' );
+	$register[ 'cpass' ] 	= Functions::Post( 'cpass' );
 	$errors 				= array();
 
 	if ( empty( $register[ 'fname' ] ) || ( strlen( $register[ 'fname' ] ) < 3 ) || ( strlen( $register[ 'fname' ] ) > 15 ) )
 	{
 		array_push( $errors, 'First name must be between 3 and 15 characters.' );
-	} else if ( !Validation::IsAlpha( $register[ 'fname' ] ) )
+	}
+	else if ( !Validation::IsAlpha( $register[ 'fname' ] ) )
 	{
 		array_push( $errors, 'First name can only contain letters.' );
 	}
@@ -25,7 +33,8 @@ function Module_Validate( $db, $user, &$register )
 	if ( empty( $register[ 'lname' ] ) || ( strlen( $register[ 'lname' ] ) < 3 ) || ( strlen( $register[ 'lname' ] ) > 15 ) )
 	{
 		array_push( $errors, 'Last name must be between 3 and 15 characters.' );
-	} else if ( !Validation::IsAlpha( $register[ 'lname' ] ) )
+	}
+	else if ( !Validation::IsAlpha( $register[ 'lname' ] ) )
 	{
 		array_push( $errors, 'Last name can only contain letters.' );
 	}
@@ -65,26 +74,27 @@ function Module_Validate( $db, $user, &$register )
 
 function Module_Update( $db, $user, $register_user )
 {
-	$ruser = array( 'fname' 			=> $register_user[ 'fname' ],
-					'lname' 			=> $register_user[ 'lname' ],
-					'email' 			=> $register_user[ 'email' ],
-					'password' 			=> $register_user[ 'password' ],
-					'admin' 			=> 0,
-					'sign_up' 			=> Functions::Timestamp(),
-					'last_on' 			=> Functions::Timestamp(),
-					'wins' 				=> 0,
-					'losses' 			=> 0,
-					'paid' 				=> 0,
-					'current_place' 	=> 1,
-					'email_preference' 	=> 1,
-					'force_password' 	=> 0 );
+	$db_picks	= new Picks( $db );
+	$ruser 		= array( 'fname' 			=> $register_user[ 'fname' ],
+						 'lname' 			=> $register_user[ 'lname' ],
+						 'email' 			=> $register_user[ 'email' ],
+						 'password' 		=> $register_user[ 'password' ],
+						 'admin' 			=> 0,
+						 'sign_up' 			=> Functions::Timestamp(),
+						 'last_on' 			=> Functions::Timestamp(),
+						 'wins' 			=> 0,
+						 'losses' 			=> 0,
+						 'paid' 			=> 0,
+						 'current_place' 	=> 1,
+						 'email_preference' => 1,
+						 'force_password' 	=> 0 );
 
 	if ( !$user->Insert( $ruser ) )
 	{
 		return Functions::Error( 'NFL-REGISTER-0', 'An error has occurred creating your account. Please try again later.' );
 	}
 
-	if ( !Picks::Insert_All( $db, $ruser[ 'id' ] ) )
+	if ( !$db_picks->Insert_All( $ruser[ 'id' ] ) )
 	{
 		return false;
 	}
@@ -99,8 +109,12 @@ function Module_Update( $db, $user, $register_user )
 	return true;
 }
 
-function Module_Content( $db, $user, $settings )
+function Module_Content( $db, $user )
 {
+	$db_settings = new Settings( $db );
+
+	$db_settings->Load( $settings );
+
 	if ( $user->id )
 	{
 		header( sprintf( 'Location: %s', INDEX ) );
@@ -108,7 +122,7 @@ function Module_Content( $db, $user, $settings )
 		return true;
 	}
 
-	if ( !$settings->registration )
+	if ( $settings[ 'registration' ] !== 1 )
 	{
 		print '<h1>Registration Off</h1>';
 		print '<p>You cannot currently sign up for the NFL Pick-Em League.</p>';
@@ -152,4 +166,3 @@ function Module_Content( $db, $user, $settings )
 <?php
 	return true;
 }
-?>

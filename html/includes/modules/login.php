@@ -6,12 +6,17 @@ function Module_Validate( &$db, &$user, &$validation )
 
 	if ( !$user->LoginValidate( $validation[ 'email' ], $validation[ 'password' ] ) )
 	{
-		if ( Settings::Load( $db, $settings ) === 1 && array_key_exists( 'login_sleep', $settings ) )
+		$failed_logins = new Failed_Logins( $db );
+
+		$failed_logins->Insert( $validation[ 'email' ] );
+
+		$db_settings = new Settings( $db );
+		$db_settings->Load( $db, $settings );
+
+		if ( $settings[ 'login_sleep' ] > 0 )
 		{
 			usleep( $settings[ 'login_sleep' ] * 1000 ); // usleep uses microseconds, not milliseconds
 		}
-
-		FailedLogin::Insert( $db, $validation[ 'email' ] );
 
 		return Functions::ValidationError( array( 'Invalid email or password' ) );
 	}

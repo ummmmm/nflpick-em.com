@@ -3,11 +3,12 @@ function Module_Content( &$db, &$user )
 {
 	Validation::User( $user->id );
 
-	$weekid = Functions::Get( 'week' );
+	$db_weeks	= new Weeks( $db );
+	$weekid 	= Functions::Get( 'week' );
 
 	if ( $weekid === '' )
 	{
-		return WeekList( $db );
+		return WeekList( $db_weeks );
 	}
 
 	if ( !Validation::Week( $weekid ) )
@@ -15,7 +16,7 @@ function Module_Content( &$db, &$user )
 		return Functions::Information( 'Error', 'Invalid week.' );
 	}
 
-	if ( !Weeks::IsLocked( $db, $weekid ) )
+	if ( !$db_weeks->IsLocked( $weekid ) )
 	{
 		return Functions::Information( 'Error', 'Week ' . htmlentities( $weekid ) . ' is not locked yet.' );
 	}
@@ -25,12 +26,15 @@ function Module_Content( &$db, &$user )
 
 function PickLayout( &$db, $user, $weekid )
 {
+	$db_games = new Games( $db );
+	$db_picks = new Picks( $db );
+
 	if ( $user->List_Load( $users ) === false )
 	{
 		return false;
 	}
 
-	$games_count = Games::List_Load( $db, $weekid, $games );
+	$games_count = $db_games->List_Load( $weekid, $games );
 
 	if ( $games_count === false )
 	{
@@ -46,7 +50,7 @@ function PickLayout( &$db, $user, $weekid )
 	{
 		$initials 								= strtoupper( substr( $loaded_user[ 'fname' ], 0, 1 ) . '.' . substr( $loaded_user[ 'lname' ], 0, 1 ) ) . '.';
 		$user_records[ $loaded_user[ 'id' ] ] 	= array( 'losses' => 0, 'wins' => 0 );
-		$missing_count 							= Picks::Missing( $db, $loaded_user[ 'id' ], $weekid );
+		$missing_count 							= $db_picks->Missing( $loaded_user[ 'id' ], $weekid );
 
 		if ( $missing_count === false )
 		{
@@ -60,7 +64,7 @@ function PickLayout( &$db, $user, $weekid )
 
 		foreach( $games as $game )
 		{
-			if ( !Picks::Load_User_Game( $db, $loaded_user[ 'id' ], $game[ 'id' ], $pick ) )
+			if ( !$db_picks->Load_User_Game( $loaded_user[ 'id' ], $game[ 'id' ], $pick ) )
 			{
 				return false;
 			}
@@ -107,10 +111,10 @@ function PickLayout( &$db, $user, $weekid )
 	return true;
 }
 
-function WeekList( &$db )
+function WeekList( &$db_weeks )
 {
 	print '<h1>Pick \'Em Weeks</h1>';
-	if ( !Weeks::List_Load( $db, $weeks ) )
+	if ( !$db_weeks->List_Load( $weeks ) )
 	{
 		return false;
 	}

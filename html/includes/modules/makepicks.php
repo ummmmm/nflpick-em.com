@@ -1,14 +1,15 @@
 <?php
 function Module_Head( &$db, &$user, &$settings, &$jquery )
 {
-	$week_id = Functions::Get( 'week' );
+	$db_weeks	= new Weeks( $db );
+	$week_id 	= Functions::Get( 'week' );
 	
 	if ( empty( $week_id ) )
 	{
 		return true;
 	}
 	
-	if ( !Weeks::Load( $db, $week_id, $loaded_week ) )
+	if ( !$db_weeks->Load( $week_id, $loaded_week ) )
 	{
 		return false;
 	}
@@ -58,12 +59,15 @@ EOT;
 function Module_Content( &$db, &$user )
 {
 	Validation::User( $user->id );
-	
-	$weekid = Functions::Get( 'week' );
+
+	$db_games	= new Games( $db );
+	$db_picks	= new Picks( $db );
+	$db_weeks	= new Weeks( $db );
+	$weekid 	= Functions::Get( 'week' );
 	
 	if ( empty( $weekid ) )
 	{
-		return WeekList( $db );
+		return WeekList( $db_weeks );
 	}
 	
 	if ( !Validation::Week( $weekid ) )
@@ -71,11 +75,11 @@ function Module_Content( &$db, &$user )
 		return Functions::Error( 'NFL-MAKEPICKS-0', 'Invalid week' );
 	}
 	
-	$count = Games::List_Load( $db, $weekid, $games );
+	$count = $db_games->List_Load( $weekid, $games );
 	
 	foreach( $games as &$game )
 	{
-		$count = Picks::Load_User_Game( $db, $user->id, $game[ 'id' ], $game[ 'pick' ] );
+		$count = $db_picks->Load_User_Game( $user->id, $game[ 'id' ], $game[ 'pick' ] );
 		
 		if ( $count === false )
 		{
@@ -88,12 +92,12 @@ function Module_Content( &$db, &$user )
 		return false;
 	}
 	
-	return GameLayout( $db, $user, $weekid );	
+	return GameLayout( $db, $user, $weekid, $db_weeks );	
 }
 
-function WeekList( &$db )
+function WeekList( &$db_weeks )
 {
-	$count_weeks = Weeks::List_Load( $db, $weeks );
+	$count_weeks = $db_weeks->List_Load( $weeks );
 	
 	if ( $count_weeks === false )
 	{
@@ -116,9 +120,11 @@ function WeekList( &$db )
 	return true;
 }
 
-function GameLayout( &$db, &$user, $week )
+function GameLayout( &$db, &$user, $week, $db_weeks )
 {
-	$games_count = Games::List_Load( $db, $week, $games );
+	$db_games		= new Games( $db );
+	$db_picks		= new Picks( $db );
+	$games_count 	= $db_games->List_Load( $week, $games );
 	
 	if ( $games_count === false )
 	{
@@ -130,12 +136,12 @@ function GameLayout( &$db, &$user, $week )
 		return Functions::Information( 'No games found', 'No games have been added for this week yet.' );
 	}
 
-	if ( !Weeks::Load( $db, $week, $loaded_week ) )
+	if ( !$db_weeks->Load( $week, $loaded_week ) )
 	{
 		return false;
 	}
 
-	$remaining = Picks::Remaining( $db, $user->id, $week );
+	$remaining = $db_picks->Remaining( $user->id, $week );
 	$timeUntil = Functions::TimeUntil( $loaded_week[ 'date' ] );
 
 	$now 		= new DateTime();
@@ -191,7 +197,7 @@ EOT;
 			$now 		= new DateTime();
 			$now->setTimezone( new DateTimezone( 'America/Los_Angeles' ) );
 			
-			if ( !Picks::Load_User_Game( $db, $user->id, $game[ 'id' ], $pick ) )
+			if ( !$db_picks->Load_User_Game( $user->id, $game[ 'id' ], $pick ) )
 			{
 				$display 	= 'none';
 				$text		= '&nbsp;';

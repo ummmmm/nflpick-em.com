@@ -1,7 +1,7 @@
 <?php
 function Module_Validate( &$db, &$user, &$validation )
 {
-	$action = trim( $_GET[ 'action' ] );
+	$action = Functions::Get( 'action' );
 
 	if ( $action === 'changepassword' )
 	{
@@ -53,7 +53,8 @@ function Module_Validate( &$db, &$user, &$validation )
 
 function Module_Update( &$db, &$user, &$validation )
 {
-	$action = trim( $_GET[ 'action' ] );
+	$reset_passwords 	= new Reset_Passwords( $db );
+	$action 			= Functions::Get( 'action' );
 
 	if ( $action == 'changepassword' )
 	{
@@ -65,7 +66,7 @@ function Module_Update( &$db, &$user, &$validation )
 			return false;
 		}
 
-		if ( !ResetPassword::Delete_User( $db, $user->id ) )
+		if ( !$reset_passwords->Delete_User( $user->id ) )
 		{
 			return false;
 		}
@@ -83,12 +84,12 @@ function Module_Update( &$db, &$user, &$validation )
 
 		$validation[ 'force_password' ] = 1;
 
-		if ( !ResetPassword::Delete_User( $db, $userid ) )
+		if ( !$reset_passwords->Delete_User( $userid ) )
 		{
 			return false;
 		}
 
-		if ( !ResetPassword::Insert( $db, $info ) )
+		if ( !$reset_passwords->Insert( $info ) )
 		{
 			return false;
 		}
@@ -123,7 +124,7 @@ function Module_Content( &$db, &$user, &$settings )
 		unset( $_SESSION[ 'updated' ] );
 	}
 
-	$action = trim( $_GET[ 'action' ] );
+	$action = Functions::Get( 'action' );
 
 	if ( $user->logged_in && $action == 'changepassword' )
 	{

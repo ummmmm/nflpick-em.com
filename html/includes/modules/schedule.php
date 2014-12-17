@@ -1,11 +1,15 @@
 <?php
+
 function Module_Content( &$db, &$user )
 {
-	$week_id = Functions::Get( 'week' );
+	$db_games	= new Games( $db );
+	$db_teams	= new Teams( $db );
+	$db_weeks	= new Weeks( $db );
+	$week_id 	= Functions::Get( 'week' );
 
 	if ( !Validation::Week( $week_id ) )
 	{
-		$count = Weeks::List_Load( $db, $weeks );
+		$count = $db_weeks->List_Load( $weeks );
 
 		if ( $count === false )
 		{
@@ -22,19 +26,19 @@ function Module_Content( &$db, &$user )
 		return true;
 	}
 
-	if ( !Weeks::Load( $db, $week_id, $loaded_week ) )
+	if ( !$db_weeks->Load( $week_id, $loaded_week ) )
 	{
 		return false;
 	}
 
-	$count = Games::List_Load( $db, $week_id, $games );
+	$count = $db_games->List_Load( $week_id, $games );
 
 	if ( $count === false )
 	{
 		return false;
 	}
 
-	$count = Teams::Byes( $db, $week_id, $teams );
+	$count = $db_teams->Byes( $week_id, $teams );
 
 	if ( $count === false )
 	{
@@ -60,4 +64,3 @@ function ByeTeams( &$db, $week_id, &$teams )
 {
 	return $db->single( 'SELECT GROUP_CONCAT( team ORDER BY team SEPARATOR \', \' ) AS bye_teams FROM teams t WHERE NOT EXISTS( SELECT g.id FROM games g WHERE ( g.away = t.id OR g.home = t.id ) AND g.week = ? )', $teams, $week_id );
 }
-?>

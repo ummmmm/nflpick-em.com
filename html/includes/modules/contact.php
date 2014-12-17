@@ -38,7 +38,9 @@ function Module_Validate( $db, $user, &$validation )
 
 function Module_Update( $db, $user, $validation )
 {
-	if ( !Settings::Load( $db, $settings ) )
+	$db_settings = new Settings( $db );
+
+	if ( !$db_settings->Load( $settings ) )
 	{
 		return false;
 	}

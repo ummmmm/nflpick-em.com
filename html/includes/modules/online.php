@@ -1,7 +1,9 @@
 <?php
 function Module_Content( &$db, &$user )
 {
-	if ( !Settings::Load( $db, $settings ) )
+	$db_settings = new Settings( $db );
+
+	if ( !$db_settings->Load( $settings ) )
 	{
 		return false;
 	}
