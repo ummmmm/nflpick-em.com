@@ -45,7 +45,10 @@ function Module_Update( $db, $user, $validation )
 		return false;
 	}
 
-	$mail = new Mail( $settings[ 'domain_email' ], $validation[ 'subject' ], "Name: {$validation[ 'name' ] }<br />Email: {$validation[ 'email' ]}<br /><br />Message: {$validation[ 'message' ]}" );
+	$message	= sprintf( "Name: %s<br />Email: %s<br /><br />Message: %s", $validation[ 'name' ], $validation[ 'email' ], $validation[ 'message' ] );
+	$mail 		= new Mail( $settings[ 'domain_email' ], $validation[ 'subject' ], $message );
+
+	$mail->replyto( $validation[ 'email' ] );
 
 	if ( $mail->send() === false )
 	{
@@ -93,4 +96,3 @@ function Module_Content( $db, $user )
 <?php
 	return true;
 }
-?>
