@@ -1,8 +1,6 @@
 <?php
 require_once( 'database.php' );
 require_once( 'functions.php' );
-require_once( 'Sessions.php' );
-require_once( 'user.php' );
 
 class Setup
 {
@@ -16,7 +14,7 @@ class Setup
 
 	public function Install()
 	{
-		if ( $this->_Configured() )
+		if ( $this->Configured() )
 		{
 			return false;
 		}
@@ -31,7 +29,7 @@ class Setup
 
 	public function Uninstall( $email, $password )
 	{
-		$users = new User();
+		$users = new User( $this->_db );
 
 		if ( !$users->LoginValidate( $email, $password ) )
 		{
@@ -51,9 +49,9 @@ class Setup
 
 	private function _Drop_Tables()
 	{
-		if ( $this->_db->select( 'SHOW TABLES', $tables ) === false )
+		if ( $this->_Get_Tables( $tables ) === false )
 		{
-			return $this->_Set_Error( 'Failed to load tables' );
+			return false;
 		}
 
 		foreach ( $tables as $table )
@@ -67,9 +65,28 @@ class Setup
 		return true;
 	}
 
-	private function _Configured()
+	private function _Get_Tables( &$tables )
 	{
-		if ( Settings::Load( $this->_db, $null ) )
+		$count = $this->_db->select( 'SHOW TABLES', $tables );
+
+		if ( $count === false )
+		{
+			return $this->_Set_Error( 'Failed to load tables' );
+		}
+
+		return $count;
+	}
+
+	public function Configured()
+	{
+		$count = $this->_Get_Tables( $null );
+
+		if ( $count === false )
+		{
+			return true;
+		}
+
+		if ( $count > 0 )
 		{
 			$this->_Set_Error( 'NFL Pick-Em site has already been configured' );
 			return true;
@@ -80,75 +97,87 @@ class Setup
 
 	private function _Create_Tables()
 	{
-		$sessions	= new Sessions();
-		$users		= new User();
+		$db_failed_logins	= new Failed_Logins( $this->_db );
+		$db_games			= new Games( $this->_db );
+		$db_news			= new News( $this->_db );
+		$db_picks			= new Picks( $this->_db );
+		$db_poll_answers	= new Poll_Answers( $this->_db );
+		$db_poll_votes		= new Poll_Votes( $this->_db );
+		$db_polls			= new Polls( $this->_db );
+		$db_reset_passwords	= new Reset_Passwords( $this->_db );
+		$db_sent_picks		= new Sent_Picks( $this->_db );
+		$db_sessions		= new Sessions( $this->_db );
+		$db_settings		= new Settings( $this->_db );
+		$db_teams			= new Teams( $this->_db );
+		$db_users			= new User( $this->_db );
+		$db_weeks			= new Weeks( $this->_db );
 
-		if ( !FailedLogin::Create( $this->_db ) )
+		if ( !$db_failed_logins->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the FailedLogin database table' );
 		}
 
-		if ( !Games::Create( $this->_db ) )
+		if ( !$db_games->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the Games database table' );
 		}
 
-		if ( !News::Create( $this->_db ) )
+		if ( !$db_news->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the News database table' );
 		}
 
-		if ( !Picks::Create( $this->_db ) )
+		if ( !$db_picks->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the Picks database table' );
 		}
 
-		if ( !Polls::Create( $this->_db ) )
+		if ( !$db_polls->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the Polls database table' );
 		}
 
-		if ( !PollAnswers::Create( $this->_db ) )
+		if ( !$db_poll_answers->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the PollAnswers database table' );
 		}
 
-		if ( !PollVotes::Create( $this->_db ) )
+		if ( !$db_poll_votes->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the PollVotes database table' );
 		}
 
-		if ( !ResetPassword::Create( $this->_db ) )
+		if ( !$db_reset_passwords->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the ResetPassword database table' );
 		}
 
-		if ( !SentPicks::Create( $this->_db ) )
+		if ( !$db_sent_picks->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the SentPicks database table' );
 		}
 
-		if ( !$sessions->Create() )
+		if ( !$db_sessions->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the Settings database table' );
 		}
 
-		if ( !Settings::Create( $this->_db ) )
+		if ( !$db_settings->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the Settings database table' );
 		}
 
-		if ( !Teams::Create( $this->_db ) )
+		if ( !$db_teams->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the Teams database table' );
 		}
 
-		if ( !$users->Create() )
+		if ( !$db_users->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the Users table' );
 		}
 
-		if ( !Weeks::Create( $this->_db ) )
+		if ( !$db_weeks->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the Weeks database table' );
 		}
