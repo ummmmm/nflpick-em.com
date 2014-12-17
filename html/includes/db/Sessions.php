@@ -1,14 +1,13 @@
 <?php
-include_once( 'database.php' );
 
 class Sessions
 {
 	private $_db;
 	private $_error;
 
-	public function __construct()
+	public function __construct( Database &$db )
 	{
-		$this->_db = new Database();
+		$this->_db = $db;
 	}
 
 	public function __destruct()
