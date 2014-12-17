@@ -5,15 +5,13 @@ ob_start();
 require_once( 'includes/classes/functions.php' );
 require_once( 'includes/classes/database.php' );
 require_once( 'includes/classes/validation.php' );
-require_once( 'includes/classes/user.php' );
-require_once( 'includes/classes/settings.php' );
 require_once( 'includes/classes/mail.php' );
 
 $db					= new Database();
-$user				= new User( $db );
-$settings			= new Settings1( $db );
+$users				= new Users( $db );
+$settings			= new Settings( $db );
 
-$screen_validation 	= Functions::ValidateScreen( $db, $user, $extra_screen_content );
+$screen_validation 	= Functions::ValidateScreen( $db, $users, $extra_screen_content );
 $module_head		= true;
 $module_content		= false;
 $jquery				= '';
@@ -23,13 +21,13 @@ if ( $screen_validation )
 	if ( function_exists( 'Module_Head' ) )
 	{
 		ob_start();
-		$module_head = call_user_func_array( 'Module_Head', array( &$db, &$user, &$settings, &$jquery ) );
+		$module_head = call_user_func_array( 'Module_Head', array( &$db, &$users, &$settings, &$jquery ) );
 		$module_head_output = ob_get_contents();
 		ob_clean();
 	}
 
 	ob_start();
-	$module_content = call_user_func_array( 'Module_Content', array( &$db, &$user, &$settings ) );
+	$module_content = call_user_func_array( 'Module_Content', array( &$db, &$users, &$settings ) );
 	$module_content_output = ob_get_contents();
 	ob_clean();
 }
@@ -47,7 +45,7 @@ if ( $screen_validation )
 <script src="static/javascript/javascript.js" type="text/javascript"></script>
 <script type="text/javascript">$( document ).ready( function() { $.fn.load_poll(); } );</script>
 <?php
-	if ( Functions::Get( 'view' ) === 'admin' && $user->account[ 'admin' ] )
+	if ( Functions::Get( 'view' ) === 'admin' && $users->account[ 'admin' ] )
 	{
 		print '<script src="static/javascript/admin.js" type="text/javascript"></script>';
 	}
@@ -58,8 +56,8 @@ if ( $screen_validation )
 	}
 
 	print '<script type="text/javascript">';
-	print "\nvar json_url = 'json.php?token={$user->token}';\n";
-	print "var token = '{$user->token}';\n";
+	print "\nvar json_url = 'json.php?token={$users->token}';\n";
+	print "var token = '{$users->token}';\n";
 	print "\$( document ).ready( function() { {$jquery} } );";
 	print "</script>\n";
 ?>
@@ -81,7 +79,7 @@ if ( $screen_validation )
     </div>
   </div>
   <div class="navigation">
-    <?php Functions::TopNavigation( $db, $user ); ?>
+    <?php Functions::TopNavigation( $db, $users ); ?>
   </div>
   <div class="main">
     <div class="content">
@@ -96,11 +94,11 @@ if ( $screen_validation )
 	?>
     </div>
     <div class="sidenav">
-      <?php Functions::UserNavigation( $db, $user ); ?>
+      <?php Functions::UserNavigation( $db, $users ); ?>
       <h1>Quick Links</h1>
       <ul>
       <?php
-      	if ( $user->logged_in === false )
+      	if ( $users->logged_in === false )
       	{
       		print '<li><a href="?module=register" title="Register">Register</a></li>';
       		print '<li><a href="?module=login" title="Login">Login</a></li>';
