@@ -1,6 +1,8 @@
 <?php
+
 function Module_JSON( &$db, &$user )
 {
+	$db_weeks	= new Weeks( $db );
 	$userid 	= Functions::Post( 'userid' );
 	$week		= Functions::Post( 'week' );
 	$token		= Functions::Post( 'token' );
@@ -10,7 +12,7 @@ function Module_JSON( &$db, &$user )
 		return JSON_Response_Error( 'NFL-HIGHLIGHTPICKS-0', 'Action cannot be completed. Please verify you are logged in.' );
 	}	
 	
-	if ( !Weeks::IsLocked( $db, $week ) )
+	if ( !$db_weeks->IsLocked( $week ) )
 	{
 		return JSON_Response_Error( 'NFL-HIGHLIGHTPICKS-1', "Week '{$week}' has not been locked yet." );
 	}
@@ -75,4 +77,3 @@ function Load_Different_Picks( &$db, $userid1, $userid2, $weekid, &$picks )
 
 	return $result;
 }
-?>

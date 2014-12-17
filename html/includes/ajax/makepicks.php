@@ -1,6 +1,11 @@
 <?php
+
 function Module_JSON( &$db, &$user )
-{	
+{
+	$db_games	= new Games( $db );
+	$db_picks	= new Picks( $db );
+	$db_teams	= new Teams( $db );
+	$db_weeks	= new Weeks( $db );
 	$date_now 	= new DateTime();
 	$week 		= Functions::Post( 'week' );
 	$gameid 	= Functions::Post( 'gameid' );
@@ -13,7 +18,7 @@ function Module_JSON( &$db, &$user )
 		return JSON_Response_Error( 'NFL-MAKEPICKS-0', 'Action cannot be completed. You do not have a valid session.' );
 	}
 	
-	$count_week = Weeks::Load( $db, $week, $loaded_week );
+	$count_week = $db_weeks->Load( $week, $loaded_week );
 	
 	if ( $count_week === false )
 	{
@@ -32,12 +37,12 @@ function Module_JSON( &$db, &$user )
 		return JSON_Response_Error( 'NFL-MAKEPICKS-2', 'This week has already been locked. You can no longer make picks.' );
 	}
 	
-	if ( !Games::Load( $db, $gameid, $game ) )
+	if ( !$db_games->Load( $gameid, $game ) )
 	{
 		return JSON_Response_Error( 'NFL-MAKEPICKS-3', 'Game not found' );
 	}
 	
-	if ( !Games::Exists( $db, $gameid, $week, $winner, $loser ) )
+	if ( !$db_games->Exists( $gameid, $week, $winner, $loser ) )
 	{
 		return JSON_Response_Error( 'NFL-MAKEPICKS-4', 'Invalid game data' );
 	}
@@ -49,12 +54,12 @@ function Module_JSON( &$db, &$user )
 		return JSON_Response_Error( 'NFL-MAKEPICKS-5', 'This game has already started and can no longer be updated.' );
 	}
 	
-	if ( !Teams::Load( $db, $winner, $winning_team ) || !Teams::Load( $db, $loser, $losing_team ) )
+	if ( !$db_teams->Load( $winner, $winning_team ) || !$db_teams->Load( $loser, $losing_team ) )
 	{
 		return JSON_Response_Error( 'NFL-MAKEPICKS-6', 'Failed to load teams.' );
 	}
 	
-	$count_pick = Picks::Load_User_Game( $db, $user->id, $gameid, $pick );
+	$count_pick = $db_picks->Load_User_Game( $user->id, $gameid, $pick );
 	
 	if ( $count_pick === false )
 	{
@@ -66,13 +71,12 @@ function Module_JSON( &$db, &$user )
 	$pick[ 'loser_pick' ]	= $loser;
 	$pick[ 'picked' ]		= 1;
 	
-	if ( !Picks::Update( $db, $pick ) )
+	if ( !$db_picks->Update( $pick ) )
 	{
 		return JSON_Response_Error();
 	}
 	
-	$remaining = Picks::Remaining( $db, $user->id, $week );
+	$remaining = $db_picks->Remaining( $user->id, $week );
 	
 	return JSON_Response_Success( array( 'remaining' => $remaining, 'message' => 'You have picked the <b>' . $winning_team[ 'team' ] . '</b> to beat the <b>' . $losing_team[ 'team'] . '</b>' ) );
 }
-?>

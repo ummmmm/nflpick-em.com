@@ -1,6 +1,9 @@
 <?php
 function Module_JSON( &$db, &$user )
 {
+	$db_games	= new Games( $db );
+	$db_picks	= new Picks( $db );
+	$db_weeks	= new Weeks( $db );
 	$week_id	= Functions::Post( 'week_id' );
 	$token		= Functions::Post( 'token' );
 	
@@ -9,7 +12,7 @@ function Module_JSON( &$db, &$user )
 		return JSON_Response_Error( 'NFL-MAKEPICKS_LOAD-0', 'Action cannot be completed. Please verify you are logged in.' );
 	}
 	
-	$count = Weeks::Load( $db, $week_id, $week );
+	$count = $db_weeks->Load( $week_id, $week );
 	
 	if ( $count === false )
 	{
@@ -21,11 +24,11 @@ function Module_JSON( &$db, &$user )
 		return JSON_Response_Error( 'NFL-MAKEPICKS_LOAD-1', 'Failed to load week' );
 	}
 
-	$count = Games::List_Load( $db, $week_id, $week[ 'games' ] );
+	$count = $db_games->List_Load( $week_id, $week[ 'games' ] );
 	
 	foreach( $week[ 'games' ] as &$game )
 	{
-		$count = Picks::Load_User_Game( $db, $user->id, $game[ 'id' ], $pick );
+		$count = $db_picks->Load_User_Game( $user->id, $game[ 'id' ], $pick );
 		
 		if ( $count === false )
 		{

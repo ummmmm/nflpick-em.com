@@ -1,13 +1,17 @@
 <?php
+
 function Module_JSON( &$db, &$user )
 {
-	$nav_poll = Functions::Post( 'nav' );
+	$polls			= new Polls( $db );
+	$poll_votes		= new Poll_Votes( $db );
+	$poll_answers	= new Poll_Answers( $db );
+	$nav_poll 		= Functions::Post( 'nav' );
 	
 	if ( $nav_poll === '1' )
 	{
-		$count = Polls::Latest( $db, $polls );
+		$count = $polls->Latest( $loaded_polls );
 	} else {
-		$count = Polls::List_Load( $db, $polls );
+		$count = $polls->List_Load( $loaded_polls );
 	}
 	
 	if ( $count === false )
@@ -15,16 +19,16 @@ function Module_JSON( &$db, &$user )
 		return JSON_Response_Error();
 	}
 	
-	foreach( $polls as &$poll )
+	foreach( $loaded_polls as &$poll )
 	{
-		$count = Polls::AnswersList_Load_Poll( $db, $poll[ 'id' ], $answers );
+		$count = $poll_answers->List_Load_Poll( $poll[ 'id' ], $answers );
 		
 		if ( $count === false )
 		{
 			return JSON_Response_Error();
 		}
 		
-		$vote_count = Polls::Votes_Total_Poll( $db, $poll[ 'id' ] );
+		$vote_count = $poll_votes->Total_Poll( $poll[ 'id' ] );
 		
 		if ( $vote_count === false )
 		{
@@ -35,7 +39,7 @@ function Module_JSON( &$db, &$user )
 		
 		foreach( $answers as &$answer )
 		{
-			$answer_count = Polls::Votes_Total_Answer( $db, $answer[ 'id' ] );
+			$answer_count = $poll_votes->Total_Answer( $answer[ 'id' ] );
 			
 			if ( $answer_count === false )
 			{
@@ -62,7 +66,7 @@ function Module_JSON( &$db, &$user )
 		}
 	}
 
-	return JSON_Response_Success( $polls );
+	return JSON_Response_Success( $loaded_polls );
 }
 
 function Vote_Casted( &$db, $user_id, $poll_id )

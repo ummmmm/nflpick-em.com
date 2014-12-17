@@ -1,20 +1,23 @@
 <?php
 function Module_JSON( &$db, &$user )
 {
-	$week	= Functions::Post( 'week' );
-	$token	= Functions::Post( 'token' );
+	$db_picks		= new Picks( $db );
+	$db_sent_picks	= new Sent_Picks( $db );
+	$db_weeks		= new Weeks( $db );
+	$week			= Functions::Post( 'week' );
+	$token			= Functions::Post( 'token' );
 	
 	if ( !Sessions::Validate( $db, $user->id, $token ) )
 	{
 		return JSON_Response_Error( 'NFL-EMAILPICKS-0', 'Action cannot be completed. Please verify you are logged in.' );
 	}
 	
-	if ( !Weeks::Load( $db, $week, $null ) )
+	if ( !$db_weeks->Load( $week, $null ) )
 	{
 		return JSON_Response_Error( 'NFL-EMAILPICKS-1', "Failed to load week '{$week}'" );
 	}
 	
-	$count = Picks::UserWeekList_Load( $db, $user->id, $week, $picks );
+	$count = $db_picks->UserWeekList_Load( $user->id, $week, $picks );
 	
 	if ( $count === false )
 	{
@@ -38,13 +41,12 @@ function Module_JSON( &$db, &$user )
 
 	if ( $mail->send() === false )
 	{
-		return JSON_Response_Error( 'NFL-EMAILPICKS-3', 'The email failed to sent. Please try again later.' );
+		return JSON_Response_Error( 'NFL-EMAILPICKS-3', 'The email failed to send. Please try again later.' );
 	}
 	
 	$insert = array( 'user_id' => $user->id, 'picks' => json_encode( $sent ), 'week' => $week );
 
-	if ( !SentPicks_Update( $db, $user->id, $week ) || 
-		 !SentPicks::Insert( $db, $insert ) )
+	if ( !$db_sent_picks->Insert( $insert ) )
 	{
 		return JSON_Response_Error();
 	}
@@ -63,9 +65,3 @@ function ConfirmationText( $week, $picks )
 	
 	return $output;
 }
-
-function SentPicks_Update( &$db, $userid, $week )
-{
-	return $db->query( 'UPDATE sent_picks SET active = 0 WHERE user_id = ? AND week = ?', $userid, $week );
-}
-?>
