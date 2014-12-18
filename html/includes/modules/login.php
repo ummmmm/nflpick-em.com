@@ -11,7 +11,7 @@ function Module_Validate( &$db, &$user, &$validation )
 		$failed_logins->Insert( $validation[ 'email' ] );
 
 		$db_settings = new Settings( $db );
-		$db_settings->Load( $db, $settings );
+		$db_settings->Load( $settings );
 
 		if ( $settings[ 'login_sleep' ] > 0 )
 		{
