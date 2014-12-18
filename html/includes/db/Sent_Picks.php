@@ -16,7 +16,7 @@ class Sent_Picks
 					id 		int( 11 ) AUTO_INCREMENT,
 					user_id int( 11 ),
 					picks 	text,
-					date 	datetime,
+					date 	int( 11 ),
 					ip 		varchar( 50 ),
 					week 	tinyint( 11 ),
 					active 	tinyint( 1 ),
@@ -39,7 +39,7 @@ class Sent_Picks
 	public function Insert_LowLevel( &$picks )
 	{
 		$picks[ 'ip' ]		= $_SERVER[ 'REMOTE_ADDR' ];
-		$picks[ 'date' ]	= Functions::Timestamp();
+		$picks[ 'date' ]	= time();
 
 		return $this->_db->insert( 'sent_picks', $picks );
 	}
