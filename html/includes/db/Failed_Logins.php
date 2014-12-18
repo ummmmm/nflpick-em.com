@@ -13,10 +13,10 @@ class Failed_Logins
 	{
 		$sql = "CREATE TABLE failed_logins
 				(
-			  		id 		int( 11 ) AUTO_INCREMENT,
-			  		email 	varchar( 50 ),
-			  		date 	datetime,
-			  		ip 		varchar( 255 ),
+			  		id 			int( 11 ) AUTO_INCREMENT,
+			  		email 		varchar( 50 ),
+			  		dt 			int( 11 ),
+			  		ip 			varchar( 255 ),
 			  		PRIMARY KEY ( id )
 			  	)";
 
@@ -25,7 +25,7 @@ class Failed_Logins
 
 	public function Insert( $email )
 	{
-		$values = array( 'email' => $email, 'date' => Functions::Timestamp(), 'ip' => $_SERVER[ 'REMOTE_ADDR' ] );
+		$values = array( 'email' => $email, 'dt' => time(), 'ip' => $_SERVER[ 'REMOTE_ADDR' ] );
 
 		return $this->_db->insert( 'failed_logins', $values );
 	}
