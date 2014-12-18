@@ -57,24 +57,24 @@ class Users
 	public function Delete( $user_id )
 	{
 		$db_picks 			= new Picks( $this->_db );
-		$db_polls			= new Polls( $this->_db );
+		$db_poll_votes		= new Poll_Votes( $this->_db );
 		$db_reset_password	= new Reset_Passwords( $this->_db );
 		$db_sent_picks		= new Sent_Picks( $this->_db );
+		$db_sessions		= new Session( $this->_db );
 
 		if ( !$db_picks->Delete_User( $user_id ) 			||
-			 !Sessions::Delete_User( $this->_db, $user_id ) ||
-			 !$db_polls->Delete_User( $user_id )			||
+			 !$db_poll_votes->Delete_User( $user_id )		||
 			 !$db_reset_password->Delete_User( $user_id )	||
 			 !$db_sent_picks->Delete_User( $user_id )		||
-			 !$this->Delete_LowLevel( $user_id ) )
+			 !$db_sessions->Delete_User( $user_id ) )
 		{
 			return false;
 		}
 
-		return true;
+		return $this->_Delete_LowLevel( $user_id );
 	}
 
-	private function Delete_LowLevel( $userid )
+	private function _Delete_LowLevel( $userid )
 	{
 		return $this->_db->query( 'DELETE FROM users WHERE id = ?', $userid );
 	}
@@ -108,9 +108,10 @@ class Users
 
 	public function Insert( &$user )
 	{
+		$db_picks			= new Picks( $this->_db );
 		$user[ 'password' ] = Functions::HashPassword( $user[ 'password' ] );
 
-		if ( !$this->_db->insert( 'users', $user ) )
+		if ( !$this->_Insert_LowLevel( $user ) )
 		{
 			return false;
 		}
@@ -118,7 +119,17 @@ class Users
 		$this->id 		= $this->_db->insert_id;
 		$user[ 'id' ] 	= $this->_db->insert_id;
 
+		if ( !$db_picks->Insert_All( $this->id ) )
+		{
+			return false;
+		}
+
 		return true;
+	}
+
+	private function _Insert_LowLevel( &$user )
+	{
+		return $this->_db->insert( 'users', $user );
 	}
 
 	private function ValidateSession()
