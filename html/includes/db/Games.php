@@ -17,7 +17,7 @@ class Games
 					id 			int( 3 ) AUTO_INCREMENT,
 					away 		int( 2 ),
 					home 		int( 2 ),
-					date 		datetime,
+					date 		int( 11 ),
 					week 		int( 2 ),
 					winner 		int( 2 ),
 					loser 		int( 2 ),
@@ -202,9 +202,7 @@ class Games
 					return $this->_Set_Error( sprintf( 'Game already exists: %s vs. %s for week %d', $team1, $team2, $i ) );
 				}
 
-				$gamedate = new DateTime();
-				$gamedate->setTimestamp( $kickoff );
-				array_push( $games, array( 'away' => $away, 'home' => $home, 'date' => $gamedate->format( 'Y-m-d H:i:s' ), 'week' => $i ) );
+				array_push( $games, array( 'away' => $away, 'home' => $home, 'date' => $kickoff, 'week' => $i ) );
 			}
 		}
 

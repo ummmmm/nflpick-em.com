@@ -19,7 +19,7 @@ class Picks
 					winner_pick int( 11 ),
 					loser_pick 	int( 11 ),
 					ip 			varchar( 50 ),
-					updated 	datetime,
+					updated 	int( 11 ),
 					week 		int( 11 ),
 					picked 		tinyint( 1 ),
 					PRIMARY KEY ( id ),
@@ -33,7 +33,7 @@ class Picks
 	public function Insert_All( $user_id )
 	{
 		$ip 		= $_SERVER[ 'REMOTE_ADDR' ];
-		$updated	= Functions::Timestamp();
+		$updated	= time();
 
 		return $this->_db->query( 'INSERT INTO picks ( user_id, game_id, winner_pick, loser_pick, ip, updated, week, picked )
 							SELECT ?, id, 0, 0, ?, ?, week, 0 FROM games', $user_id, $ip, $updated );
@@ -42,7 +42,7 @@ class Picks
 	public function Update( $pick )
 	{
 		$ip 	= $_SERVER[ 'REMOTE_ADDR' ];
-		$time 	= Functions::Timestamp();
+		$time 	= time();
 
 		return $this->_db->query( 'UPDATE
 								picks
@@ -76,7 +76,7 @@ class Picks
 
 	public function Remaining( $userid, $weekid )
 	{
-		$date	= Functions::Timestamp();
+		$date	= time();
 		$count 	= $this->_db->single( 'SELECT
 									COUNT( p.id ) AS remaining
 								FROM

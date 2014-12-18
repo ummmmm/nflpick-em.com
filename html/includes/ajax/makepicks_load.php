@@ -36,7 +36,8 @@ function Module_JSON( &$db, &$user )
 		}
 		
 		$now	= new DateTime();
-		$date 	= new DateTime( $game[ 'date' ] );
+		$date 	= new DateTime();
+		$date->setTimestamp( $game[ 'date' ] );
 		
 		$game[ 'past' ] 		 	= ( $now > $date ) ? true : false;
 		$game[ 'time_formatted' ] 	= $date->format( 'h:i a' );

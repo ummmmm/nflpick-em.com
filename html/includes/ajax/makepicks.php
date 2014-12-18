@@ -48,7 +48,8 @@ function Module_JSON( &$db, &$user )
 		return JSON_Response_Error( 'NFL-MAKEPICKS-4', 'Invalid game data' );
 	}
 	
-	$date_start = new DateTime( $game[ 'date' ] );
+	$date_start = new DateTime();
+	$date_start->setTimestamp( $game[ 'date' ] );
 	
 	if ( $date_now > $date_start )
 	{
