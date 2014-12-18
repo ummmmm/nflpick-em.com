@@ -19,7 +19,6 @@ class Picks
 					winner_pick int( 11 ),
 					loser_pick 	int( 11 ),
 					ip 			varchar( 50 ),
-					date 		datetime,
 					updated 	datetime,
 					week 		int( 11 ),
 					picked 		tinyint( 1 ),
@@ -33,10 +32,11 @@ class Picks
 
 	public function Insert_All( $user_id )
 	{
-		$ip = $_SERVER[ 'REMOTE_ADDR' ];
+		$ip 		= $_SERVER[ 'REMOTE_ADDR' ];
+		$updated	= Functions::Timestamp();
 
-		return $this->_db->query( 'INSERT INTO picks ( user_id, game_id, winner_pick, loser_pick, ip, week )
-							SELECT ?, id, 0, 0, ?, week FROM games', $user_id, $ip );
+		return $this->_db->query( 'INSERT INTO picks ( user_id, game_id, winner_pick, loser_pick, ip, updated, week, picked )
+							SELECT ?, id, 0, 0, ?, ?, week, 0 FROM games', $user_id, $ip, $updated );
 	}
 
 	public function Update( $pick )
