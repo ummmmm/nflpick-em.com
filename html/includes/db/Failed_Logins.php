@@ -15,7 +15,7 @@ class Failed_Logins
 				(
 			  		id 			int( 11 ) AUTO_INCREMENT,
 			  		email 		varchar( 50 ),
-			  		dt 			int( 11 ),
+			  		date 		int( 11 ),
 			  		ip 			varchar( 255 ),
 			  		PRIMARY KEY ( id )
 			  	)";
@@ -25,7 +25,7 @@ class Failed_Logins
 
 	public function Insert( $email )
 	{
-		$values = array( 'email' => $email, 'dt' => time(), 'ip' => $_SERVER[ 'REMOTE_ADDR' ] );
+		$values = array( 'email' => $email, 'date' => time(), 'ip' => $_SERVER[ 'REMOTE_ADDR' ] );
 
 		return $this->_db->insert( 'failed_logins', $values );
 	}
