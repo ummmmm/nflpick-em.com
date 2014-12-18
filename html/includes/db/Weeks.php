@@ -3,18 +3,19 @@
 class Weeks
 {
 	private $_db;
+	private $_error;
 
 	public function __construct( Database &$db )
 	{
 		$this->_db = $db;
 	}
 
-	public function Create( &$db )
+	public function Create()
 	{
 		$sql = "CREATE TABLE weeks
 				(
 					id 		int( 11 ),
-					date 	datetime,
+					date 	int( 11 ),
 					locked 	tinyint( 1 ),
 					PRIMARY KEY ( id )
 				)";
@@ -98,5 +99,40 @@ class Weeks
 		}
 
 		return $games[ 'total' ];
+	}
+
+	public function Create_Weeks( $start_date )
+	{
+		$count = $this->List_Load( $null );
+
+		if ( $count === false )		return false;
+		else if ( $count !== 0 )	return $this->_Set_Error( 'Weeks table must be empty to call Create_Weeks' );
+
+		for ( $i = 1; $i <= 17; $i++ )
+		{
+			$week[ 'id' ] 		= $i;
+			$week[ 'date']		= $start_date;
+			$week[ 'locked' ]	= 0;
+
+			if ( !$this->Insert( $week ) )
+			{
+				return false;
+			}
+
+			$start_date = strtotime( '+1 week', $start_date );
+		}
+
+		return true;
+	}
+
+	private function _Set_Error( $error )
+	{
+		$this->_error = $error;
+		return false;
+	}
+
+	public function Get_Error()
+	{
+		return $this->_error;
 	}
 }
