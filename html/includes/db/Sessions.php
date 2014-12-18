@@ -17,8 +17,8 @@ class Sessions
 					token 		varchar( 40 ),
 					cookieid 	varchar( 40 ),
 					userid 		int( 11 ),
-					date 		datetime,
-					last_active datetime,
+					date 		int( 11 ),
+					last_active int( 11 ),
 					UNIQUE KEY sessions_1 ( token )
 				)";
 
@@ -77,7 +77,8 @@ class Sessions
 
 	public static function Insert( &$db, $session )
 	{
-		$session[ 'date' ] = Functions::Timestamp();
+		$session[ 'date' ] 			= time();
+		$session[ 'last_active' ]	= time();
 
 		return $db->insert( 'sessions', $session );
 	}
@@ -99,7 +100,7 @@ class Sessions
 
 	public static function Update_Cookie_LastActive( &$db, $cookieid )
 	{
-		$date = Functions::Timestamp();
+		$date = time();
 
 		return $db->query( 'UPDATE sessions SET last_active = ? WHERE cookieid = ?', $date, $cookieid );
 	}

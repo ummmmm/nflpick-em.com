@@ -15,7 +15,7 @@ class Reset_Passwords
 				(
 					userid 		int( 11 ),
 					password 	varchar( 255 ),
-					date 		datetime,
+					date 		int( 11 ),
 					UNIQUE KEY reset_password_1 ( password )
 				)";
 
@@ -24,7 +24,7 @@ class Reset_Passwords
 
 	public function Insert( &$insert )
 	{
-		$insert[ 'date' ] = Functions::Timestamp();
+		$insert[ 'date' ] = time();
 
 		return $this->_db->insert( 'reset_password', $insert );
 	}

@@ -25,8 +25,8 @@ class Users
 					email 				varchar( 255 ),
 					password 			varchar( 255 ),
 					admin 				tinyint( 1 ),
-					sign_up 			datetime,
-					last_on 			datetime,
+					sign_up 			int( 11 ),
+					last_on 			int( 11 ),
 					wins 				int( 11 ),
 					losses 				int( 11 ),
 					paid 				tinyint( 1 ),
@@ -81,7 +81,7 @@ class Users
 
 	private function UserActive_Update()
 	{
-		$date = Functions::Timestamp();
+		$date = time();
 
 		return $this->_db->query( 'UPDATE users SET last_on = ? WHERE id = ?', $date, $this->id );
 	}

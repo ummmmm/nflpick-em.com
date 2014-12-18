@@ -15,7 +15,7 @@ class Polls
 				(
 					id 			int( 11 ) AUTO_INCREMENT,
 					active		tinyint( 1 ),
-					date 		datetime,
+					date 		int( 11 ),
 					question 	varchar( 255 ),
 					PRIMARY KEY ( id )
 				)";
@@ -35,7 +35,7 @@ class Polls
 
 	public function Insert( &$poll )
 	{
-		$poll[ 'date' ] = Functions::Timestamp();
+		$poll[ 'date' ] = time();
 
 		return $this->_db->insert( 'polls', $poll );
 	}

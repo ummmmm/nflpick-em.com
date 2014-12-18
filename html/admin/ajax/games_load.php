@@ -24,9 +24,10 @@ function Module_JSON( &$db, &$user )
 		
 		foreach( $week[ 'games' ] as &$game )
 		{
-			$game[ 'date' ] = new DateTime( $game[ 'date' ] );
-			$game[ 'date' ]->setTimezone( new DateTimeZone( 'America/Los_Angeles' ) );
-			$game[ 'date' ] = $game[ 'date' ]->format( DATE_ISO8601 );
+			$date = new DateTime();
+			$date->setTimestamp( $game[ 'date' ] );
+			$date->setTimezone( new DateTimeZone( 'America/Los_Angeles' ) );
+			$game[ 'date' ] = $date->format( DATE_ISO8601 );
 		}
 		
 		if ( $count === false )

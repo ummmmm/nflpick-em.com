@@ -17,7 +17,7 @@ class News
 					user_id int( 11 ),
 					title 	varchar( 255 ),
 					news	text,
-					date 	datetime,
+					date 	int( 11 ),
 					ip 		varchar( 255 ),
 					active 	tinyint( 1 ),
 					PRIMARY KEY (id)
@@ -29,7 +29,7 @@ class News
 	public function Insert( &$news )
 	{
 		$news[ 'ip' ]	= $_SERVER[ 'REMOTE_ADDR' ];
-		$news[ 'date' ]	= Functions::Timestamp();
+		$news[ 'date' ]	= time();
 
 		return $this->_db->insert( 'news', $news );
 	}

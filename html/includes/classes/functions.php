@@ -295,9 +295,10 @@ class Functions
 		return true;
 	}
 
-	public static function FormatDate( $date )
+	public static function FormatDate( $unix )
 	{
-		$date = new DateTime( $date );
+		$date = new DateTime();
+		$date->setTimestamp( $unix );
 		$date->setTimezone( new DateTimezone( 'America/Los_Angeles' ) );
 
 		return $date->format( 'm/d/y' ) . ' at '. $date->format( 'h:i a' );

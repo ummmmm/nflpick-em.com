@@ -17,7 +17,7 @@ class Poll_Votes
 					poll_id 	int( 11 ),
 					answer_id 	int( 11 ),
 					user_id 	int( 11 ),
-					date 		datetime,
+					date 		int( 11 ),
 					ip 			varchar( 255 ),
 					PRIMARY KEY ( id ),
 					UNIQUE KEY 	poll_votes_1 ( poll_id, user_id )
@@ -43,10 +43,10 @@ class Poll_Votes
 
 	public function Insert( &$vote )
 	{
-		$vote[ 'date' ] = Functions::Timestamp();
+		$vote[ 'date' ] = time();
 		$vote[ 'ip' ] 	= $_SERVER[ 'REMOTE_ADDR' ];
 
-		return $this->db->insert( 'poll_votes', $vote );
+		return $this->_db->insert( 'poll_votes', $vote );
 	}
 
 	public static function Delete_Answer( $answer_id )
