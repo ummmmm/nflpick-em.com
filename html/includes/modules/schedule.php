@@ -31,7 +31,7 @@ function Module_Content( &$db, &$user )
 		return false;
 	}
 
-	$count = $db_games->List_Load( $week_id, $games );
+	$count = $db_games->List_Load_Week( $week_id, $games );
 
 	if ( $count === false )
 	{
