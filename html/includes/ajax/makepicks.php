@@ -30,7 +30,8 @@ function Module_JSON( &$db, &$user )
 		return JSON_Response_Error( 'NFL-MAKEPICKS-1', "Week '{$week}' could not be loaded" );
 	}
 	
-	$date_week = new DateTime( $loaded_week[ 'date' ] );
+	$date_week = new DateTime();
+	$date_week->setTimestamp( $loaded_week[ 'date' ] );
 
 	if ( $loaded_week[ 'locked' ] === 1 || $date_now > $date_week )
 	{
