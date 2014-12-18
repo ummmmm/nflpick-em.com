@@ -306,7 +306,8 @@ class Functions
 	public static function TimeUntil( $time )
 	{
 		$now	 	= new DateTime();
-		$then		= new DateTime( $time );
+		$then		= new DateTime();
+		$then->setTimestamp( $time );
 		$interval	= $now->diff( $then );
 
 		return $interval->format( '%d days %h hours %i minutes %s seconds' );
