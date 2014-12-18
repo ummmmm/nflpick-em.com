@@ -10,11 +10,6 @@ class Sessions
 		$this->_db = $db;
 	}
 
-	public function __destruct()
-	{
-
-	}
-
 	public function Create()
 	{
 		$sql = "CREATE TABLE sessions
@@ -51,6 +46,11 @@ class Sessions
 		return $this->_db->single( 'SELECT * FROM sessions WHERE cookieid = ?', $session, $cookie_id );
 	}
 
+	public function Delete_User( $user_id )
+	{
+		return $this->_db->query( 'DELETE FROM sessions WHERE userid = ?', $user_id );
+	}
+
 	/*public function Delete( $cookie_id )
 	{
 		return $this->_db->query( 'DELETE FROM Sessions WHERE cookie_id = ?', $cookie_id );
@@ -85,11 +85,6 @@ class Sessions
 	public static function Delete( &$db, $token )
 	{
 		return $db->query( 'DELETE FROM sessions WHERE token = ?', $token );
-	}
-
-	public static function Delete_User( &$db, $user_id )
-	{
-		return $db->query( 'DELETE FROM sessions WHERE userid = ?', $user_id );
 	}
 
 	public static function Delete_Cookie( &$db, $cookie_id )
