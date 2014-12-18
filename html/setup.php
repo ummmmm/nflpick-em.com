@@ -1,8 +1,10 @@
 <?php
+
 require_once( 'includes/classes/functions.php' );
 require_once( 'includes/classes/database.php' );
 require_once( 'includes/classes/Setup.php' );
 
+$db		= new Database();
 $action	= Functions::Get( 'Action' );
 
 if ( $action === 'INSTALL' )
@@ -28,15 +30,29 @@ function install()
 
 	if ( $install != '' )
 	{
-		$database		= new Database();
+		$db				= new Database();
+		$db_games		= new Games( $db );
 		$db_settings	= new Settings( $db );
+		$db_weeks		= new Weeks( $db );
 		$site_title		= Functions::Post( 'site_title' );
 		$domain_url 	= Functions::Post( 'domain_url' );
 		$domain_email	= Functions::Post( 'domain_email' );
+		$start_date		= Functions::Post( 'start_date' );
 
 		if ( $site_title == '' )		die( 'A site title is required' );
 		else if ( $domain_url == '' )	die( 'A domain URL is required' );
 		else if ( $domain_email == '' )	die( 'A domain email is required' );
+		else if ( $start_date == '' )	die( 'Start date is required' );
+
+		if ( !preg_match( "/^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/20\d{2}$/", $start_date ) )
+		{
+			die( "Start date must be in format mm/dd/yyyy" );
+		}
+
+		$timestamp = strtotime( $start_date . ' 10 A.M.' );
+
+		if ( $timestamp === false )				die( 'Invalid start date' );
+		elseif ( date( 'w', $timestamp ) != 0 )	die( 'Start date is expected to be a Sunday' );
 
 		if ( !$setup->Install() )
 		{
@@ -45,7 +61,7 @@ function install()
 
 		if ( !$db_settings->Load( $settings ) )
 		{
-			print 'Failed to load settings';
+			printf( 'Failed to load settings<br />' );
 		}
 		else
 		{
@@ -55,8 +71,18 @@ function install()
 
 			if ( !$db_settings->Update( $settings ) )
 			{
-				print 'Failed to update default settings';
+				printf( 'Failed to update default settings<br />' );
 			}
+		}
+
+		if ( !$db_weeks->Create_Weeks( $timestamp ) )
+		{
+			die( $db_weeks->Get_Error() );
+		}
+
+		if ( !$db_games->Create_Games() )
+		{
+			printf( 'Failed to create games: %s<br />', htmlentities( $db_games->Get_Error() ) );
 		}
 
 		die( 'The NFL Pick-Em site has successfully been installed' );
@@ -75,6 +101,10 @@ function install()
 	print '<tr>';
 	print '<td><b>Domain Email:</b></td>';
 	print '<td><input type="text" name="domain_email" value="" /></td>';
+	print '</tr>';
+	print '<tr>';
+	print '<td><b>Start Date:</b></td>';
+	print '<td><input type="text" name="start_date" value="' . first_sunday() . '" /></td>';
 	print '</tr>';
 	print '<tr>';
 	print '<td>&nbsp;</td>';
@@ -118,4 +148,9 @@ function uninstall()
 	print '</tr>';
 	print '</table>';
 	print '</form>';
+}
+
+function first_sunday()
+{
+	return date( 'm/d/Y', strtotime( 'First Sunday of September ' . date( 'Y' ) ) );
 }
