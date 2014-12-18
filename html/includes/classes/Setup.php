@@ -29,7 +29,7 @@ class Setup
 
 	public function Uninstall( $email, $password )
 	{
-		$users = new User( $this->_db );
+		$users = new Users( $this->_db );
 
 		if ( !$users->LoginValidate( $email, $password ) )
 		{
@@ -109,7 +109,7 @@ class Setup
 		$db_sessions		= new Sessions( $this->_db );
 		$db_settings		= new Settings( $this->_db );
 		$db_teams			= new Teams( $this->_db );
-		$db_users			= new User( $this->_db );
+		$db_users			= new Users( $this->_db );
 		$db_weeks			= new Weeks( $this->_db );
 
 		if ( !$db_failed_logins->Create() )
