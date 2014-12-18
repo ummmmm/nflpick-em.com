@@ -17,16 +17,17 @@ class Settings
 	{
 		$this->_db = $db;
 		
-		$this->Load( $settings );
-		
-		$this->max_news 		= $settings[ 'max_news' ];
-		$this->poll_options 	= $settings[ 'poll_options' ];
-		$this->email_validation = $settings[ 'email_validation' ];
-		$this->registration 	= $settings[ 'registration' ];
-		$this->domain_url 		= $settings[ 'domain_url' ];
-		$this->domain_email 	= $settings[ 'domain_email' ];
-		$this->online 			= $settings[ 'online' ];
-		$this->site_title 		= $settings[ 'site_title' ];
+		if ( $this->Load( $settings ) )
+		{
+			$this->max_news 		= $settings[ 'max_news' ];
+			$this->poll_options 	= $settings[ 'poll_options' ];
+			$this->email_validation = $settings[ 'email_validation' ];
+			$this->registration 	= $settings[ 'registration' ];
+			$this->domain_url 		= $settings[ 'domain_url' ];
+			$this->domain_email 	= $settings[ 'domain_email' ];
+			$this->online 			= $settings[ 'online' ];
+			$this->site_title 		= $settings[ 'site_title' ];
+		}
 	}
 
 	public function Create()
@@ -56,7 +57,15 @@ class Settings
 
 	private function Defaults()
 	{
-		return array( 'poll_options' => 10, 'email_validation' => 0, 'registration' => 1, 'max_news' => 4, 'domain_url' => '', 'domain_email' => '', 'online' => 30, 'site_title' => '', 'login_sleep' => 3000 );
+		return array( 'poll_options' 		=> 10,
+					  'email_validation'	=> 0,
+					  'registration' 		=> 1,
+					  'max_news' 			=> 4,
+					  'domain_url' 			=> '',
+					  'domain_email' 		=> '',
+					  'online' 				=> 30,
+					  'site_title' 			=> '',
+					  'login_sleep' 		=> 3000 );
 	}
 
 	public function Load( &$settings )
