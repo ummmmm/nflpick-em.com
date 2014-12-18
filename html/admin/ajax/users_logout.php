@@ -1,8 +1,10 @@
 <?php
+
 function Module_JSON( &$db, &$user )
 {
-	$token		= Functions::Get( 'token' );
-	$user_id	= Functions::Post( 'user_id' );
+	$db_sessions	= new Sessions( $db );
+	$token			= Functions::Get( 'token' );
+	$user_id		= Functions::Post( 'user_id' );
 
 	$count = $user->Load( $user_id, $null );
 	
@@ -16,11 +18,10 @@ function Module_JSON( &$db, &$user )
 		return JSON_Response_Error( 'NFL-USERS_LOGOUT-0', 'Unable to load user' );
 	}
 
-	if ( !Sessions::Delete_User( $db, $user_id ) )
+	if ( !$db_sessions->Delete_User( $user_id ) )
 	{
 		return JSON_Response_Error();
 	}
 	
 	return JSON_Response_Success();
 }
-?>
