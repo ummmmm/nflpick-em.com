@@ -24,7 +24,7 @@ function Module_JSON( &$db, &$user )
 		return JSON_Response_Error( 'NFL-MAKEPICKS_LOAD-1', 'Failed to load week' );
 	}
 
-	$count = $db_games->List_Load( $week_id, $week[ 'games' ] );
+	$count = $db_games->List_Load_Week( $week_id, $week[ 'games' ] );
 	
 	foreach( $week[ 'games' ] as &$game )
 	{
