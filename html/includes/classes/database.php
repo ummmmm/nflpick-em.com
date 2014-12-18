@@ -1,4 +1,5 @@
 <?php
+
 include_once( 'Definitions.php' );
 include_once( 'includes/db/db.php' );
 
@@ -9,6 +10,8 @@ class Database extends mysqli
 	private	$_password;
 	public  $_schema;
 	private $_connected = false;
+	private $_error_code;
+	private $_error_message;
 
 	public function __construct()
 	{
@@ -106,7 +109,7 @@ class Database extends mysqli
 
 		if ( !$stmt->prepare( $query ) )
 		{
-			return Functions::Error( 'NFL-DATABASE-0', $this->error );
+			return $this->_Set_Error( 'NFL-DATABASE-0', $this->error );
 		}
 
 		if ( $arg_count > $min_arg_number )
@@ -139,27 +142,27 @@ class Database extends mysqli
 
 			if ( !call_user_func_array( array( $stmt, 'bind_param' ), $bind_params ) )
 			{
-				return Functions::Error( 'NFL-DATABASE-1', $this->error );
+				return $this->_Set_Error( 'NFL-DATABASE-1', $this->error );
 			}
 		}
 
 		if ( !$stmt->execute() )
 		{
-			return Functions::Error( 'NFL-DATABASE-2', $this->error );
+			return $this->_Set_Error( 'NFL-DATABASE-2', $this->error );
 		}
 
 		if ( !is_null( $results ) )
 		{
 			if ( !$stmt->store_result() )
 			{
-				return Functions::Error( 'NFL-DATABASE-3', $this->error );
+				return $this->_Set_Error( 'NFL-DATABASE-3', $this->error );
 			}
 
 			if ( !$count = $stmt->num_rows )
 			{
 				if ( !$stmt->close() )
 				{
-					return Functions::Error( 'NFL-DATABASE-4', $this->error );
+					return $this->_Set_Error( 'NFL-DATABASE-4', $this->error );
 				}
 
 				return true;
@@ -167,7 +170,7 @@ class Database extends mysqli
 
 			if ( !$meta = $stmt->result_metadata() )
 			{
-				return Functions::Error( 'NFL-DATABASE-5', $this->error );
+				return $this->_Set_Error( 'NFL-DATABASE-5', $this->error );
 			}
 
 			$fields = array();
@@ -181,7 +184,7 @@ class Database extends mysqli
 
 			if ( !call_user_func_array( array( $stmt, 'bind_result' ), $fields ) )
 			{
-				return Functions::Error( 'NFL-DATABASE-6', $this->error );
+				return $this->_Set_Error( 'NFL-DATABASE-6', $this->error );
 			}
 
 			if ( $multiple_results )
@@ -202,7 +205,7 @@ class Database extends mysqli
 			} else {
 				if ( !$stmt->fetch() )
 				{
-					return Functions::Error( 'NFL-DATABASE-7', $this->error );
+					return $this->_Set_Error( 'NFL-DATABASE-7', $this->error );
 				}
 
 				foreach( $fields as $key => $value )
@@ -214,10 +217,22 @@ class Database extends mysqli
 
 		if ( !$stmt->close() )
 		{
-			return Functions::Error( 'NFL-DATABASE-8', $this->error );
+			return $this->_Set_Error( 'NFL-DATABASE-8', $this->error );
 		}
 
 		return true;
 	}
+
+	private function _Set_Error( $code, $message )
+	{
+		$this->_error_code		= $code;
+		$this->_error_message 	= $message;
+
+		return Functions::Error( $code, $message );
+	}
+
+	public function Get_Error()
+	{
+		return $this->_error_message;
+	}
 }
-?>
