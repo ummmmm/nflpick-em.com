@@ -17,7 +17,8 @@ function Module_Head( &$db, &$user, &$settings, &$jquery )
 	$jquery = "\$.fn.load_picks( {$week_id} );";
 	
 	$now 	= new DateTime();
-	$then	= new DateTime( $loaded_week[ 'date' ] );
+	$then	= new DateTime();
+	$then->setTimestamp( $loaded_week[ 'date' ] );
 	
 	$now->setTimezone( new DateTimeZone( 'UTC' ) );
 	$then->setTimezone( new DateTimeZone( 'UTC' ) );
@@ -75,7 +76,7 @@ function Module_Content( &$db, &$user )
 		return Functions::Error( 'NFL-MAKEPICKS-0', 'Invalid week' );
 	}
 	
-	$count = $db_games->List_Load( $weekid, $games );
+	$count = $db_games->List_Load_Week( $weekid, $games );
 	
 	foreach( $games as &$game )
 	{
@@ -124,7 +125,7 @@ function GameLayout( &$db, &$user, $week, $db_weeks )
 {
 	$db_games		= new Games( $db );
 	$db_picks		= new Picks( $db );
-	$games_count 	= $db_games->List_Load( $week, $games );
+	$games_count 	= $db_games->List_Load_Week( $week, $games );
 	
 	if ( $games_count === false )
 	{
@@ -145,7 +146,8 @@ function GameLayout( &$db, &$user, $week, $db_weeks )
 	$timeUntil = Functions::TimeUntil( $loaded_week[ 'date' ] );
 
 	$now 		= new DateTime();
-	$then		= new DateTime( $loaded_week[ 'date' ] );
+	$then		= new DateTime();
+	$then->setTimestamp( $loaded_week[ 'date' ] );
 	$time_left	= '';
 
 	if ( $now < $then )
