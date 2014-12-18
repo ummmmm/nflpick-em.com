@@ -1,13 +1,14 @@
 <?php
 function Module_JSON( &$db, &$user )
 {
+	$db_news	= new News( $db );
 	$token 		= Functions::Get( 'token' );
 	$news_id	= Functions::Post( 'news_id' );
 	$title		= Functions::Post( 'title' );
 	$message	= Functions::Post( 'message' );
 	$active		= Functions::Post_Active( 'active' );	
 	
-	$count = News::Load( $db, $news_id, $news );
+	$count = $db_news->Load( $news_id, $news );
 	
 	if ( $count === false )
 	{
@@ -33,7 +34,7 @@ function Module_JSON( &$db, &$user )
 	$news[ 'news' ]		= $message;
 	$news[ 'active' ] 	= $active;
 	
-	if ( !News::Update( $db, $news ) )
+	if ( !$db_news->Update( $news ) )
 	{
 		return JSON_Response_Global_Error();
 	}

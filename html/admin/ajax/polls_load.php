@@ -1,14 +1,17 @@
 <?php
 function Module_JSON( &$db, &$user )
 {
-	$token = Functions::Get( 'token' );
+	$db_poll_answers	= new Poll_Answers( $db );
+	$db_poll_votes		= new Poll_Votes( $db );
+	$db_polls			= new Polls( $db );
+	$token 				= Functions::Get( 'token' );
 	
 	if ( !Sessions::Validate( $db, $user->id, $token ) )
 	{
 		return JSON_Response_Error( 'NFL-POLLS_LOAD-0', 'You do not have a valid token to complete this action.' );
 	}
 	
-	$count = Polls::List_Load( $db, $polls );
+	$count = $db_polls->List_Load( $polls );
 	
 	if ( $count === false )
 	{
@@ -17,14 +20,14 @@ function Module_JSON( &$db, &$user )
 	
 	foreach( $polls as &$poll )
 	{
-		$count = Polls::AnswersList_Load_Poll( $db, $poll[ 'id' ], $answers );
+		$count = $db_poll_answers->List_Load_Poll( $poll[ 'id' ], $answers );
 		
 		if ( $count === false )
 		{
 			return JSON_Response_Global_Error();
 		}
 		
-		$votes_count = Polls::Votes_Total_Poll( $db, $poll[ 'id' ] );
+		$votes_count = $db_poll_votes->Total_Poll( $poll[ 'id' ] );
 		
 		if ( $votes_count === false )
 		{

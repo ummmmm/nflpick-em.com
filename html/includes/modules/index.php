@@ -24,8 +24,10 @@ function Module_Content( &$db, &$user, &$settings )
 
 	foreach( $news_list as $news )
 	{
-		$date = new DateTime( $news[ 'date' ] );
+		$date = new DateTime();
 		$date->setTimezone( new DateTimeZone( 'America/Los_Angeles' ) );
+		$date->setTimestamp( $news[ 'date' ] );
+
 		print '<h1>' . $news[ 'title' ] . '</h1>';
 		print '<div class="descr">' . $date->format( 'M d, Y' ) . ' by ' . htmlentities( $news[ 'name' ] ) . '</div>';
 		print '<p>' . nl2br( htmlentities( $news[ 'news' ] ) ) . '</p>';

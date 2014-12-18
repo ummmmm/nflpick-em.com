@@ -1,11 +1,14 @@
 <?php
+
 function Module_JSON( &$db, &$user )
 {
-	$token 			= Functions::Get( 'token' );
-	$question		= Functions::Post( 'question' );
-	$answers		= array_filter( Functions::Post_Array( 'answers' ) );
-	$active			= Functions::Post_Active( 'active' );
-	$valid_answer	= false;
+	$db_poll_answers	= new Poll_Answers( $db );
+	$db_polls			= new Polls( $db );
+	$token 				= Functions::Get( 'token' );
+	$question			= Functions::Post( 'question' );
+	$answers			= array_filter( Functions::Post_Array( 'answers' ) );
+	$active				= Functions::Post_Active( 'active' );
+	$valid_answer		= false;
 	
 	if ( !Sessions::Validate( $db, $user->id, $token ) || !$user->account[ 'admin' ] )
 	{
@@ -25,7 +28,7 @@ function Module_JSON( &$db, &$user )
 	$poll_insert[ 'question' ] 	= $question;
 	$poll_insert[ 'active' ] 	= $active;
 	
-	if ( !Polls::Insert( $db, $poll_insert ) )
+	if ( !$db_polls->Insert( $poll_insert ) )
 	{
 		return JSON_Response_Error();
 	}
@@ -36,7 +39,7 @@ function Module_JSON( &$db, &$user )
 	{
 		$answer_insert = array( 'poll_id' => $poll_id, 'answer' => $answer );
 		
-		if ( !Polls::Answer_Insert( $db, $answer_insert ) )
+		if ( !$db_poll_answers->Insert( $answer_insert ) )
 		{
 			return JSON_Response_Error();
 		}
@@ -44,4 +47,3 @@ function Module_JSON( &$db, &$user )
 	
 	return JSON_Response_Success();
 }
-?>
