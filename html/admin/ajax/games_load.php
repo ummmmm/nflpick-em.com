@@ -20,7 +20,7 @@ function Module_JSON( &$db, &$user )
 	
 	foreach( $weeks as &$week )
 	{
-		$count = $db_games->List_Load( $week[ 'id' ], $week[ 'games' ] );
+		$count = $db_games->List_Load_Week( $week[ 'id' ], $week[ 'games' ] );
 		
 		foreach( $week[ 'games' ] as &$game )
 		{
