@@ -9,6 +9,7 @@ class Authentication
 
 	public $user;
 	public $authenticated;
+	public $userID;
 
 	public function __construct()
 	{
@@ -17,10 +18,25 @@ class Authentication
 		$this->_users			= new Users( $this->_db );
 		$this->user				= array();
 		$this->authenticated	= false;
+		$this->userID			= 0;
+
+		$this->_initialize();
 	}
 
-	public function __destruct()
+	private function _initialize()
 	{
+		$cookie_id = Functions::Cookie( 'session' );
+
+		if ( $this->_sessions->Load( $cookie_id, $session ) )
+		{
+			if ( $this->_users->Load( $session[ 'userid' ], $user ) )
+			{
+				$this->user 			= $user;
+				$this->session			= $session;
+				$this->userID			= $user[ 'id' ];
+				$this->authenticated	= true;
+			}
+		}
 	}
 
 	public function User()
@@ -54,6 +70,28 @@ class Authentication
 		}
 
 		return true;
+	}
+
+	public function isAdmin()
+	{
+		if ( $this->authenticated && $user[ 'admin' ] )
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	public function isUser()
+	{
+		return $this->authenticated;
+	}
+
+	public function isValidToken( $token )
+	{
+		$count = $this->_sessions->Load_User_Token( $this->userID, $token, $null );
+
+		return $count ? true : false;
 	}
 
 	public function __get( $property )

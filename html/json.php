@@ -6,12 +6,27 @@ require_once( 'includes/classes/database.php' );
 require_once( 'includes/classes/validation.php' );
 require_once( 'includes/classes/mail.php' );
 require_once( 'includes/classes/Authentication.php' );
+require_once( 'includes/classes/JSON.php' );
 
 $db			= new Database();
 $db_users 	= new Users( $db );
 $auth 		= new Authentication();
 $module		= Functions::Post( 'module' );
 $view		= Functions::Post( 'view' );
+
+$json		= new JSON();
+$admin		= Functions::Post_Boolean( 'admin' );
+$action		= Functions::Post( 'module' );
+$token		= Functions::Get( 'token' );
+
+$json->initialize( $admin, $action, $token );
+
+if ( $json->execute() )
+{
+	die( $json->responseSuccess() );
+}
+
+die( $json->responseError() );
 
 if ( !Validation::Filename( $module ) )
 {

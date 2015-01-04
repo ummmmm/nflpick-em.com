@@ -73,7 +73,10 @@ class Sessions
 		return $this->_error;
 	}
 
-
+	public function Load_User_Token( $user_id, $token, &$session )
+	{
+		return $this->_db->single( 'SELECT * FROM sessions WHERE userid = ? AND token = ?', $session, $user_id, $token );
+	}
 
 	public static function Insert( &$db, $session )
 	{
