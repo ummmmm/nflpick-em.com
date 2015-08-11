@@ -45,7 +45,7 @@ if ( $screen_validation )
 <script src="static/javascript/javascript.js" type="text/javascript"></script>
 <script type="text/javascript">$( document ).ready( function() { $.fn.load_poll(); } );</script>
 <?php
-	if ( Functions::Get( 'view' ) === 'admin' && $users->account[ 'admin' ] )
+	if ( Functions::Get( 'view' ) === 'admin' && $users->account && $users->account[ 'admin' ] )
 	{
 		print '<script src="static/javascript/admin.js" type="text/javascript"></script>';
 	}
