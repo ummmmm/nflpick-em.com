@@ -30,7 +30,7 @@ $( document ).ready( function(){
 
 	$.fn.load_weeklyrecords = function()
 	{
-		$.fn.json( 'weeklyrecords_load', '', function( response )
+		$.fn.json( 'LoadWeeklyRecords', '', function( response )
 		{
 			if ( !response.success )
 			{
@@ -151,19 +151,6 @@ $( document ).ready( function(){
 		} );
 	}
 
-	$.fn.updateEmailPreferences = function()
-	{
-		$.fn.json( 'emailpreferences', '', function( response )
-		{
-			if ( !response.success )
-			{
-				return $.fn.error( response.error_message );
-			}
-
-			$( '#emailpreferences' ).val( response.data );
-		} );
-	}
-
 	var highlighting = false;
 
 	$.fn.highlightPicks = function( userid, week )
@@ -192,11 +179,15 @@ $( document ).ready( function(){
 			return;
 		}
 
-		$.fn.json( 'highlightpicks', 'userid=' + encodeURIComponent( userid ) + '&week=' + encodeURIComponent( week ), function( response )
+		$.fn.json( 'HighlightPicks', 'userid=' + encodeURIComponent( userid ) + '&week=' + encodeURIComponent( week ), function( response )
 		{
 			if ( !response.success )
 			{
 				return $.fn.error( response.error_message );
+			}
+			else if ( !response.data )
+			{
+				return;
 			}
 
 			var userid, gameid, games, users = response.data;
@@ -247,7 +238,7 @@ $( document ).ready( function(){
 
 	$.fn.makePicks = function( week, gameid, winner, loser )
 	{
-		$.fn.json(	'makepicks',
+		$.fn.json(	'MakePicks',
 					'week=' + encodeURIComponent( week ) +
 					'&gameid=' + encodeURIComponent( gameid ) +
 					'&winner=' + encodeURIComponent( winner ) +
@@ -268,7 +259,7 @@ $( document ).ready( function(){
 
 	$.fn.load_polls = function()
 	{
-		$.fn.json( 'polls_load', '', function( response )
+		$.fn.json( 'LoadPolls', '', function( response )
 		{
 			if ( !response.success )
 			{
@@ -281,7 +272,7 @@ $( document ).ready( function(){
 
 	$.fn.load_poll = function()
 	{
-		$.fn.json( 'polls_load', 'nav=1', function( response )
+		$.fn.json( 'LoadPolls', 'nav=1', function( response )
 		{
 			if ( !response.success )
 			{

@@ -7,7 +7,7 @@ $( document ).ready( function()
 			url: json_url,
 			dataType: 'JSON',
 			async: false,
-			data: 'view=admin&module=' + encodeURIComponent( module ) + '&token=' + token + '&' + data,
+			data: 'admin=true&module=' + encodeURIComponent( module ) + '&token=' + token + '&' + data,
 			success: function( response )
 			{
 				callback( response );
@@ -139,7 +139,7 @@ $( document ).ready( function()
 				return $.fn.error( response.error_message );
 			}
 			
-			$.fn.sort( 'users_load', 'name', $.fn.sort_user_callback );
+			$.fn.sort( 'LoadUsers', 'name', $.fn.sort_user_callback );
 		} );
 	}
 	
@@ -311,7 +311,7 @@ $( document ).ready( function()
 	
 	$.fn.load_weeks = function()
 	{
-		$.fn.json( 'weeks_load', 'view=admin', function( response )
+		$.fn.json( 'LoadWeeks', 'admin=true', function( response )
 		{
 			if ( !response.success )
 			{
@@ -340,7 +340,7 @@ $( document ).ready( function()
 	
 	$.fn.toggleWeek = function( week_id )
 	{
-		$.fn.json( 'weeks_update', 'week_id=' + encodeURIComponent( week_id ), function( response )
+		$.fn.json( 'LockWeek', 'week_id=' + encodeURIComponent( week_id ), function( response )
 		{
 			if ( !response.success )
 			{
@@ -353,7 +353,7 @@ $( document ).ready( function()
 	
 	$.fn.load_news = function()
 	{
-		$.fn.json( 'news_load', '', function( response )
+		$.fn.json( 'LoadNews', '', function( response )
 		{
 			if ( !response.success )
 			{
@@ -389,7 +389,7 @@ $( document ).ready( function()
 	
 	$.fn.insert_news = function()
 	{
-		$.fn.json( 'news_insert', $( '#news_addedit :input' ).serialize(), function( response )
+		$.fn.json( 'InsertNews', $( '#news_addedit :input' ).serialize(), function( response )
 		{
 			if ( !response.success )
 			{
@@ -413,7 +413,7 @@ $( document ).ready( function()
 	
 	$.fn.update_news = function( news_id )
 	{
-		$.fn.json( 'news_update', 'news_id=' + encodeURIComponent( news_id ) + '&' + $( '#news_addedit :input' ).serialize(), function( response )
+		$.fn.json( 'UpdateNews', 'news_id=' + encodeURIComponent( news_id ) + '&' + $( '#news_addedit :input' ).serialize(), function( response )
 		{
 			if ( !response.success )
 			{
@@ -431,7 +431,7 @@ $( document ).ready( function()
 			return false;
 		}
 		
-		$.fn.json( 'news_delete', 'news_id=' + encodeURIComponent( news_id ), function( response )
+		$.fn.json( 'DeleteNews', 'news_id=' + encodeURIComponent( news_id ), function( response )
 		{
 			if ( !response.success )
 			{
