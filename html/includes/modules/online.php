@@ -23,21 +23,23 @@ function Module_Content( &$db, &$user )
 		return true;
 	}
 	
-	print '<h1>Online Users - Last ' . htmlentities( $settings[ 'online' ] ) . ' Minutes</h1>';
+	printf( "<h1>Online Users - Last %d Minutes</h1>", $settings[ "online" ] );
 	
 	foreach( $users as $loaded_user )
 	{
-		$date = new DateTime( $loaded_user[ 'last_on' ] );
-		print '<p>' . $loaded_user[ 'name' ] . ' - Last active on ' . $date->format( 'D F d, Y' ) . ' at '. $date->format( 'h:i A T' ) . '</p>';
+		$date = new DateTime();
+		$date->setTimestamp( $loaded_user[ 'last_on' ] );
+
+		printf( "<p>%s - Last active on %s at %s</p>", htmlentities( $loaded_user[ 'name' ] ), $date->format( "D Fd, Y" ), $date->format( "h:i A T" ) );
 	}
 	
 	return true;
 }
 
-function OnlineUsersList_Load( &$db, &$list, &$online_time )
+function OnlineUsersList_Load( &$db, &$users, $minutes )
 {
-	$date 	= Functions::Timestamp();
-	$online = $db->select( 'SELECT CONCAT( fname, \' \', lname ) AS name, last_on FROM users WHERE last_on > ( ? - INTERVAL ? MINUTE ) ORDER BY last_on DESC, name', $list, $date, $online_time );
+	$time	= time() - ( 60 * $minutes );
+	$online = $db->select( 'SELECT CONCAT( fname, \' \', lname ) AS name, last_on FROM users WHERE last_on > ? ORDER BY last_on DESC, name', $users, $time );
 	
 	if ( $online === false )
 	{
