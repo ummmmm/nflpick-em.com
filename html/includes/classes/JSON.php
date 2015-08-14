@@ -4,8 +4,6 @@ interface iJSON
 {
 	function execute();
 	function requirements();
-	function getError();
-	function getData();
 }
 
 class JSON
@@ -15,6 +13,7 @@ class JSON
 	private $_auth;
 	private $_action;
 	private $_misconfigured;
+	private $_data;
 
 	public function __construct()
 	{
@@ -39,7 +38,7 @@ class JSON
 
 		if ( !$this->_action->execute() )
 		{
-			return $this->_setError( $this->_action->getError() );
+			return false;
 		}
 
 		return true;
@@ -70,7 +69,7 @@ class JSON
 			return $this->_setError( array( '#Error#', 'Action is misconfigured' ) );
 		}
 
-		$this->_action = new $class( $this->_db, $this->_auth );
+		$this->_action = new $class( $this->_db, $this->_auth, $this );
 
 		if ( !$this->_action instanceof iJSON )
 		{
@@ -107,14 +106,24 @@ class JSON
 
 	public function responseError()
 	{
-		@list( $code, $message ) = $this->_getError();
+		$error = $this->_getError();
 
-		print json_encode( array( 'success' => false, 'error_code' => $code, 'error_message' => $message ) );
+		if ( is_array( $error ) )
+		{
+			@list( $code, $message ) = $error;
+		}
+		else
+		{
+			$code 		= "UNKNOWN";
+			$message	= $error;
+		}
+
+		return json_encode( array( 'success' => false, 'error_code' => $code, 'error_message' => $message ) );
 	}
 
 	public function responseSuccess()
 	{
-		print json_encode( array( 'success' => true, 'data' => $this->_getData() ) );
+		return json_encode( array( 'success' => true, 'data' => $this->_getData() ) );
 	}
 
 
@@ -139,14 +148,9 @@ class JSON
 		return $fullpath_ns;
 	}
 
-	public function getError()
-	{
-		return $this->_error;
-	}
-
 	private function _getData()
 	{
-		return $this->_action->getData();
+		return $this->_data;
 	}
 
 	private function _getError()
@@ -157,6 +161,28 @@ class JSON
 	private function _setError( $error )
 	{
 		$this->_error = $error;
+
+		return false;
+	}
+
+	public function DB_Error()
+	{
+		$this->_error = $this->_db->Get_Error();
+
+		return false;
+	}
+
+	public function setData( $data )
+	{
+		$this->_data = $data;
+
+		return true;
+	}
+
+	public function setError( $error )
+	{
+		$this->_error = $error;
+	
 		return false;
 	}
 }
