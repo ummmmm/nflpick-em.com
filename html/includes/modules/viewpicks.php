@@ -34,7 +34,7 @@ function PickLayout( &$db, $user, $weekid )
 		return false;
 	}
 
-	$games_count = $db_games->List_Load( $weekid, $games );
+	$games_count = $db_games->List_Load_Week( $weekid, $games );
 
 	if ( $games_count === false )
 	{
