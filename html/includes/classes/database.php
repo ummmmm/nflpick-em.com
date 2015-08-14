@@ -67,7 +67,7 @@ class Database extends mysqli
 		return $results_count;
 	}
 
-	public function single( $query, &$results )
+	public function single( $query, &$result )
 	{
 		$result_count		= 0;
 		$result 			= array();
@@ -104,10 +104,10 @@ class Database extends mysqli
 		return call_user_func_array( array( $this, 'query' ), array_merge( $args, $values ) );
 	}
 
-	private function _Run_Statement( &$query, $bind_params, $multiple_results = false, &$results = null, &$result_count = 0 )
+	private function _Run_Statement( &$query, $params, $multiple_results = false, &$results = null, &$result_count = 0 )
 	{
 		$result_count 	= 0;
-		$bind_count 	= count( $bind_params );
+		$bind_count 	= count( $params );
 		$stmt 			= $this->stmt_init();
 
 		if ( !$stmt->prepare( $query ) )
@@ -126,7 +126,7 @@ class Database extends mysqli
 
 			for ( $i = 0; $i < $bind_count; $i++ )
 			{
-				switch( gettype( $bind_params[ $i ] ) )
+				switch( gettype( $params[ $i ] ) )
 				{
 					case 'integer'	:
 						$bind_params[ 0 ] .= 'i';
@@ -145,7 +145,7 @@ class Database extends mysqli
 						break;
 				}
 
-				$bind_params[ $i + 1 ] = &$bind_params[ $i ];
+				$bind_params[ $i + 1 ] = &$params[ $i ];
 			}
 
 			if ( !call_user_func_array( array( $stmt, 'bind_param' ), $bind_params ) )
