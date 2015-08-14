@@ -74,7 +74,7 @@ class Authentication
 
 	public function isAdmin()
 	{
-		if ( $this->authenticated && $user[ 'admin' ] )
+		if ( $this->authenticated && $this->user[ 'admin' ] )
 		{
 			return true;
 		}
