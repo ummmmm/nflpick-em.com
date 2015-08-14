@@ -126,7 +126,7 @@ class Functions
 		{
 			$output 	= '';
 			$message	= '';
-			$title 		= ( $count === 1 ) ? 'Error Has' : $i . ' Errors Have';
+			$title 		= ( $count === 1 ) ? 'Error Has' : $count . ' Errors Have';
 
 			foreach( $error_validation as $error )
 			{
