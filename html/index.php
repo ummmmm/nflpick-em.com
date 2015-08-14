@@ -35,8 +35,8 @@ if ( $screen_validation )
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
-<title><?php print $settings->site_title; ?></title>
+<meta charset="utf-8" />
+<title><?php printf( '%s', htmlentities( $settings->site_title ) ); ?></title>
 <base href="<?php print $settings->domain_url; ?>" />
 <link rel="icon" type="image/x-icon" href="favicon.ico" />
 <link rel="stylesheet" type="text/css" href="static/css/styles.css" media="screen" />
