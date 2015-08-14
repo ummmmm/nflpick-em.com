@@ -61,7 +61,7 @@ class JSON
 		}
 		else if ( !include_once( $file_path ) )
 		{
-			return $this->_setError( array( '#Error#', 'Action is missing required interface functions' ) );
+			return $this->_setError( array( '#Error#', 'Failed to load action' ) );
 		}
 
 		if ( !class_exists( $class ) )
