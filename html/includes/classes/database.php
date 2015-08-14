@@ -55,7 +55,7 @@ class Database extends mysqli
 	public function select( $query, &$results )
 	{
 		$results 	= array();
-		$args		= func_get_args();
+		$args		= array_slice( func_get_args(), 2 );
 
 		if ( !$this->_Run_Statement( $query, $args, true, $results, $count ) )
 		{
@@ -68,7 +68,7 @@ class Database extends mysqli
 	public function single( $query, &$results )
 	{
 		$results 	= array();
-		$args		= func_get_args();
+		$args		= array_slice( func_get_args(), 2 );
 
 		if ( !$this->_Run_Statement( $query, $args, false, $results, $count ) )
 		{
@@ -89,7 +89,7 @@ class Database extends mysqli
 		$prepared	= '';
 		$args		= array();
 
-		foreach( $values as $key => $null )
+		foreach ( $values as $key => $null )
 		{
 			$columns 	.= $columns == '' ? $key : sprintf( ', %s', $key );
 			$prepared	.= $prepared == '' ? '?' : ', ?';
@@ -102,42 +102,46 @@ class Database extends mysqli
 
 	private function _Run_Statement( &$query, $arg_list, $multiple_results = false, &$results = null, &$count = 0 )
 	{
-		$count 			= 0;
-		$arg_count 		= count( $arg_list );
-		$min_arg_number = ( is_null( $results ) ) ? 1 : 2;
-		$stmt 			= $this->stmt_init();
+		$count 		= 0;
+		$arg_count 	= count( $arg_list );
+		$stmt 		= $this->stmt_init();
 
 		if ( !$stmt->prepare( $query ) )
 		{
 			return $this->_Set_Error( 'NFL-DATABASE-0', $this->error );
 		}
 
-		if ( $arg_count > $min_arg_number )
+		if ( $arg_count )
 		{
+			if ( $stmt->param_count != $arg_count )
+			{
+				return $this->_Set_Error( '#Error#', sprintf( 'Parameter count mismatch, expected %d parameters, found %d', $arg_count, $stmt->param_count ) );
+			}
+
 			$bind_params = array( '' ); // initialize the empty array
 
-			for( $i = $min_arg_number; $i < $arg_count; $i++ )
+			for ( $i = 0; $i < $arg_count; $i++ )
 			{
 				switch( gettype( $arg_list[ $i ] ) )
 				{
-					case 'integer':
+					case 'integer'	:
 						$bind_params[ 0 ] .= 'i';
 						break;
 
-					case 'double':
+					case 'double'	:
 						$bind_params[ 0 ] .= 'd';
 						break;
 
-					case 'string':
+					case 'string'	:
 						$bind_params[ 0 ] .= 's';
 						break;
 
-					default:
+					default			:
 						$bind_params[ 0 ] .= 'b';
 						break;
 				}
 
-				$bind_params[ $i ] = &$arg_list[ $i ];
+				$bind_params[ $i + 1 ] = &$arg_list[ $i ];
 			}
 
 			if ( !call_user_func_array( array( $stmt, 'bind_param' ), $bind_params ) )
