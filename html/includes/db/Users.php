@@ -203,7 +203,7 @@ class Users
 								$user[ 'id' ] );
 	}
 
-	public function Recalculate_Records( &$db )
+	public function Recalculate_Records()
 	{
 		$query = $this->_db->query( 'UPDATE
 										users u
@@ -221,7 +221,7 @@ class Users
 			return false;
 		}
 
-		if ( !Functions::Fix_User_Records( $db, $users ) )
+		if ( !Functions::Fix_User_Records( $this->_db, $users ) )
 		{
 			return false;
 		}
@@ -242,7 +242,7 @@ class Users
 		return true;
 	}
 
-	public function Update_Record( &$db, $userid, $wins, $losses )
+	public function Update_Record( $userid, $wins, $losses )
 	{
 		return $this->_db->query( 'UPDATE
 								users
