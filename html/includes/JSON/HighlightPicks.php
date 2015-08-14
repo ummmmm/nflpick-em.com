@@ -2,17 +2,11 @@
 
 class JSON_HighlightPicks implements iJSON
 {
-	private $_db;
-	private $_auth;
-	private $_error;
-	private $_data;
-
-	public function __construct( Database &$db, Authentication &$auth )
+	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
 	{
 		$this->_db		= $db;
 		$this->_auth	= $auth;
-		$this->_data	= null;
-		$this->_error	= array();
+		$this->_json	= $json;
 	}
 
 	public function requirements()
@@ -28,7 +22,7 @@ class JSON_HighlightPicks implements iJSON
 		
 		if ( !$db_weeks->IsLocked( $week ) )
 		{
-			return $this->_setError( array( "#ERROR#", sprintf( "Week '%d' has not been locked yet.", $week ) ) );
+			return $this->_json->setError( array( "#ERROR#", sprintf( "Week '%d' has not been locked yet.", $week ) ) );
 		}
 
 		$diff_picks = array();
@@ -37,11 +31,11 @@ class JSON_HighlightPicks implements iJSON
 		{	
 			if ( $userid == $this->_auth->userID )
 			{
-				return $this->_setError( array( "#Error#", "You cannot view picks you have different from yourself" ) );
+				return $this->_json->setError( array( "#Error#", "You cannot view picks you have different from yourself" ) );
 			}
 			else if ( ( $count = $this->_Load_Different_Picks( $this->_auth->userID, $userid, $week, $picks ) ) === false )
 			{
-				return $this->_setError( $this->_db->Get_Error() );
+				return $this->_json->DB_Error();
 			}
 			else if ( $count === 0 )
 			{
@@ -54,7 +48,7 @@ class JSON_HighlightPicks implements iJSON
 		{
 			if ( ( $count = $this->_Load_Different_Picks( $this->_auth->userID, NULL, $week, $users_picks ) ) === false )
 			{
-				return $this->_setError( $this->_db->Get_Error() );
+				return $this->_json->DB_Error();
 			}
 			else if ( $count === 0 )
 			{
@@ -67,29 +61,7 @@ class JSON_HighlightPicks implements iJSON
 			}
 		}
 
-		return $this->_setData( $diff_picks );
-	}
-
-	public function getData()
-	{
-		return $this->_data;
-	}
-
-	public function getError()
-	{
-		return $this->_error;
-	}
-
-	public function _setData( $data )
-	{
-		$this->_data = $data;
-		return true;
-	}
-
-	private function _setError( $error )
-	{
-		$this->_error = $error;
-		return false;
+		return $this->_json->setData( $diff_picks );
 	}
 
 	// Helper functions

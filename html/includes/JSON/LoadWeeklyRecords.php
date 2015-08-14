@@ -2,17 +2,11 @@
 
 class JSON_LoadWeeklyRecords implements iJSON
 {
-	private $_db;
-	private $_auth;
-	private $_error;
-	private $_data;
-
-	public function __construct( Database &$db, Authentication &$auth )
+	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
 	{
 		$this->_db		= $db;
 		$this->_auth	= $auth;
-		$this->_data	= null;
-		$this->_error	= array();
+		$this->_json	= $json;
 	}
 
 	public function requirements()
@@ -24,7 +18,7 @@ class JSON_LoadWeeklyRecords implements iJSON
 	{
 		if ( $this->_Weeks( $loaded_weeks ) === false || $this->_Users( $loaded_users ) === false )
 		{
-			return $this->_setError( $this->_db->Get_Error() );
+			return $this->_json->DB_Error();
 		}
 		
 		foreach( $loaded_users as &$loaded_user )
@@ -33,17 +27,17 @@ class JSON_LoadWeeklyRecords implements iJSON
 			
 			foreach( $loaded_weeks as $loaded_week )
 			{
-				if ( Wins( 		$loaded_user[ 'id' ], $loaded_week[ 'id' ], $wins )	 === false ||
-					 Losses( 	$loaded_user[ 'id' ], $loaded_week[ 'id' ], $losses )	 === false )
+				if ( $this->_Wins( 		$loaded_user[ 'id' ], $loaded_week[ 'id' ], $wins )	 === false ||
+					 $this->_Losses( 	$loaded_user[ 'id' ], $loaded_week[ 'id' ], $losses )	 === false )
 				{
-					return $this->_setError( $this->_db->Get_Error() );
+					return $this->_json->DB_Error();
 				}
 
 				if ( $wins[ 'total' ] === 0 && $losses[ 'total' ] === 0 )
 				{
 					if ( !Functions::Worst_Record_Calculated( $this->_db, $loaded_week[ 'id' ], $record ) )
 					{
-						return $this->_setError( $this->_db->Get_Error() );
+						return $this->_json->DB_Error();
 					}
 
 					$wins[ 'total' ] 	= $record[ 'wins' ];
@@ -54,29 +48,7 @@ class JSON_LoadWeeklyRecords implements iJSON
 			}
 		}
 		
-		return $this->_setData( $loaded_users );
-	}
-
-	public function getData()
-	{
-		return $this->_data;
-	}
-
-	public function getError()
-	{
-		return $this->_error;
-	}
-
-	public function _setData( $data )
-	{
-		$this->_data = $data;
-		return true;
-	}
-
-	private function _setError( $error )
-	{
-		$this->_error = $error;
-		return false;
+		return $this->_json->setData( $loaded_users );
 	}
 
 	// Helper functions

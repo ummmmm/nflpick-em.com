@@ -2,17 +2,11 @@
 
 class JSON_EmailPicks implements iJSON
 {
-	private $_db;
-	private $_auth;
-	private $_error;
-	private $_data;
-
-	public function __construct( Database &$db, Authentication &$auth )
+	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
 	{
 		$this->_db		= $db;
 		$this->_auth	= $auth;
-		$this->_data	= null;
-		$this->_error	= array();
+		$this->_json	= $json;
 	}
 
 	public function requirements()
@@ -29,18 +23,18 @@ class JSON_EmailPicks implements iJSON
 
 		if ( !$db_weeks->Load( $week, $null ) )
 		{
-			return $this->_setError( array( 'NFL-EMAILPICKS-1', sprintf( 'Failed to load week %d', $week ) ) );
+			return $this->_json->setError( array( 'NFL-EMAILPICKS-1', sprintf( 'Failed to load week %d', $week ) ) );
 		}
 
 		$count = $db_picks->UserWeekList_Load( $this->_auth->userID, $week, $picks );
 
 		if ( $count === false )
 		{
-			return $this->_setError( $db_picks->Get_Error() );
+			return $this->_json->DB_Error();
 		}
 
 		$sent = array( 'userid' => $this->_auth->userID, 'week' => $week, 'date' => Functions::Timestamp(), 'picks' => array() );
-		$mail = new Mail( $this->_auth->user[ 'email' ], "Week {$week} Picks" );
+		$mail = new Mail( $this->_auth->user[ 'email' ], sprintf( "Week %d Picks", $week ) );
 
 		foreach( $picks as $pick )
 		{
@@ -56,17 +50,17 @@ class JSON_EmailPicks implements iJSON
 
 		if ( $mail->send() === false )
 		{
-			return $this->_setError( array( 'NFL-EMAILPICKS-3', 'The email failed to send. Please try again later.' ) );
+			return $this->_json->setError( array( 'NFL-EMAILPICKS-3', 'The email failed to send. Please try again later.' ) );
 		}
 
 		$insert = array( 'user_id' => $this->_auth->userID, 'picks' => json_encode( $sent ), 'week' => $week );
 
 		if ( !$db_sent_picks->Insert( $insert ) )
 		{
-			return $this->_setError( $db_sent_picks->Get_Error() );
+			return $this->_json->DB_Error();
 		}
 
-		return $this->_setData( sprintf( 'Your picks for week %d have been sent.', $week ) );
+		return $this->_json->setData( sprintf( 'Your picks for week %d have been sent.', $week ) );
 	}
 
 	private function _confirmationText( &$week, &$picks )
@@ -79,27 +73,5 @@ class JSON_EmailPicks implements iJSON
 		}
 
 		return $output;
-	}
-
-	public function getData()
-	{
-		return $this->_data;
-	}
-
-	public function getError()
-	{
-		return $this->_error;
-	}
-
-	public function _setData( $data )
-	{
-		$this->_data = $data;
-		return true;
-	}
-
-	private function _setError( $error )
-	{
-		$this->_error = $error;
-		return false;
 	}
 }

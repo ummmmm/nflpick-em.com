@@ -2,17 +2,11 @@
 
 class JSON_LoadPicks implements iJSON
 {
-	private $_db;
-	private $_auth;
-	private $_error;
-	private $_data;
-
-	public function __construct( Database &$db, Authentication &$auth )
+	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
 	{
 		$this->_db		= $db;
 		$this->_auth	= $auth;
-		$this->_data	= null;
-		$this->_error	= array();
+		$this->_json	= $json;
 	}
 
 	public function requirements()
@@ -31,15 +25,15 @@ class JSON_LoadPicks implements iJSON
 
 		if ( $count === false )
 		{
-			return $this->_setError( $db_weeks->Get_Error() );
+			return $this->_json->DB_Error();
 		}
 
 		if ( $count === 0 )
 		{
-			return $this->_setError( array( '#Error#', 'Failed to load week' ) );
+			return $this->_json->setError( array( '#Error#', 'Failed to load week' ) );
 		}
 
-		$count = $db_games->List_Load_Week( $week_id, $week[ 'games' ] );
+		$db_games->List_Load_Week( $week_id, $week[ 'games' ] );
 
 		foreach( $week[ 'games' ] as &$game )
 		{
@@ -47,7 +41,7 @@ class JSON_LoadPicks implements iJSON
 
 			if ( $count === false )
 			{
-				return $this->_setError( $db_picks->Get_Error() );
+				return $this->_json->DB_Error();
 			}
 
 			$now	= new DateTime();
@@ -61,28 +55,6 @@ class JSON_LoadPicks implements iJSON
 			$game[ 'pick' ] 			= $pick;
 		}
 
-		return $this->_setData( $week );
-	}
-
-	public function getData()
-	{
-		return $this->_data;
-	}
-
-	public function getError()
-	{
-		return $this->_error;
-	}
-
-	public function _setData( $data )
-	{
-		$this->_data = $data;
-		return true;
-	}
-
-	private function _setError( $error )
-	{
-		$this->_error = $error;
-		return false;
+		return $this->_json->setData( $week );
 	}
 }
