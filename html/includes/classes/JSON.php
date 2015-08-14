@@ -132,20 +132,7 @@ class JSON
 		if ( $admin )	$path = 'admin/JSON';
 		else			$path = 'includes/JSON';
 
-		$fullpath 		= sprintf( '%s/%s.php', $path, $action );
-		$fullpath_ns 	= "";
-
-		for ( $i = 0; $i < strlen( $fullpath ); $i++ )
-		{
-			$char = substr( $fullpath, $i, 1 );
-
-			if ( ord( $char ) != 0 )
-			{
-				$fullpath_ns .= $char;
-			}
-		}
-
-		return $fullpath_ns;
+		return Functions::Strip_Nulls( sprintf( '%s/%s.php', $path, $action ) );
 	}
 
 	private function _getData()

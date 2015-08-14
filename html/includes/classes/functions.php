@@ -591,4 +591,21 @@ EOT;
 
 		return true;
 	}
+
+	public static function Strip_Nulls( $string )
+	{
+		$string_ns = "";
+
+		for ( $i = 0; $i < strlen( $string ); $i++ )
+		{
+			$char = substr( $string, $i, 1 );
+
+			if ( ord( $char ) != 0 )
+			{
+				$string_ns .= $char;
+			}
+		}
+
+		return $string_ns;
+	}
 }
