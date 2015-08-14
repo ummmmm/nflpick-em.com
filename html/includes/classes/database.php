@@ -47,35 +47,39 @@ class Database extends mysqli
 
 	public function query( $query )
 	{
-		$args = array_slice( func_get_args(), 1 );
+		$bind_parmas = array_slice( func_get_args(), 1 );
 
-		return $this->_Run_Statement( $query, $args );
+		return $this->_Run_Statement( $query, $bind_parmas );
 	}
 
 	public function select( $query, &$results )
 	{
-		$results 	= array();
-		$args		= array_slice( func_get_args(), 2 );
+		$results_count		= 0;
+		$results 			= array();
+		$bind_parmas		= array_slice( func_get_args(), 2 );
+		$multiple_results	= true;
 
-		if ( !$this->_Run_Statement( $query, $args, true, $results, $count ) )
+		if ( !$this->_Run_Statement( $query, $bind_parmas, $multiple_results, $results, $results_count ) )
 		{
 			return false;
 		}
 
-		return $count;
+		return $results_count;
 	}
 
 	public function single( $query, &$results )
 	{
-		$results 	= array();
-		$args		= array_slice( func_get_args(), 2 );
+		$result_count		= 0;
+		$result 			= array();
+		$bind_parmas		= array_slice( func_get_args(), 2 );
+		$multiple_results	= false;
 
-		if ( !$this->_Run_Statement( $query, $args, false, $results, $count ) )
+		if ( !$this->_Run_Statement( $query, $bind_parmas, $multiple_results, $result, $result_count ) )
 		{
 			return false;
 		}
 
-		return $count;
+		return $result_count;
 	}
 
 	public function insert( $table, &$values )
@@ -100,29 +104,29 @@ class Database extends mysqli
 		return call_user_func_array( array( $this, 'query' ), array_merge( $args, $values ) );
 	}
 
-	private function _Run_Statement( &$query, $arg_list, $multiple_results = false, &$results = null, &$count = 0 )
+	private function _Run_Statement( &$query, $bind_params, $multiple_results = false, &$results = null, &$result_count = 0 )
 	{
-		$count 		= 0;
-		$arg_count 	= count( $arg_list );
-		$stmt 		= $this->stmt_init();
+		$result_count 	= 0;
+		$bind_count 	= count( $bind_params );
+		$stmt 			= $this->stmt_init();
 
 		if ( !$stmt->prepare( $query ) )
 		{
 			return $this->_Set_Error( 'NFL-DATABASE-0', $this->error );
 		}
 
-		if ( $arg_count )
+		if ( $bind_count )
 		{
-			if ( $stmt->param_count != $arg_count )
+			if ( $stmt->param_count != $bind_count )
 			{
-				return $this->_Set_Error( '#Error#', sprintf( 'Parameter count mismatch, expected %d parameters, found %d', $arg_count, $stmt->param_count ) );
+				return $this->_Set_Error( '#Error#', sprintf( 'Parameter count mismatch, expected %d parameters, found %d', $bind_count, $stmt->param_count ) );
 			}
 
 			$bind_params = array( '' ); // initialize the empty array
 
-			for ( $i = 0; $i < $arg_count; $i++ )
+			for ( $i = 0; $i < $bind_count; $i++ )
 			{
-				switch( gettype( $arg_list[ $i ] ) )
+				switch( gettype( $bind_params[ $i ] ) )
 				{
 					case 'integer'	:
 						$bind_params[ 0 ] .= 'i';
@@ -141,7 +145,7 @@ class Database extends mysqli
 						break;
 				}
 
-				$bind_params[ $i + 1 ] = &$arg_list[ $i ];
+				$bind_params[ $i + 1 ] = &$bind_params[ $i ];
 			}
 
 			if ( !call_user_func_array( array( $stmt, 'bind_param' ), $bind_params ) )
@@ -155,69 +159,95 @@ class Database extends mysqli
 			return $this->_Set_Error( 'NFL-DATABASE-2', $this->error );
 		}
 
-		if ( !is_null( $results ) )
+		if ( is_null( $results ) ) // Must be an INSERT, UPDATE, DELETE
 		{
-			if ( !$stmt->store_result() )
+			if ( !$stmt->close() )
 			{
-				return $this->_Set_Error( 'NFL-DATABASE-3', $this->error );
+				return $this->_Set_Error( 'NFL-DATABASE-8', $this->error );
 			}
 
-			if ( !$count = $stmt->num_rows )
+			return true;
+		}
+
+		// Otherwise we have a result set
+
+		if ( !$stmt->store_result() )
+		{
+			$stmt->close();
+
+			return $this->_Set_Error( 'NFL-DATABASE-3', $this->error );
+		}
+
+		if ( ( $result_count = $stmt->num_rows ) == 0 )
+		{
+			$stmt->free_result();
+
+			if ( !$stmt->close() )
 			{
-				if ( !$stmt->close() )
+				return $this->_Set_Error( 'NFL-DATABASE-4', $this->error );
+			}
+
+			return true;
+		}
+
+		if ( ( $meta = $stmt->result_metadata() ) === false )
+		{
+			$stmt->free_result();
+			$stmt->close();
+
+			return $this->_Set_Error( 'NFL-DATABASE-5', $this->error );
+		}
+
+		$fields = array();
+
+		while( ( $field = $meta->fetch_field() ) !== false )
+		{
+			$colunm_name			= $field->name;
+			${$colunm_name}			= null; // create a dynamic PHP variable set to the column name
+			$fields[ $colunm_name ] = &${$colunm_name}; // create a reference to the dynamic variable
+		}
+
+		if ( !call_user_func_array( array( $stmt, 'bind_result' ), $fields ) )
+		{
+			$stmt->free_result();
+			$stmt->close();
+
+			return $this->_Set_Error( 'NFL-DATABASE-6', $this->error );
+		}
+
+		if ( $multiple_results )
+		{
+			$i = 0;
+
+			while ( $stmt->fetch() )
+			{
+				$results[ $i ] = array();
+
+				foreach ( $fields as $key => $value )
 				{
-					return $this->_Set_Error( 'NFL-DATABASE-4', $this->error );
+					$results[ $i ][ $key ] = $value;
 				}
 
-				return true;
-			}
-
-			if ( !$meta = $stmt->result_metadata() )
-			{
-				return $this->_Set_Error( 'NFL-DATABASE-5', $this->error );
-			}
-
-			$fields = array();
-
-			while( $field = $meta->fetch_field() )
-			{
-				$var 			= $field->name;
-				$$var 			= null;
-				$fields[ $var ] = &$$var;
-			}
-
-			if ( !call_user_func_array( array( $stmt, 'bind_result' ), $fields ) )
-			{
-				return $this->_Set_Error( 'NFL-DATABASE-6', $this->error );
-			}
-
-			if ( $multiple_results )
-			{
-				$i = 0;
-
-				while( $stmt->fetch() )
-				{
-					$results[ $i ] = array();
-
-					foreach( $fields as $key => $value )
-					{
-						$results[ $i ][ $key ] = $value;
-					}
-
-					$i++;
-				}
-			} else {
-				if ( !$stmt->fetch() )
-				{
-					return $this->_Set_Error( 'NFL-DATABASE-7', $this->error );
-				}
-
-				foreach( $fields as $key => $value )
-				{
-					$results[ $key ] = $value;
-				}
+				$i++;
 			}
 		}
+		else
+		{
+			if ( !$stmt->fetch() )
+			{
+				$stmt->free_result();
+				$stmt->close();
+
+				return $this->_Set_Error( 'NFL-DATABASE-7', $this->error );
+			}
+
+			foreach( $fields as $key => $value )
+			{
+				$results[ $key ] = $value;
+			}
+		}
+
+		$stmt->free_result();
 
 		if ( !$stmt->close() )
 		{
