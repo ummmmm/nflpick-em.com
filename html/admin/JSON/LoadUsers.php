@@ -1,17 +1,11 @@
 <?php
 class JSON_LoadUsers implements iJSON
 {
-	private $_db;
-	private $_auth;
-	private $_error;
-	private $_data;
-
-	public function __construct( Database &$db, Authentication &$auth )
+	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
 	{
 		$this->_db		= $db;
 		$this->_auth	= $auth;
-		$this->_data	= null;
-		$this->_error	= array();
+		$this->_json	= $json;
 	}
 
 	public function requirements()
@@ -26,7 +20,7 @@ class JSON_LoadUsers implements iJSON
 		
 		if ( !$this->_Load_Users( $sort, $direction, $users ) )
 		{
-			return JSON_Response_Error();
+			return $this->_json->DB_Error();
 		}
 		
 		foreach( $users as &$loaded_user )
@@ -34,30 +28,8 @@ class JSON_LoadUsers implements iJSON
 			$loaded_user[ 'last_on' ] 			= Functions::FormatDate( $loaded_user[ 'last_on' ] );
 			$loaded_user[ 'current_place' ] 	= Functions::Place( $loaded_user[ 'current_place' ] ); 
 		}
-		
-		return $this->_setData( $users );
-	}
 
-	public function getData()
-	{
-		return $this->_data;
-	}
-
-	public function getError()
-	{
-		return $this->_error;
-	}
-
-	public function _setData( $data )
-	{
-		$this->_data = $data;
-		return true;
-	}
-
-	private function _setError( $error )
-	{
-		$this->_error = $error;
-		return false;
+		return $this->_json->setData( $users );		
 	}
 
 	// Helper functions
