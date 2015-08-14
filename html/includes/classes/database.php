@@ -47,7 +47,7 @@ class Database extends mysqli
 
 	public function query( $query )
 	{
-		$args = func_get_args();
+		$args = array_slice( func_get_args(), 1 );
 
 		return $this->_Run_Statement( $query, $args );
 	}
