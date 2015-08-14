@@ -105,22 +105,16 @@ function Module_Content( &$db, &$user )
 
 	$action = Functions::Get( 'action' );
 
-	if ( empty( $action ) )
-	{
-		return PageLayout();
-	}
-
 	if ( $action == 'changeemail' )
 	{
 		return ChangeEmail();
 	}
-
-	if ( $action == 'changepassword' )
+	else if ( $action == 'changepassword' )
 	{
 		return ChangePassword();
 	}
-
-	return true;
+	
+	return PageLayout();
 }
 
 function PageLayout()
