@@ -110,11 +110,6 @@ function Module_Content( &$db, &$user )
 		return PageLayout();
 	}
 
-	if ( $action == 'emailpreferences' )
-	{
-		return EmailPreferences( $user );
-	}
-
 	if ( $action == 'changeemail' )
 	{
 		return ChangeEmail();
@@ -136,18 +131,7 @@ function PageLayout()
 		<p><a href="?module=controlpanel&action=changepassword" title="Change Password">Change Password</a></p>
 		<p><a href="?module=controlpanel&action=changeemail" title="Change Email">Change Email</a></p>
 		<p><a href="?module=contact" title="File Report">Support Help</a></p>
-		<p><a href="?module=controlpanel&action=emailpreferences" title="Email Preferences">Email Preferences</a></p>
 EOT;
-
-	return true;
-}
-
-function EmailPreferences( &$user )
-{
-	$value = ( $user->account[ 'email_preference' ] ) ? 'Disable Email Notifications' : 'Enable Email Notifications';
-
-	print '<h1>Email Preferences</h1>';
-	print '<input type="button" id= "emailpreferences" value="' . $value . '" onclick="$.fn.updateEmailPreferences();" />';
 
 	return true;
 }
