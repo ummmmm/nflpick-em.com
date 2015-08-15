@@ -522,7 +522,7 @@ $( document ).ready( function()
 			return false;
 		}
 		
-		$.fn.json( 'polls_delete', 'poll_id=' + encodeURIComponent( poll_id ), function( response )
+		$.fn.json( 'DeletePoll', 'poll_id=' + encodeURIComponent( poll_id ), function( response )
 		{
 			if ( !response.success )
 			{
