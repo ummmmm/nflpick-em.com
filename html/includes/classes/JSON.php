@@ -129,8 +129,8 @@ class JSON
 
 	private function _filePath( $admin, $action )
 	{
-		if ( $admin )	$path = 'admin/JSON';
-		else			$path = 'includes/JSON';
+		if ( $admin )	$path = 'includes/runtime/admin/JSON';
+		else			$path = 'includes/runtime/non-admin/JSON';
 
 		return Functions::Strip_Nulls( sprintf( '%s/%s.php', $path, $action ) );
 	}

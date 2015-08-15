@@ -407,9 +407,9 @@ EOT;
 
 		if ( $view === 'admin' && $user->logged_in && $user->account[ 'admin' ] )
 		{
-			$path = "admin/modules/{$module}.php";
+			$path = "includes/runtime/admin/modules/{$module}.php";
 		} else {
-			$path = "includes/modules/{$module}.php";
+			$path = "includes/runtime/non-admin/modules/{$module}.php";
 		}
 
 		if ( !file_exists( $path ) )
