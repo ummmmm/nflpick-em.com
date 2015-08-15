@@ -132,7 +132,7 @@ $( document ).ready( function()
 	
 	$.fn.update_users = function( user_id )
 	{		
-		$.fn.json( 'users_update', 'user_id=' + encodeURIComponent( user_id ), function( response )
+		$.fn.json( 'UpdatePaidUser', 'user_id=' + encodeURIComponent( user_id ), function( response )
 		{
 			if ( !response.success )
 			{
