@@ -21,7 +21,7 @@ class JSON
 	public function __construct()
 	{
 		$this->_db 				= new Database();
-		$this->_auth			= new Authentication( $this->_db );
+		$this->_auth			= new Authentication();
 		$this->_misconfigured	= false;
 		$this->_action			= null;
 		$this->_error			= array();
@@ -172,7 +172,7 @@ class JSON
 	public function setError( $error )
 	{
 		$this->_error = $error;
-	
+
 		return false;
 	}
 }
