@@ -496,7 +496,7 @@ $( document ).ready( function()
 	
 	$.fn.insert_poll = function()
 	{
-		$.fn.json( 'polls_insert', $( '#polls_addedit :input' ).serialize(), function( response )
+		$.fn.json( 'InsertPoll', $( '#polls_addedit :input' ).serialize(), function( response )
 		{
 			if ( !response.success )
 			{
