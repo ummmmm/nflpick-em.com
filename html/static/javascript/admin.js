@@ -103,7 +103,7 @@ $( document ).ready( function()
 			return false;
 		}
 		
-		$.fn.json( 'users_login', 'user_id=' + encodeURIComponent( user.id ), function( response )
+		$.fn.json( 'LoginUser', 'user_id=' + encodeURIComponent( user.id ), function( response )
 		{
 			if ( !response.success )
 			{
