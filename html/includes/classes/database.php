@@ -1,6 +1,7 @@
 <?php
 
 include_once( 'includes/db/db.php' );
+include_once( "includes/classes/functions.php" );
 
 class Database extends mysqli
 {
@@ -8,12 +9,17 @@ class Database extends mysqli
 	public 	$_user;
 	private	$_password;
 	public  $_schema;
-	private $_connected = false;
+	private $_connected;
 	private $_error_code;
 	private $_error_message;
 
 	public function __construct()
 	{
+		if ( !defined( "DB_CONFIG" ) || !Functions::Strip_Nulls( DB_CONFIG ) )
+		{
+			die( "Failed to load configuration file" );
+		}
+
 		$settings = parse_ini_file( DB_CONFIG, true );
 
 		if ( $settings === false )
@@ -21,6 +27,7 @@ class Database extends mysqli
 			die( 'Failed to parse the configuration file' );
 		}
 
+		$this->_connected	= false;
 		$this->_host		= $settings[ 'database' ][ 'host' ];
 		$this->_user		= $settings[ 'database' ][ 'username' ];
 		$this->_password	= $settings[ 'database' ][ 'password' ];
