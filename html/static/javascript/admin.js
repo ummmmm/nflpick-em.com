@@ -121,7 +121,7 @@ $( document ).ready( function()
 			return false;
 		}
 		
-		$.fn.json( 'users_logout', 'user_id=' + encodeURIComponent( user.id ), function( response )
+		$.fn.json( 'LogoutUser', 'user_id=' + encodeURIComponent( user.id ), function( response )
 		{
 			if ( !response.success )
 			{
