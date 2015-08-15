@@ -147,7 +147,7 @@ $( document ).ready( function()
 	
 	$.fn.load_games = function()
 	{
-		$.fn.json( 'games_load', '', function( response )
+		$.fn.json( 'LoadGames', '', function( response )
 		{
 			if ( !response.success )
 			{
