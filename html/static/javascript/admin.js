@@ -451,7 +451,7 @@ $( document ).ready( function()
 	
 	$.fn.load_polls = function()
 	{
-		$.fn.json( 'polls_load', '', function( response )
+		$.fn.json( 'LoadPolls', '', function( response )
 		{
 			if ( !response.success )
 			{
