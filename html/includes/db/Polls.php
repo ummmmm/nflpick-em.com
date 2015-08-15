@@ -45,7 +45,7 @@ class Polls
 		$poll_votes 	= new Poll_Votes( $this->_db );
 		$poll_answers	= new Poll_Answers( $this->_db );
 
-		if ( !$poll_votes->Delete_Poll( $poll_id ) || !$poll_answers->Delete_Poll( $poll_id ) || !$this->Delete_LowLevel( $poll_id ) )
+		if ( !$poll_votes->Delete_Poll( $poll_id ) || !$poll_answers->Answers_Delete_Poll( $poll_id ) || !$this->Delete_LowLevel( $poll_id ) )
 		{
 			return false;
 		}
