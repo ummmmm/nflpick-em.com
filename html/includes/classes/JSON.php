@@ -1,5 +1,8 @@
 <?php
 
+require_once( 'database.php' );
+require_once( 'Authentication.php' );
+
 interface iJSON
 {
 	function execute();
