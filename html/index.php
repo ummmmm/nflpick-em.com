@@ -115,7 +115,7 @@ if ( $screen_validation )
     <br clear="all" />
   </div>
   <div class="footer">
-	  &copy; 2007-2014 <a href="">NFLPick-Em.com</a>. Template design by <a href="http://templates.arcsin.se" target="_blank" title="Designed By Arcsin">Arcsin</a>.
+	  &copy; 2007-2015 <a href="">NFLPick-Em.com</a>. Template design by <a href="http://templates.arcsin.se" target="_blank" title="Designed By Arcsin">Arcsin</a>.
   </div>
 </div>
 </body>
