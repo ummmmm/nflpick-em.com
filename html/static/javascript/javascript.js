@@ -325,7 +325,7 @@ $( document ).ready( function(){
 			return $.fn.error( 'Select a poll answer' );
 		}
 
-		$.fn.json( 'polls_vote', 'poll_id=' + encodeURIComponent( poll_id ) + '&answer_id=' + encodeURIComponent( answer ), function( response )
+		$.fn.json( 'VotePoll', 'poll_id=' + encodeURIComponent( poll_id ) + '&answer_id=' + encodeURIComponent( answer ), function( response )
 		{
 			if ( !response.success )
 			{
