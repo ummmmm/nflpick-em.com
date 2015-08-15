@@ -30,7 +30,7 @@ $( document ).ready( function()
 	
 	$.fn.update_settings = function()
 	{
-		$.fn.json( 'settings_update', $( '#settings_addedit :input' ).serialize(), function( response )
+		$.fn.json( 'UpdateSettings', $( '#settings_addedit :input' ).serialize(), function( response )
 		{
 			if ( !response.success )
 			{
