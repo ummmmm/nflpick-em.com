@@ -49,17 +49,17 @@ class Poll_Votes
 		return $this->_db->insert( 'poll_votes', $vote );
 	}
 
-	public static function Delete_Answer( $answer_id )
+	public function Delete_Answer( $answer_id )
 	{
 		return $this->_db->query( 'DELETE FROM poll_votes WHERE answer_id = ?', $answer_id );
 	}
 
-	public static function Delete_Poll( $poll_id )
+	public function Delete_Poll( $poll_id )
 	{
 		return $this->_db->query( 'DELETE FROM poll_votes WHERE poll_id = ?', $poll_id );
 	}
 
-	public static function List_Load_Poll( $poll_id, &$votes )
+	public function List_Load_Poll( $poll_id, &$votes )
 	{
 		return $this->_db->select( 'SELECT * FROM poll_votes WHERE poll_id = ?', $votes, $poll_id );
 	}
