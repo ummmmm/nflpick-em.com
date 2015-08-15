@@ -572,7 +572,7 @@ $( document ).ready( function()
 	{
 		var data = 'poll_id=' + encodeURIComponent( poll_id ) + '&' + $( '#polls_addedit :input' ).serialize();
 		
-		$.fn.json( 'polls_update', data, function( response )
+		$.fn.json( 'UpdatePoll', data, function( response )
 		{
 			if ( !response.success )
 			{
