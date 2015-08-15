@@ -285,7 +285,7 @@ $( document ).ready( function()
 		var scored 	= $( '#scored' ).val();		
 		var data 	= ( scored == 'true' ) ? $( '#scores :input' ).serialize() : $( '#games :input' ).serialize();
 
-		$.fn.json( 	'games_update',
+		$.fn.json( 	'UpdateGame',
 					'game_id=' + encodeURIComponent( game.id ) +
 					'&scored=' + encodeURIComponent( scored ) + 
 					'&' + data,
