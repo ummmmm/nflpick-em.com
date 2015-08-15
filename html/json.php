@@ -1,6 +1,7 @@
 <?php
 header( 'Content-type: application/json' );
 
+require_once( 'config.php' );
 require_once( 'includes/classes/functions.php' );
 require_once( 'includes/classes/database.php' );
 require_once( 'includes/classes/validation.php' );

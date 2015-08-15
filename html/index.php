@@ -2,6 +2,7 @@
 session_start();
 ob_start();
 
+require_once( 'config.php' );
 require_once( 'includes/classes/functions.php' );
 require_once( 'includes/classes/database.php' );
 require_once( 'includes/classes/validation.php' );

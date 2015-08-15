@@ -1,6 +1,5 @@
 <?php
 
-include_once( 'Definitions.php' );
 include_once( 'includes/db/db.php' );
 
 class Database extends mysqli
