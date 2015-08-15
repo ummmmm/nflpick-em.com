@@ -91,9 +91,9 @@ class Sessions
 		return $db->query( 'DELETE FROM sessions WHERE token = ?', $token );
 	}
 
-	public static function Delete_Cookie( &$db, $cookie_id )
+	public function Delete_Cookie( $cookie_id )
 	{
-		return $db->query( 'DELETE FROM sessions WHERE cookieid = ?', $cookie_id );
+		return $this->_db->query( 'DELETE FROM sessions WHERE cookieid = ?', $cookie_id );
 	}
 
 	public static function Update( &$db, $session )
