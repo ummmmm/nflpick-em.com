@@ -6,7 +6,6 @@ require_once( 'config.php' );
 require_once( 'includes/classes/functions.php' );
 require_once( 'includes/classes/Database.php' );
 require_once( 'includes/classes/validation.php' );
-require_once( 'includes/classes/mail.php' );
 
 $db					= new Database();
 $users				= new Users( $db );

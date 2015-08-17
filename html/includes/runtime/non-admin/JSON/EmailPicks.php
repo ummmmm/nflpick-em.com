@@ -1,5 +1,7 @@
 <?php
 
+require_once( "includes/classes/Mail.php" );
+
 class JSON_EmailPicks implements iJSON
 {
 	public function __construct( Database &$db, Authentication &$auth, JSON &$json )

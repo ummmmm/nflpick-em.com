@@ -1,4 +1,7 @@
 <?php
+
+require_once( "includes/classes/Mail.php" );
+
 function Module_Validate( $db, $user, &$validation )
 {
 	$validation[ 'name' ] 		= Functions::Post( 'name' );
