@@ -1,5 +1,7 @@
 <?php
-include_once( 'functions.php' );
+
+require_once( "Database.php" );
+require_once( "functions.php" );
 
 class Authentication
 {
@@ -37,39 +39,6 @@ class Authentication
 				$this->authenticated	= true;
 			}
 		}
-	}
-
-	public function User()
-	{
-		$cookie_id = Functions::Cookie( 'session' );
-
-		if ( $this->_sessions->Load( $cookie_id, $session ) )
-		{
-			if ( $this->_users->Load( $session[ 'user_id' ], $user ) )
-			{
-				$this->user 			= $user;
-				$this->authenticated 	= true;
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public function Admin()
-	{
-		if ( !$this->User() )
-		{
-			return false;
-		}
-
-		if ( !$this->user[ 'admin' ] )
-		{
-			$this->user = array();
-			return false;
-		}
-
-		return true;
 	}
 
 	public function isAdmin()
