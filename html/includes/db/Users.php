@@ -93,12 +93,13 @@ class Users
 			return false;
 		}
 
-		$cookieid	= sha1( session_id() );
-		$token		= sha1( uniqid( rand(), TRUE ) );
+		$db_sessions	= new Sessions( $this->_db );
+		$cookieid		= sha1( session_id() );
+		$token			= sha1( uniqid( rand(), TRUE ) );
 
 		setcookie( 'session', $cookieid, time() + 60 * 60 * 24 * 30, INDEX, '', false, true );
 
-		if ( !Sessions::Insert( $this->_db, array( 'token' => $token, 'cookieid' => $cookieid, 'userid' => $this->id ) ) )
+		if ( !$db_sessions->Insert( array( 'token' => $token, 'cookieid' => $cookieid, 'userid' => $this->id ) ) )
 		{
 			return false;
 		}

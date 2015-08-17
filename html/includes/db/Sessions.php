@@ -78,12 +78,12 @@ class Sessions
 		return $this->_db->single( 'SELECT * FROM sessions WHERE userid = ? AND token = ?', $session, $user_id, $token );
 	}
 
-	public static function Insert( &$db, $session )
+	public function Insert( $session )
 	{
 		$session[ 'date' ] 			= time();
 		$session[ 'last_active' ]	= time();
 
-		return $db->insert( 'sessions', $session );
+		return $this->_db->insert( 'sessions', $session );
 	}
 
 	public static function Delete( &$db, $token )
