@@ -51,16 +51,6 @@ class Sessions
 		return $this->_db->query( 'DELETE FROM sessions WHERE userid = ?', $user_id );
 	}
 
-	/*public function Delete( $cookie_id )
-	{
-		return $this->_db->query( 'DELETE FROM Sessions WHERE cookie_id = ?', $cookie_id );
-	}
-
-	public function Delete_UserID( $user_id )
-	{
-		return $this->_db->query( 'DELETE FROM Sessions WHERE user_id = ?', $user_id );
-	}*/
-
 	private function _Error( $message )
 	{
 		$this->_error = $message;
@@ -94,11 +84,6 @@ class Sessions
 	public function Delete_Cookie( $cookie_id )
 	{
 		return $this->_db->query( 'DELETE FROM sessions WHERE cookieid = ?', $cookie_id );
-	}
-
-	public static function Update( &$db, $session )
-	{
-		return $db->query( 'UPDATE sessions SET token = ?, userid = ?, date = ? WHERE cookieid = ?', $session[ 'token' ], $session[ 'userid' ], $session[ 'date' ], $session[ 'cookieid' ] );
 	}
 
 	public function Update_Cookie_LastActive( $cookieid )
