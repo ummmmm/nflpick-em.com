@@ -17,7 +17,6 @@ class JSON_UpdateNews implements iJSON
 	public function execute()
 	{
 		$db_news	= new News( $this->_db );
-		$token 		= Functions::Get( 'token' );
 		$news_id	= Functions::Post( 'news_id' );
 		$title		= Functions::Post( 'title' );
 		$message	= Functions::Post( 'message' );
