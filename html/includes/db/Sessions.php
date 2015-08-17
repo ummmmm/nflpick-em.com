@@ -86,9 +86,9 @@ class Sessions
 		return $this->_db->insert( 'sessions', $session );
 	}
 
-	public static function Delete( &$db, $token )
+	public function Delete( $token )
 	{
-		return $db->query( 'DELETE FROM sessions WHERE token = ?', $token );
+		return $this->_db->query( 'DELETE FROM sessions WHERE token = ?', $token );
 	}
 
 	public function Delete_Cookie( $cookie_id )
