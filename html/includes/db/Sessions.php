@@ -101,11 +101,11 @@ class Sessions
 		return $db->query( 'UPDATE sessions SET token = ?, userid = ?, date = ? WHERE cookieid = ?', $session[ 'token' ], $session[ 'userid' ], $session[ 'date' ], $session[ 'cookieid' ] );
 	}
 
-	public static function Update_Cookie_LastActive( &$db, $cookieid )
+	public function Update_Cookie_LastActive( $cookieid )
 	{
 		$date = time();
 
-		return $db->query( 'UPDATE sessions SET last_active = ? WHERE cookieid = ?', $date, $cookieid );
+		return $this->_db->query( 'UPDATE sessions SET last_active = ? WHERE cookieid = ?', $date, $cookieid );
 	}
 
 	public static function Validate( &$db, $userid, $token )
@@ -113,25 +113,6 @@ class Sessions
 		$cookieid = Functions::Cookie( 'session' );
 
 		$count = $db->single( 'SELECT * FROM sessions WHERE token = ? AND cookieid = ? AND userid = ?', $null, $token, $cookieid, $userid );
-
-		return $count ? true : false;
-	}
-
-	public static function Validate_Admin( &$db, $userid, $token )
-	{
-		$cookieid = Functions::Cookie( 'session' );
-
-		$count = $db->single( 'SELECT
-								u.id
-							   FROM
-								sessions s,
-								users u
-							   WHERE
-								s.token 	= ? 	AND
-								s.cookieid 	= ? 	AND
-								s.userid 	= ? 	AND
-								s.userid 	= u.id 	AND
-								u.admin 	= 1', $null, $token, $cookieid, $userid );
 
 		return $count ? true : false;
 	}

@@ -135,8 +135,9 @@ class Users
 
 	private function ValidateSession()
 	{
-		$cookieid 	= Functions::Cookie( 'session' );
-		$count 		= $this->_db->single( 'SELECT s.userid, s.token FROM users u, sessions s WHERE s.cookieid = ? AND u.id = s.userid', $session, $cookieid );
+		$db_sessions	= new Sessions( $this->_db );
+		$cookieid 		= Functions::Cookie( 'session' );
+		$count 			= $this->_db->single( 'SELECT s.userid, s.token FROM users u, sessions s WHERE s.cookieid = ? AND u.id = s.userid', $session, $cookieid );
 
 		if ( !$count )
 		{
@@ -148,7 +149,7 @@ class Users
 		$this->logged_in 	= true;
 		$this->Load( $this->id, $this->account );
 		$this->UserActive_Update();
-		Sessions::Update_Cookie_LastActive( $this->_db, $cookieid );
+		$db_sessions->Update_Cookie_LastActive( $cookieid );
 
 		return true;
 	}
