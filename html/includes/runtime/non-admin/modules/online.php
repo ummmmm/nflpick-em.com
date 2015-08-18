@@ -30,7 +30,7 @@ function Module_Content( &$db, &$user )
 		$date = new DateTime();
 		$date->setTimestamp( $loaded_user[ 'last_on' ] );
 
-		printf( "<p>%s - Last active on %s at %s</p>", htmlentities( $loaded_user[ 'name' ] ), $date->format( "D Fd, Y" ), $date->format( "h:i A T" ) );
+		printf( "<p>%s - Last active on %s at %s</p>", htmlentities( $loaded_user[ 'name' ] ), $date->format( "D F d, Y" ), $date->format( "h:i A T" ) );
 	}
 	
 	return true;
