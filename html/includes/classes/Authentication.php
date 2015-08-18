@@ -10,7 +10,6 @@ class Authentication
 	private $_db;
 
 	public $user;
-	public $authenticated;
 	public $userID;
 
 	public function __construct()
@@ -18,8 +17,8 @@ class Authentication
 		$this->_db				= new Database();
 		$this->_sessions 		= new Sessions( $this->_db );
 		$this->_users			= new Users( $this->_db );
+
 		$this->user				= array();
-		$this->authenticated	= false;
 		$this->userID			= 0;
 
 		$this->_initialize();
@@ -33,27 +32,21 @@ class Authentication
 		{
 			if ( $this->_users->Load( $session[ 'userid' ], $user ) )
 			{
-				$this->user 			= $user;
-				$this->session			= $session;
-				$this->userID			= $user[ 'id' ];
-				$this->authenticated	= true;
+				$this->session	= $session;
+				$this->user 	= $user;
+				$this->userID	= $user[ 'id' ];
 			}
 		}
 	}
 
 	public function isAdmin()
 	{
-		if ( $this->authenticated && $this->user[ 'admin' ] )
-		{
-			return true;
-		}
-
-		return false;
+		return $this->userID && $this->user[ 'admin' ];
 	}
 
 	public function isUser()
 	{
-		return $this->authenticated;
+		return $this->userID ? true : false;
 	}
 
 	public function isValidToken( $token )
@@ -81,4 +74,3 @@ class Authentication
 		return $this;
 	}
 }
-?>
