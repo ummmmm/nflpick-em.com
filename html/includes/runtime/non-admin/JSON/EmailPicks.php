@@ -36,7 +36,7 @@ class JSON_EmailPicks implements iJSON
 		}
 
 		$sent = array( 'userid' => $this->_auth->getUserID(), 'week' => $week, 'date' => Functions::Timestamp(), 'picks' => array() );
-		$mail = new Mail( $this->_auth->user[ 'email' ], sprintf( "Week %d Picks", $week ) );
+		$mail = new Mail( $this->_auth->getUser()[ 'email' ], sprintf( "Week %d Picks", $week ) );
 
 		foreach( $picks as $pick )
 		{
