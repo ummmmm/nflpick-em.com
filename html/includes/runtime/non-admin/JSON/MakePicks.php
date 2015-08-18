@@ -20,7 +20,7 @@ class JSON_MakePicks implements iJSON
 		$db_picks	= new Picks( $this->_db );
 		$db_teams	= new Teams( $this->_db );
 		$db_weeks	= new Weeks( $this->_db );
-		$date_now 	= new DateTime();
+		$date_now 	= time();
 
 		$week 		= Functions::Post( 'week' );
 		$gameid 	= Functions::Post( 'gameid' );
@@ -39,10 +39,7 @@ class JSON_MakePicks implements iJSON
 			return $this->_json->setError( array( '#Error#', sprintf( "Week '%d' could not be loaded", $week ) ) );
 		}
 		
-		$date_week = new DateTime();
-		$date_week->setTimestamp( $loaded_week[ 'date' ] );
-
-		if ( $loaded_week[ 'locked' ] === 1 || $date_now > $date_week )
+		if ( $loaded_week[ 'locked' ] === 1 || $date_now > $loaded_week[ 'date' ] )
 		{
 			return $this->_json->setError( array( "#Error#", "This week has already been locked.  You can no longer make picks." ) );
 		}
@@ -57,10 +54,7 @@ class JSON_MakePicks implements iJSON
 			return $this->_json->setError( array( "#Error#", "Invalid game data" ) );
 		}
 		
-		$date_start = new DateTime();
-		$date_start->setTimestamp( $game[ 'date' ] );
-		
-		if ( $date_now > $date_start )
+		if ( $date_now > $game[ 'date' ] )
 		{
 			return $this->_json->setError( array( "#Error#", "This game has already started and can no longer be updated." ) );
 		}
