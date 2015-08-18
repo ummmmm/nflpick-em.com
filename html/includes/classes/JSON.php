@@ -11,22 +11,24 @@ interface iJSON
 
 class JSON
 {
+	const FLAG_USER 	= 0x1;
+	const FLAG_ADMIN	= 0x2;
+	const FLAG_TOKEN	= 0x4;
+
 	private $_db;
 	private $_error;
 	private $_auth;
 	private $_action;
 	private $_misconfigured;
 	private $_data;
-	private $_requirement_flags;
 
 	public function __construct()
 	{
-		$this->_db 					= new Database();
-		$this->_auth				= new Authentication();
-		$this->_misconfigured		= false;
-		$this->_action				= null;
-		$this->_error				= array();
-		$this->_requirement_flags	= array( 'user' => 0x1, 'admin' => 0x2, 'token' => 0x4 );
+		$this->_db 				= new Database();
+		$this->_auth			= new Authentication();
+		$this->_misconfigured	= false;
+		$this->_action			= null;
+		$this->_error			= array();
 	}
 
 	public function initialize( $admin, $action, $token )
@@ -78,17 +80,17 @@ class JSON
 
 		$this->_getRequirements( $flags );
 
-		if ( ( $flags & $this->_requirement_flags[ 'admin' ] ) && !$this->_auth->isAdmin() )
+		if ( ( $flags & self::FLAG_USER ) && !$this->_auth->isUser() )
+		{
+			return $this->_setError( array( '#Error#', 'You must be a user to complete this action' ) );
+		}
+
+		if ( ( $flags & self::FLAG_ADMIN ) && !$this->_auth->isAdmin() )
 		{
 			return $this->_setError( array( '#Error#', 'You must be an administrator to complete this action' ) );
 		}
 
-		if ( ( $flags & $this->_requirement_flags[ 'user' ] ) && !$this->_auth->isUser() )
-		{
-			return $this->_setError( array( '#Error#', 'You must be logged in to complete this action' ) );
-		}
-
-		if ( ( $flags & $this->_requirement_flags[ 'token' ] ) && !$this->_auth->isValidToken( $token ) )
+		if ( ( $flags & self::FLAG_TOKEN ) && !$this->_auth->isValidToken( $token ) )
 		{
 			return $this->_setError( array( '#Error#', 'You must have a valid token to complete this action' ) );
 		}
@@ -100,9 +102,9 @@ class JSON
 	{
 		$requirements 	= $this->_action->requirements();
 		$flags			= 0x0;
-		$flags			|= array_key_exists( 'user', 	$requirements ) && $requirements[ 'user' ] 	? $this->_requirement_flags[ 'user' ] 	: 0x0;
-		$flags			|= array_key_exists( 'admin', 	$requirements ) && $requirements[ 'admin' ] ? $this->_requirement_flags[ 'admin' ] 	: 0x0;
-		$flags			|= array_key_exists( 'token', 	$requirements ) && $requirements[ 'token' ] ? $this->_requirement_flags[ 'token' ] 	: 0x0;
+		$flags			|= array_key_exists( 'user', 	$requirements ) && $requirements[ 'user' ] 	? self::FLAG_USER	: 0x0;
+		$flags			|= array_key_exists( 'admin', 	$requirements ) && $requirements[ 'admin' ] ? self::FLAG_ADMIN	: 0x0;
+		$flags			|= array_key_exists( 'token', 	$requirements ) && $requirements[ 'token' ] ? self::FLAG_TOKEN	: 0x0;
 	}
 
 	public function responseError()
