@@ -29,11 +29,11 @@ class JSON_HighlightPicks implements iJSON
 
 		if ( $userid != 0 )
 		{	
-			if ( $userid == $this->_auth->userID )
+			if ( $userid == $this->_auth->getUserID() )
 			{
 				return $this->_json->setError( array( "#Error#", "You cannot view picks you have different from yourself" ) );
 			}
-			else if ( ( $count = $this->_Load_Different_Picks( $this->_auth->userID, $userid, $week, $picks ) ) === false )
+			else if ( ( $count = $this->_Load_Different_Picks( $this->_auth->getUserID(), $userid, $week, $picks ) ) === false )
 			{
 				return $this->_json->DB_Error();
 			}
@@ -46,7 +46,7 @@ class JSON_HighlightPicks implements iJSON
 		}
 		else
 		{
-			if ( ( $count = $this->_Load_Different_Picks( $this->_auth->userID, NULL, $week, $users_picks ) ) === false )
+			if ( ( $count = $this->_Load_Different_Picks( $this->_auth->getUserID(), NULL, $week, $users_picks ) ) === false )
 			{
 				return $this->_json->DB_Error();
 			}

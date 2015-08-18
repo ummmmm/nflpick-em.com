@@ -31,7 +31,7 @@ class JSON_InsertNews implements iJSON
 			return $this->_json->setError( array( 'NFL-NEWS_INSERT-1', 'Message cannot be blank' ) );
 		}
 
-		$insert = array( 'title' => $title, 'news' => $message, 'active' => $active, 'user_id' => $this->_auth->userID );
+		$insert = array( 'title' => $title, 'news' => $message, 'active' => $active, 'user_id' => $this->_auth->getUserID() );
 		
 		if ( !$db_news->Insert( $insert ) )
 		{

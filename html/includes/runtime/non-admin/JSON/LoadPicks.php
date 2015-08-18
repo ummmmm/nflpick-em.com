@@ -37,7 +37,7 @@ class JSON_LoadPicks implements iJSON
 
 		foreach( $week[ 'games' ] as &$game )
 		{
-			$count = $db_picks->Load_User_Game( $this->_auth->userID, $game[ 'id' ], $pick );
+			$count = $db_picks->Load_User_Game( $this->_auth->getUserID(), $game[ 'id' ], $pick );
 
 			if ( $count === false )
 			{

@@ -28,14 +28,14 @@ class JSON_EmailPicks implements iJSON
 			return $this->_json->setError( array( 'NFL-EMAILPICKS-1', sprintf( 'Failed to load week %d', $week ) ) );
 		}
 
-		$count = $db_picks->UserWeekList_Load( $this->_auth->userID, $week, $picks );
+		$count = $db_picks->UserWeekList_Load( $this->_auth->getUserID(), $week, $picks );
 
 		if ( $count === false )
 		{
 			return $this->_json->DB_Error();
 		}
 
-		$sent = array( 'userid' => $this->_auth->userID, 'week' => $week, 'date' => Functions::Timestamp(), 'picks' => array() );
+		$sent = array( 'userid' => $this->_auth->getUserID(), 'week' => $week, 'date' => Functions::Timestamp(), 'picks' => array() );
 		$mail = new Mail( $this->_auth->user[ 'email' ], sprintf( "Week %d Picks", $week ) );
 
 		foreach( $picks as $pick )
@@ -55,7 +55,7 @@ class JSON_EmailPicks implements iJSON
 			return $this->_json->setError( array( 'NFL-EMAILPICKS-3', 'The email failed to send. Please try again later.' ) );
 		}
 
-		$insert = array( 'user_id' => $this->_auth->userID, 'picks' => json_encode( $sent ), 'week' => $week );
+		$insert = array( 'user_id' => $this->_auth->getUserID(), 'picks' => json_encode( $sent ), 'week' => $week );
 
 		if ( !$db_sent_picks->Insert( $insert ) )
 		{

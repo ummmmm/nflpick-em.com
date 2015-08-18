@@ -47,7 +47,7 @@ class JSON_VotePoll implements iJSON
 			return $this->_json->setError( array( 'NFL-POLLS_VOTE-2', 'Failed to load answer' ) );
 		}
 		
-		$count = $this->_Vote_Load_Poll_User( $poll_id, $this->_auth->userID );
+		$count = $this->_Vote_Load_Poll_User( $poll_id, $this->_auth->getUserID() );
 		
 		if ( $count === false )
 		{
@@ -61,7 +61,7 @@ class JSON_VotePoll implements iJSON
 		
 		$vote[ 'poll_id' ] 		= $poll_id;
 		$vote[ 'answer_id' ]	= $answer_id;
-		$vote[ 'user_id' ]		= $this->_auth->userID;
+		$vote[ 'user_id' ]		= $this->_auth->getUserID();
 		
 		if ( !$db_poll_votes->Insert( $vote ) )
 		{

@@ -71,7 +71,7 @@ class JSON_LoadPolls implements iJSON
 			}
 			else
 			{
-				$count = $this->_Vote_Casted( $this->_auth->userID, $poll[ 'id' ] );
+				$count = $this->_Vote_Casted( $this->_auth->getUserID(), $poll[ 'id' ] );
 				
 				if ( $count === false )
 				{

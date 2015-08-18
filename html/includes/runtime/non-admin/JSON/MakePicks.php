@@ -70,7 +70,7 @@ class JSON_MakePicks implements iJSON
 			return $this->_json->setError( array( "#Error#", "Failed to load teams" ) );
 		}
 		
-		$count_pick = $db_picks->Load_User_Game( $this->_auth->userID, $gameid, $pick );
+		$count_pick = $db_picks->Load_User_Game( $this->_auth->getUserID(), $gameid, $pick );
 		
 		if ( $count_pick === false )
 		{
@@ -87,7 +87,7 @@ class JSON_MakePicks implements iJSON
 			return $this->_json->DB_Error();
 		}
 		
-		$remaining = $db_picks->Remaining( $this->_auth->userID, $week );
+		$remaining = $db_picks->Remaining( $this->_auth->getUserID(), $week );
 
 		return $this->_json->setData( array( 'remaining' => $remaining, 'message' => 'You have picked the <b>' . $winning_team[ 'team' ] . '</b> to beat the <b>' . $losing_team[ 'team'] . '</b>' ) );
 	}
