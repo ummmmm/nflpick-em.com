@@ -37,7 +37,7 @@ if ( $screen_validation )
 <meta charset="utf-8" />
 <title><?php printf( '%s', htmlentities( $settings->site_title ) ); ?></title>
 <base href="<?php print $settings->domain_url; ?>" />
-<link rel="icon" type="image/x-icon" href="favicon.ico" />
+<link rel="icon" type="image/x-icon" href="static/favicon.ico" />
 <link rel="stylesheet" type="text/css" href="static/css/styles.css" media="screen" />
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
 <script src="static/javascript/jqueryui.js" type="text/javascript"></script>
