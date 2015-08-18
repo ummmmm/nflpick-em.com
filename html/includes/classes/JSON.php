@@ -53,9 +53,8 @@ class JSON
 
 	private function _configure( $admin, $action, $token )
 	{
-		$class 			= sprintf( 'JSON_%s', $action );
-		$file_path 		= $this->_filePath( $admin, $action );
-		$requirements	= array();
+		$class 		= sprintf( 'JSON_%s', $action );
+		$file_path 	= $this->_filePath( $admin, $action );
 
 		if ( !file_exists( $file_path ) )
 		{
