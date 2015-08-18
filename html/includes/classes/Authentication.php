@@ -6,16 +6,14 @@ require_once( "functions.php" );
 class Authentication
 {
 	private $_db;
-
 	public $user;
 	public $userID;
 
 	public function __construct()
 	{
-		$this->_db				= new Database();
-
-		$this->user				= array();
-		$this->userID			= 0;
+		$this->_db		= new Database();
+		$this->user		= array();
+		$this->userID	= 0;
 
 		$this->_initialize();
 	}
@@ -31,6 +29,16 @@ class Authentication
 			$this->user 	= $user;
 			$this->userID	= $user[ 'id' ];
 		}
+	}
+
+	public function getUserID()
+	{
+		return $this->userID;
+	}
+
+	public function getUser()
+	{
+		return $this->user;
 	}
 
 	public function isAdmin()
