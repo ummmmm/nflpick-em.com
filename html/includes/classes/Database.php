@@ -1,5 +1,6 @@
 <?php
 
+require_once( "includes/config.php" );
 include_once( 'includes/db/db.php' );
 include_once( "includes/classes/functions.php" );
 
@@ -15,23 +16,18 @@ class Database extends mysqli
 
 	public function __construct()
 	{
-		if ( !defined( "DB_CONFIG" ) || !Functions::Strip_Nulls( DB_CONFIG ) )
-		{
-			die( "Failed to load configuration file" );
-		}
+		$db_settings = array();
 
-		$settings = parse_ini_file( DB_CONFIG, true );
-
-		if ( $settings === false )
+		if ( !defined( "DB_CONFIG" ) || !Functions::Get_Config_Section( DB_CONFIG, "database", $db_settings ) )
 		{
-			die( 'Failed to parse the configuration file' );
+			die( "Failed to load configuration settings" );
 		}
 
 		$this->_connected	= false;
-		$this->_host		= $settings[ 'database' ][ 'host' ];
-		$this->_user		= $settings[ 'database' ][ 'username' ];
-		$this->_password	= $settings[ 'database' ][ 'password' ];
-		$this->_schema		= $settings[ 'database' ][ 'schema' ];
+		$this->_host		= $db_settings[ 'host' ];
+		$this->_user		= $db_settings[ 'username' ];
+		$this->_password	= $db_settings[ 'password' ];
+		$this->_schema		= $db_settings[ 'schema' ];
 
 		parent::__construct( $this->_host, $this->_user, $this->_password, $this->_schema );
 

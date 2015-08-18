@@ -1,6 +1,5 @@
 <?php
 
-require_once( 'config.php' );
 require_once( 'includes/classes/functions.php' );
 require_once( 'includes/classes/Database.php' );
 require_once( 'includes/classes/Setup.php' );

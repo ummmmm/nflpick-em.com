@@ -4,4 +4,4 @@ sftp-config.json
 nflpick-em.com.sublime-*
 nflpickem.sublime-*
 data/config.ini
-html/config.php
+html/includes/config.php

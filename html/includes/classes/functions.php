@@ -608,4 +608,24 @@ EOT;
 
 		return $string_ns;
 	}
+
+	public static function Get_Config_Section( $file, $section_name, &$section )
+	{
+		$file 		= Functions::Strip_Nulls( $file );
+		$settings	= @parse_ini_file( $file, true );
+
+		if ( !$settings )
+		{
+			return false;
+		}
+
+		if ( !array_key_exists( $section_name, $settings ) )
+		{
+			return false;
+		}
+
+		$section = $settings[ $section_name ];
+
+		return true;
+	}
 }

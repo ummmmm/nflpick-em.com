@@ -2,7 +2,6 @@
 
 header( 'Content-type: application/json' );
 
-require_once( 'config.php' );
 require_once( 'includes/classes/JSON.php' );
 
 $json	= new JSON();
