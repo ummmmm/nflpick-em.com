@@ -41,7 +41,7 @@ class JSON_InsertPoll implements iJSON
 			return $this->_json->DB_Error();
 		}
 		
-		$poll_id = $this->_db->insert_id;
+		$poll_id = $this->_db->insertID();
 		
 		foreach( $answers as $answer )
 		{

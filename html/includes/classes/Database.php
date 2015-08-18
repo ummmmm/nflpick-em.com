@@ -4,13 +4,13 @@ require_once( "includes/config.php" );
 include_once( 'includes/db/db.php' );
 include_once( "includes/classes/functions.php" );
 
-class Database extends mysqli
+class Database
 {
-	public 	$_host;
-	public 	$_user;
+	private $_mysqli;
+	private	$_host;
+	private	$_user;
 	private	$_password;
-	public  $_schema;
-	private $_connected;
+	private $_schema;
 	private $_error_code;
 	private $_error_message;
 
@@ -23,27 +23,24 @@ class Database extends mysqli
 			die( "Failed to load configuration settings" );
 		}
 
-		$this->_connected	= false;
+		$this->_mysqli		= null;
 		$this->_host		= $db_settings[ 'host' ];
 		$this->_user		= $db_settings[ 'username' ];
 		$this->_password	= $db_settings[ 'password' ];
 		$this->_schema		= $db_settings[ 'schema' ];
+		$this->_mysqli 		= @new mysqli( $this->_host, $this->_user, $this->_password, $this->_schema );
 
-		parent::__construct( $this->_host, $this->_user, $this->_password, $this->_schema );
-
-		if ( mysqli_connect_error() )
+		if ( $this->_mysqli->connect_error )
 		{
-			die( 'Database error: ' . mysqli_connect_error() );
+			die( sprintf( "Database error: %s", htmlentities( $this->_mysqli->connect_error ) ) );
 		}
-
-		$this->_connected = true;
 	}
 
 	public function __destruct()
 	{
-		if ( $this->_connected )
+		if ( !$this->_mysqli->connect_error )
 		{
-			parent::close();
+			$this->_mysqli->close();
 		}
 	}
 
@@ -106,11 +103,16 @@ class Database extends mysqli
 		return call_user_func_array( array( $this, 'query' ), array_merge( $args, $values ) );
 	}
 
+	public function insertID()
+	{
+		return $this->_mysqli->insert_id;
+	}
+
 	private function _Run_Statement( &$query, $params, $multiple_results = false, &$results = null, &$result_count = 0 )
 	{
 		$result_count 	= 0;
 		$bind_count 	= count( $params );
-		$stmt 			= $this->stmt_init();
+		$stmt 			= $this->_mysqli->stmt_init();
 
 		if ( !$stmt->prepare( $query ) )
 		{

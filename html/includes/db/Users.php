@@ -117,8 +117,8 @@ class Users
 			return false;
 		}
 
-		$this->id 		= $this->_db->insert_id;
-		$user[ 'id' ] 	= $this->_db->insert_id;
+		$this->id 		= $this->_db->insertID();
+		$user[ 'id' ] 	= $this->_db->insertID();
 
 		if ( !$db_picks->Insert_All( $this->id ) )
 		{
