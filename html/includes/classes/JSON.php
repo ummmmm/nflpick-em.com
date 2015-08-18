@@ -1,7 +1,8 @@
 <?php
 
-require_once( 'Database.php' );
-require_once( 'Authentication.php' );
+require_once( "Database.php" );
+require_once( "Authentication.php" );
+require_once( "Functions.php" );
 
 interface iJSON
 {
@@ -154,12 +155,7 @@ class JSON
 		return false;
 	}
 
-	public function DB_Error()
-	{
-		$this->_error = $this->_db->Get_Error();
-
-		return false;
-	}
+	// public functions that the sub-classes can use to set data/errors
 
 	public function setData( $data )
 	{
@@ -173,5 +169,10 @@ class JSON
 		$this->_error = $error;
 
 		return false;
+	}
+
+	public function DB_Error()
+	{
+		return $this->_setError( $this->_db->Get_Error() );
 	}
 }
