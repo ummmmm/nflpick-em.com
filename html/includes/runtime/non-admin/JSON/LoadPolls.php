@@ -11,7 +11,7 @@ class JSON_LoadPolls implements iJSON
 
 	public function requirements()
 	{
-		return array( 'user' => true );
+		return array();
 	}
 
 	public function execute()
@@ -65,7 +65,7 @@ class JSON_LoadPolls implements iJSON
 			
 			$poll[ 'answers' ] = $answers;
 			
-			if ( !$this->_auth->authenticated )
+			if ( !$this->_auth->isUser() )
 			{
 				$poll[ 'voted' ] = true;
 			}
