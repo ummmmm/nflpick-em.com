@@ -11,7 +11,7 @@ class JSON_LoadWeeks implements iJSON
 
 	public function requirements()
 	{
-		return array( 'user' => true, 'admin' => true );
+		return array( 'admin' => true );
 	}
 
 	public function execute()

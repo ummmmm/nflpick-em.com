@@ -11,7 +11,7 @@ class JSON_LockWeek implements iJSON
 
 	public function requirements()
 	{
-		return array( 'user' => true, 'admin' => true, 'token' => true );
+		return array( 'admin' => true, 'token' => true );
 	}
 
 	public function execute()
