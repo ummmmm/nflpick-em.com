@@ -18,7 +18,7 @@ class Database
 	{
 		$db_settings = array();
 
-		if ( !defined( "DB_CONFIG" ) || !Functions::Get_Config_Section( DB_CONFIG, "database", $db_settings ) )
+		if ( !defined( "CONFIG_INI" ) || !Functions::Get_Config_Section( CONFIG_INI, "database", $db_settings ) )
 		{
 			die( "Failed to load configuration settings" );
 		}
