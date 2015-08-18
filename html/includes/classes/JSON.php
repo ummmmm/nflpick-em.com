@@ -17,14 +17,16 @@ class JSON
 	private $_action;
 	private $_misconfigured;
 	private $_data;
+	private $_requirement_flags;
 
 	public function __construct()
 	{
-		$this->_db 				= new Database();
-		$this->_auth			= new Authentication();
-		$this->_misconfigured	= false;
-		$this->_action			= null;
-		$this->_error			= array();
+		$this->_db 					= new Database();
+		$this->_auth				= new Authentication();
+		$this->_misconfigured		= false;
+		$this->_action				= null;
+		$this->_error				= array();
+		$this->_requirement_flags	= array( 'user' => 0x1, 'admin' => 0x2, 'token' => 0x4 );
 	}
 
 	public function initialize( $admin, $action, $token )
@@ -53,16 +55,11 @@ class JSON
 		$file_path 		= $this->_filePath( $admin, $action );
 		$requirements	= array();
 
-		if ( !preg_match( "/^[a-zA-Z_]+$/", $action ) )
-		{
-			return $this->_setError( array( '#Error#', 'Invalid action' ) );
-		}
-
 		if ( !file_exists( $file_path ) )
 		{
 			return $this->_setError( array( '#Error#', 'Action not found' ) );
 		}
-		else if ( !include_once( $file_path ) )
+		else if ( !require_once( $file_path ) )
 		{
 			return $this->_setError( array( '#Error#', 'Failed to load action' ) );
 		}
@@ -79,19 +76,19 @@ class JSON
 			return $this->_setError( array( '#Error#', 'Action is missing required interface' ) );
 		}
 
-		$this->_getRequirements( $needs_admin, $needs_user, $needs_token );
+		$this->_getRequirements( $flags );
 
-		if ( $needs_admin && !$this->_auth->isAdmin() )
+		if ( ( $flags & $this->_requirement_flags[ 'admin' ] ) && !$this->_auth->isAdmin() )
 		{
 			return $this->_setError( array( '#Error#', 'You must be an administrator to complete this action' ) );
 		}
 
-		if ( $needs_user && !$this->_auth->isUser() )
+		if ( ( $flags & $this->_requirement_flags[ 'user' ] ) && !$this->_auth->isUser() )
 		{
 			return $this->_setError( array( '#Error#', 'You must be logged in to complete this action' ) );
 		}
 
-		if ( $needs_token && !$this->_auth->isValidToken( $token ) )
+		if ( ( $flags & $this->_requirement_flags[ 'token' ] ) && !$this->_auth->isValidToken( $token ) )
 		{
 			return $this->_setError( array( '#Error#', 'You must have a valid token to complete this action' ) );
 		}
@@ -99,12 +96,13 @@ class JSON
 		return true;
 	}
 
-	private function _getRequirements( &$admin, &$user, &$token )
+	private function _getRequirements( &$flags )
 	{
 		$requirements 	= $this->_action->requirements();
-		$admin			= array_key_exists( 'admin', 	$requirements ) && $requirements[ 'admin' ] ? true : false;
-		$user			= array_key_exists( 'user', 	$requirements ) && $requirements[ 'user' ] 	? true : false;
-		$token			= array_key_exists( 'token', 	$requirements ) && $requirements[ 'token' ] ? true : false;
+		$flags			= 0x0;
+		$flags			|= array_key_exists( 'user', 	$requirements ) && $requirements[ 'user' ] 	? $this->_requirement_flags[ 'user' ] 	: 0x0;
+		$flags			|= array_key_exists( 'admin', 	$requirements ) && $requirements[ 'admin' ] ? $this->_requirement_flags[ 'admin' ] 	: 0x0;
+		$flags			|= array_key_exists( 'token', 	$requirements ) && $requirements[ 'token' ] ? $this->_requirement_flags[ 'token' ] 	: 0x0;
 	}
 
 	public function responseError()
