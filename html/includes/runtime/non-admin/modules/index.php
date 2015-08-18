@@ -33,7 +33,10 @@ function Module_Content( &$db, &$user, &$settings )
 		print '<p>' . nl2br( htmlentities( $news[ 'news' ] ) ) . '</p>';
 	}
 
-	print '<div align="center"><a href="?action=viewall" title="View All News">View All Posted News</a></div>';
+	if ( $action != "viewall" )
+	{
+		print '<div align="center"><a href="?action=viewall" title="View All News">View All Posted News</a></div>';
+	}
 
 	return true;
 }
