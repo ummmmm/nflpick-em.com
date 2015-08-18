@@ -5,8 +5,6 @@ require_once( "functions.php" );
 
 class Authentication
 {
-	private $_sessions;
-	private $_users;
 	private $_db;
 
 	public $user;
@@ -15,8 +13,6 @@ class Authentication
 	public function __construct()
 	{
 		$this->_db				= new Database();
-		$this->_sessions 		= new Sessions( $this->_db );
-		$this->_users			= new Users( $this->_db );
 
 		$this->user				= array();
 		$this->userID			= 0;
@@ -26,16 +22,14 @@ class Authentication
 
 	private function _initialize()
 	{
-		$cookie_id = Functions::Cookie( 'session' );
+		$cookie_id		= Functions::Cookie( 'session' );
+		$db_users		= new Users( $this->_db );
+		$db_sessions	= new Sessions( $this->_db );
 
-		if ( $this->_sessions->Load( $cookie_id, $session ) )
+		if ( $db_sessions->Load( $cookie_id, $session ) && $db_users->Load( $session[ 'userid' ], $user ) )
 		{
-			if ( $this->_users->Load( $session[ 'userid' ], $user ) )
-			{
-				$this->session	= $session;
-				$this->user 	= $user;
-				$this->userID	= $user[ 'id' ];
-			}
+			$this->user 	= $user;
+			$this->userID	= $user[ 'id' ];
 		}
 	}
 
@@ -51,7 +45,8 @@ class Authentication
 
 	public function isValidToken( $token )
 	{
-		$count = $this->_sessions->Load_User_Token( $this->userID, $token, $null );
+		$db_sessions	= new Sessions( $this->_db );
+		$count 			= $db_sessions->Load_User_Token( $this->userID, $token, $null );
 
 		return $count ? true : false;
 	}
