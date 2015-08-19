@@ -5,31 +5,19 @@ ob_start();
 require_once( 'includes/classes/functions.php' );
 require_once( 'includes/classes/Database.php' );
 require_once( 'includes/classes/validation.php' );
+require_once( "includes/classes/Screen.php" );
 
+$screen 			= new Screen();
 $db					= new Database();
 $users				= new Users( $db );
 $settings			= new Settings( $db );
 
-$screen_validation 	= Functions::ValidateScreen( $db, $users, $extra_screen_content );
-$module_head		= true;
-$module_content		= false;
-$jquery				= '';
+$admin 		= Functions::Get( "view" ) == "admin" ? true : false;
+$screen1	= Functions::Get( "screen" ) == "" ? "index" : Functions::Get( "screen" );
+$update		= Functions::Post( "update" ) == "update" ? true : false;
 
-if ( $screen_validation )
-{
-	if ( function_exists( 'Module_Head' ) )
-	{
-		ob_start();
-		$module_head = call_user_func_array( 'Module_Head', array( &$db, &$users, &$settings, &$jquery ) );
-		$module_head_output = ob_get_contents();
-		ob_clean();
-	}
-
-	ob_start();
-	$module_content = call_user_func_array( 'Module_Content', array( &$db, &$users, &$settings ) );
-	$module_content_output = ob_get_contents();
-	ob_clean();
-}
+$screen->initialize( $admin, ucfirst( $screen1 ) );
+$success			= $screen->execute( $update );
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -42,23 +30,21 @@ if ( $screen_validation )
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
 <script src="static/javascript/jqueryui.js" type="text/javascript"></script>
 <script src="static/javascript/javascript.js" type="text/javascript"></script>
+<script type="text/javascript">
+	var json_url = <?php print json_encode( sprintf( "json.php?token=%s", urlencode( $users->token ) ) ); ?>;
+	var token = <?php print json_encode( $users->token ); ?>;
+</script>
 <script type="text/javascript">$( document ).ready( function() { $.fn.load_poll(); } );</script>
 <?php
-	if ( Functions::Get( 'view' ) === 'admin' && $users->account && $users->account[ 'admin' ] )
+	if ( $admin )
 	{
-		print '<script src="static/javascript/admin.js" type="text/javascript"></script>';
+		print '<script type="text/javascript src="static/javascript/admin.js"></script>';
 	}
 
-	if ( $module_head === true && $module_content === true && isset( $module_head_output ) )
+	if ( $success )
 	{
-		print $module_head_output;
+		print $screen->getHeadData();
 	}
-
-	print '<script type="text/javascript">';
-	print "\nvar json_url = 'json.php?token={$users->token}';\n";
-	print "var token = '{$users->token}';\n";
-	print "\$( document ).ready( function() { {$jquery} } );";
-	print "</script>\n";
 ?>
 <script>
 	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -74,7 +60,7 @@ if ( $screen_validation )
 <div class="container">
   <div class="header">
     <div class="title">
-      <h1><a href="" title="<?php print $settings->site_title; ?>"><?php print $settings->site_title; ?></a></h1>
+      <h1><a href="" title="<?php printf( "%s", htmlentities( $settings->site_title ) ); ?>"><?php printf( "%s", htmlentities( $settings->site_title ) ); ?></a></h1>
     </div>
   </div>
   <div class="navigation">
@@ -83,12 +69,14 @@ if ( $screen_validation )
   <div class="main">
     <div class="content">
 	<?php
-		if ( $module_head === true && $module_content === true )
+		if ( $success )
 		{
-			print $module_content_output;
-			print $extra_screen_content;
-		} else {
-			Functions::OutputError();
+			print $screen->getValidationErrorsData();
+			print $screen->getContentData();
+		}
+		else
+		{
+			Functions::OutputError( $screen->getError() );
 		}
 	?>
     </div>
@@ -99,13 +87,13 @@ if ( $screen_validation )
       <?php
       	if ( $users->logged_in === false )
       	{
-      		print '<li><a href="?module=register" title="Register">Register</a></li>';
-      		print '<li><a href="?module=login" title="Login">Login</a></li>';
+      		print '<li><a href="?screen=register" title="Register">Register</a></li>';
+      		print '<li><a href="?screen=login" title="Login">Login</a></li>';
       	}
       ?>
-        <li><a href="?module=schedule" title="View Schedule">Schedule</a></li>
-        <li><a href="?module=contact" title="Contact Us">Contact Us</a></li>
-        <li><a href="?module=online" title="Online Users">Online Users</a></li>
+        <li><a href="?screen=schedule" title="View Schedule">Schedule</a></li>
+        <li><a href="?screen=contact" title="Contact Us">Contact Us</a></li>
+        <li><a href="?screen=online" title="Online Users">Online Users</a></li>
       </ul>
       <h1>Poll</h1>
 		<div id="loading_polls_nav"></div>
