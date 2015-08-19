@@ -158,34 +158,11 @@ class Functions
 		return true;
 	}
 
-	public static function Error( $code, $message )
-	{
-		global $error_code;
-		global $error_message;
-
-		$error_code 	= $code;
-		$error_message 	= $message;
-
-		return false;
-	}
-
 	public static function ValidationError( $errors )
 	{
 		global $error_validation;
 
 		$error_validation = $errors;
-
-		return false;
-	}
-
-	public static function EmailExists( $db, $email )
-	{
-		$count = $db->single( 'SELECT id FROM users WHERE email = ?', $null, $email );
-
-		if ( $count === 1 )
-		{
-			return true;
-		}
 
 		return false;
 	}
@@ -289,8 +266,8 @@ class Functions
 
 	public static function Information( $h1, $p )
 	{
-		print "<h1>{$h1}</h1>";
-		print "<p>{$p}</p>";
+		printf( "<h1>%s</h1>\n", $h1 );
+		printf( "<p>%s</p>\n", $p );
 
 		return true;
 	}
@@ -340,120 +317,6 @@ class Functions
 		}
 
 		return strtoupper( $hex_salt );
-	}
-
-	public static function TopNavigation( &$db, &$user )
-	{
-		$db_weeks = new Weeks( $db );
-
-		if ( !$user->logged_in )
-		{
-			print '<span>Welcome, Guest. Please login to start making your picks for week ' . htmlentities( $db_weeks->Current() ) . '.</span>';
-		} else {
-			print '<span>Welcome, ' . htmlentities( $user->account[ 'name' ] ) . '! You have ' . htmlentities( $user->account[ 'wins' ] ) . ' wins and ' . htmlentities( $user->account[ 'losses' ] ) . ' losses and currently in ' . Functions::Place( $user->account[ 'current_place' ] ) . ' place.</span>';
-		}
-	}
-
-	public static function UserNavigation( &$db, &$user )
-	{
-		$db_weeks = new Weeks( $db );
-
-		if ( $user->logged_in )
-		{
-			$admin 	= ( $user->account[ 'admin' ] ) ? '<li><a href="?view=admin" title="Admin Control Panel">Admin Control Panel</a></li>' : '';
-			$weekid = $db_weeks->Previous();
-
-			print <<<EOT
-				<h1>User Links</h1>
-				<ul>
-				  <li><a href="" title="Home">Home Page</a></li>
-				  <li><a href="?module=controlpanel" title="User Control Panel">User Control Panel</a></li>
-				  {$admin}
-				  <li><a href="?module=makepicks" title="Make Picks">Make Picks</a></li>
-				  <li><a href="?module=viewpicks&week={$weekid}" title="User Picks">View Other's Picks</a></li>
-				  <li><a href="?module=weeklyrecords" title="Weekly User Records">View Weekly Records</a></li>
-				  <li><a href="?module=leaderboard" title="Leader Board">View Leader Board</a></li>
-				  <li><a href="?module=logout" title="Logout" id="logout">Logout</a></li>
-				</ul>
-EOT;
-		}
-	}
-
-	public static function ValidateScreen( &$db, &$user, &$extra_screen_content )
-	{
-		$view	= Functions::Get( 'view' );
-		$module = Functions::Get( 'module' );
-
-		if ( empty( $module ) )
-		{
-			$module = 'index';
-		}
-
-		if ( $user->logged_in )
-		{
-			$action = Functions::Get( 'action' );
-
-			if ( $user->account[ 'force_password' ] && ( $module != 'forgotpassword' || ( $module == 'forgotpassword' &&  $action != 'changepassword' ) ) )
-			{
-				header( sprintf( 'location: %s?module=forgotpassword&action=changepassword', INDEX ) );
-				return false;
-			}
-		}
-
-		if ( !Validation::Filename( $module ) )
-		{
-			return Functions::Error( 'NFL-FUNCTIONS-1', 'Invalid module name' );
-		}
-
-		if ( $view === 'admin' && $user->logged_in && $user->account[ 'admin' ] )
-		{
-			$path = "includes/runtime/admin/modules/{$module}.php";
-		} else {
-			$path = "includes/runtime/non-admin/modules/{$module}.php";
-		}
-
-		if ( !file_exists( $path ) )
-		{
-			return Functions::Error( 'NFL-FUNCTIONS-2', "Module '{$module}' does not exist." );
-		}
-
-		ob_start();
-		require_once( $path );
-		$extra_screen_content = ob_get_contents();
-		ob_clean();
-
-		if ( !function_exists( 'Module_Content' ) )
-		{
-			return Functions::Error( 'NFL-FUNCTIONS-3', "The module '{$module}' is missing the Module_Content function." );
-		}
-
-		$validation = array();
-		$action 	= Functions::Post( 'action' );
-
-		if ( $action === 'update' )
-		{
-			if ( !function_exists( 'Module_Validate' ) )
-			{
-				return Functions::Error( 'NFL-FUNCTIONS-4', "The module '{$module}' is missing the Module_Validate function." );
-			}
-
-			if ( !function_exists( 'Module_Update' ) )
-			{
-				return Functions::Error( 'NFL-FUNCTIONS-5', "The module '{$module}' is missing the Module_Update function." );
-			}
-
-			if ( !Module_Validate( $db, $user, $validation ) )
-			{
-				return true;
-			}
-
-			if ( !Module_Update( $db, $user, $validation ) )
-			{
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	public static function PrintR( $data )
