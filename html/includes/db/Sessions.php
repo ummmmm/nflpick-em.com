@@ -29,7 +29,7 @@ class Sessions
 	{
 		$cookie_id	= sha1( session_id() );
 		$token		= sha1( uniqid( rand(), TRUE ) );
-		$session	= array( 'token' => $token, 'cookie_id' => $cookie_id, 'user_id' => $user_id );
+		$session	= array( 'token' => $token, 'cookieid' => $cookie_id, 'userid' => $user_id );
 
 		setcookie( 'session', $cookie_id, time() + 60 * 60 * 24 * 30, '/', '', false, true );
 
