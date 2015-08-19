@@ -12,8 +12,7 @@ class Database
 	private	$_user;
 	private	$_password;
 	private $_schema;
-	private $_error_code;
-	private $_error_message;
+	private $_error;
 
 	public function __construct()
 	{
@@ -24,6 +23,7 @@ class Database
 			die( "Failed to load configuration settings" );
 		}
 
+		$this->_error		= array();
 		$this->_connected	= false;
 		$this->_mysqli		= null;
 		$this->_host		= $db_settings[ 'host' ];
@@ -120,14 +120,14 @@ class Database
 
 		if ( !$stmt->prepare( $query ) )
 		{
-			return $this->_Set_Error( 'NFL-DATABASE-0', $this->error );
+			return $this->_setError( array( 'NFL-DATABASE-0', $this->_mysqli->error ) );
 		}
 
 		if ( $bind_count )
 		{
 			if ( $stmt->param_count != $bind_count )
 			{
-				return $this->_Set_Error( '#Error#', sprintf( 'Parameter count mismatch, expected %d parameters, found %d', $bind_count, $stmt->param_count ) );
+				return $this->_setError( array( '#Error#', sprintf( 'Parameter count mismatch, expected %d parameters, found %d', $bind_count, $stmt->param_count ) ) );
 			}
 
 			$bind_params = array( '' ); // initialize the empty array
@@ -158,20 +158,20 @@ class Database
 
 			if ( !call_user_func_array( array( $stmt, 'bind_param' ), $bind_params ) )
 			{
-				return $this->_Set_Error( 'NFL-DATABASE-1', $this->error );
+				return $this->_setError( array( 'NFL-DATABASE-1', $this->_mysqli->error ) );
 			}
 		}
 
 		if ( !$stmt->execute() )
 		{
-			return $this->_Set_Error( 'NFL-DATABASE-2', $this->error );
+			return $this->_setError( array( 'NFL-DATABASE-2', $this->_mysqli->error ) );
 		}
 
 		if ( is_null( $results ) ) // Must be an INSERT, UPDATE, DELETE
 		{
 			if ( !$stmt->close() )
 			{
-				return $this->_Set_Error( 'NFL-DATABASE-8', $this->error );
+				return $this->_setError( array( 'NFL-DATABASE-8', $this->_mysqli->error ) );
 			}
 
 			return true;
@@ -183,7 +183,7 @@ class Database
 		{
 			$stmt->close();
 
-			return $this->_Set_Error( 'NFL-DATABASE-3', $this->error );
+			return $this->_setError( array( 'NFL-DATABASE-3', $this->_mysqli->error ) );
 		}
 
 		if ( ( $result_count = $stmt->num_rows ) == 0 )
@@ -192,7 +192,7 @@ class Database
 
 			if ( !$stmt->close() )
 			{
-				return $this->_Set_Error( 'NFL-DATABASE-4', $this->error );
+				return $this->_setError( array( 'NFL-DATABASE-4', $this->_mysqli->error ) );
 			}
 
 			return true;
@@ -203,7 +203,7 @@ class Database
 			$stmt->free_result();
 			$stmt->close();
 
-			return $this->_Set_Error( 'NFL-DATABASE-5', $this->error );
+			return $this->_setError( array( 'NFL-DATABASE-5', $this->_mysqli->error ) );
 		}
 
 		$fields = array();
@@ -220,7 +220,7 @@ class Database
 			$stmt->free_result();
 			$stmt->close();
 
-			return $this->_Set_Error( 'NFL-DATABASE-6', $this->error );
+			return $this->_setError( array( 'NFL-DATABASE-6', $this->_mysqli->error ) );
 		}
 
 		if ( $multiple_results )
@@ -246,7 +246,7 @@ class Database
 				$stmt->free_result();
 				$stmt->close();
 
-				return $this->_Set_Error( 'NFL-DATABASE-7', $this->error );
+				return $this->_setError( array( 'NFL-DATABASE-7', $this->_mysqli->error ) );
 			}
 
 			foreach( $fields as $key => $value )
@@ -259,22 +259,21 @@ class Database
 
 		if ( !$stmt->close() )
 		{
-			return $this->_Set_Error( 'NFL-DATABASE-8', $this->error );
+			return $this->_setError( array( 'NFL-DATABASE-8', $this->_mysqli->error ) );
 		}
 
 		return true;
 	}
 
-	private function _Set_Error( $code, $message )
+	private function _setError( $error )
 	{
-		$this->_error_code		= $code;
-		$this->_error_message 	= $message;
+		$this->_error = $error;
 
-		return Functions::Error( $code, $message );
+		return false;
 	}
 
 	public function Get_Error()
 	{
-		return $this->_error_message;
+		return $this->_error;
 	}
 }
