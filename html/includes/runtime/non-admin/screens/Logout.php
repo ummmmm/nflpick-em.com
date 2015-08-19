@@ -9,15 +9,16 @@ class Screen_Logout implements iScreen
 		$this->_screen	= $screen;
 	}
 
+	public function requirements()
+	{
+		return array( "user" => true );
+	}
+
 	public function content()
 	{
-		if ( $this->_auth->authenticated )
-		{
-			$db_sessions = new Sessions( $this->_db );
-			$db_sessions->Delete( $this->_auth->session[ 'token' ] );
-			setcookie( 'session', null, -1, INDEX );
-		}
-
+		$db_sessions = new Sessions( $this->_db );
+		$db_sessions->Delete_Cookie( Functions::Cookie( "session" ) );
+		setcookie( 'session', null, -1, INDEX );
 		header( sprintf( 'location: %s', INDEX ) );
 
 		return true;
