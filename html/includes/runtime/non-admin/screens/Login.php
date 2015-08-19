@@ -9,6 +9,11 @@ class Screen_Login implements iScreen
 		$this->_screen	= $screen;
 	}
 
+	public function requirements()
+	{
+		return array();
+	}
+
 	public function validate()
 	{
 		$db_users	= new Users( $this->_db );
@@ -26,27 +31,42 @@ class Screen_Login implements iScreen
 				usleep( $settings[ 'login_sleep' ] * 1000 );
 			}
 
-			return $this->_screen->setValidationErrors( "Invalid email or password" );
+			return $this->_screen->setValidationErrors( array( "Invalid email or password" ) );
 		}
 
-		$this->_screen->setValidationData( array( "email" => $email ) );
+		return $this->_screen->setValidationData( array( "email" => $email ) );
+	}
+
+	public function update( $data )
+	{
+		$db_users		= new Users( $this->_db );
+		$db_sessions 	= new Sessions( $this->_db );
+
+		if ( !$db_users->Load_Email( $data[ 'email' ], $user ) )
+		{
+			return $this->_screen->setError( array( "#Error#", "Failed to load user account" ) );
+		}
+
+		if ( !$db_sessions->Generate( $user[ 'id' ] ) )
+		{
+			return $this->_screen->setDBError();
+		}
+
+		header( sprintf( 'Location: %s', INDEX ) );
 
 		return true;
 	}
 
-	public function update( $validation_data )
+	public function jquery()
 	{
-		return true;
-	}
+		print "$( '#loginEmail' ).focus();\n";
 
-	public function head()
-	{
 		return true;
 	}
 
 	public function content()
 	{
-		if ( $this->_auth->authenticated )
+		if ( $this->_auth->getUserID() )
 		{
 			header( sprintf( "Location: %s", INDEX ) );
 			die();
@@ -64,9 +84,9 @@ class Screen_Login implements iScreen
 			<label for="password">Password</label>
 			<input type="password" name="password" id="loginPassword" value="" />
 			<br />
-			<input type="hidden" name="update" value="update" />
-			<input type="submit" name="login" id="login" value="Login Now!" /><br />
-			<a href="?module=forgotpassword" title="Forgotten Password?">Forgotten Password?</a>
+			<input type="hidden" name="update" value="1" />
+			<input type="submit" name="login" id="login" value="Login" /><br />
+			<a href="?screen=forgot_password" title="Forgotten Password?">Forgotten Password?</a>
 	  </fieldset>
 	</form>
 <?php
