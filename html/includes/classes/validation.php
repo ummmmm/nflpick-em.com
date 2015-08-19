@@ -31,16 +31,6 @@ class Validation
 		return true;
 	}
 
-	public static function User( $id )
-	{
-		if ( !$id )
-		{
-			header( sprintf( 'Location: %s?module=login', INDEX ) );
-		}
-
-		return true;
-	}
-
 	public static function Week( $week )
 	{
 		if ( !preg_match( "/^([1-9]|1[0-7])$/", $week ) )
