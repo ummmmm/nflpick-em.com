@@ -11,6 +11,7 @@ class Mail
 
 	public function __construct( $to = null, $subject = null, $message = null, $from = null, $replyto = null, $headers = null )
 	{
+		$this->_error	= array();
 		$this->_from 	= "NFL Pick-Em <contact@nflpick-em.com>";
 		$this->_replyto	= "NFL Pick-Em <contact@nflpick-em.com>";
 
@@ -67,9 +68,21 @@ class Mail
 
 		if ( !mail( $this->_to, $this->_subject, $message, $headers ) )
 		{
-			return Functions::Error( '#Error#', 'Failed to send mail' );
+			return $this->_setError( array( "#Error#", "Failed to send email" ) );
 		}
 
 		return true;
+	}
+
+	private function _setError( $error )
+	{
+		$this->_error = $error;
+
+		return false;
+	}
+
+	public function getError()
+	{
+		return $this->_error;
 	}
 }
