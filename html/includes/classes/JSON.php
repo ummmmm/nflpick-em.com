@@ -2,7 +2,7 @@
 
 require_once( "Database.php" );
 require_once( "Authentication.php" );
-require_once( "Functions.php" );
+require_once( "functions.php" );
 
 interface iJSON
 {
