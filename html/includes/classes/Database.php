@@ -6,6 +6,7 @@ include_once( "includes/classes/functions.php" );
 
 class Database
 {
+	private $_connected;
 	private $_mysqli;
 	private	$_host;
 	private	$_user;
@@ -23,6 +24,7 @@ class Database
 			die( "Failed to load configuration settings" );
 		}
 
+		$this->_connected	= false;
 		$this->_mysqli		= null;
 		$this->_host		= $db_settings[ 'host' ];
 		$this->_user		= $db_settings[ 'username' ];
@@ -34,11 +36,13 @@ class Database
 		{
 			die( sprintf( "Database error: %s", htmlentities( $this->_mysqli->connect_error ) ) );
 		}
+
+		$this->_connected 	= true;
 	}
 
 	public function __destruct()
 	{
-		if ( !$this->_mysqli->connect_error )
+		if ( $this->_connected )
 		{
 			$this->_mysqli->close();
 		}
