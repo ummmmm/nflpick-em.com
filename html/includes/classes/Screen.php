@@ -75,19 +75,19 @@ class Screen
 			
 			if ( !$this->_screen->validate() )
 			{
-				$this->_setErrorLevel( self::FLAG_ERROR_VALIDATE );
+				return $this->_setErrorLevel( self::FLAG_ERROR_VALIDATE );
 			}
 
 			if ( !$this->_validation_errors && !$this->_screen->update( $this->_validation_data ) )
 			{
-				$this->_setErrorLevel( self::FLAG_ERROR_UPDATE );
+				return $this->_setErrorLevel( self::FLAG_ERROR_UPDATE );
 			}
 		}
 
 		if ( method_exists( $this->_screen, "head" ) )
 		{
 			ob_start();
-			if ( !$this->_screen->head() )	$this->_setErrorLevel( self::FLAG_ERROR_HEAD );
+			if ( !$this->_screen->head() )	return $this->_setErrorLevel( self::FLAG_ERROR_HEAD );
 			else							$this->_setHeadData( ob_get_contents() );
 			ob_clean();
 		}
@@ -95,14 +95,9 @@ class Screen
 		if ( method_exists( $this->_screen, "jquery" ) )
 		{
 			ob_start();
-			if ( !$this->_screen->jquery() )	$this->_setErrorLevel( self::FLAG_ERROR_JQUERY );
+			if ( !$this->_screen->jquery() )	return $this->_setErrorLevel( self::FLAG_ERROR_JQUERY );
 			else								$this->_setJQueryData( ob_get_contents() );
 			ob_clean();
-		}
-
-		if ( $this->_error_level != 0x0 )
-		{
-			return false;
 		}
 		
 		ob_start();
