@@ -154,30 +154,31 @@ class Users
 		return true;
 	}
 
-	public function LoginValidate( $email, $password )
+	public function validateLogin( $email, $password, &$user )
 	{
-		$count = $this->_db->single( 'SELECT id, password, force_password FROM users WHERE email = ?', $login, $email );
-
-		if ( !$count )
+		if ( !$this->Load_Email( $email, $loaded_user ) )
 		{
 			return false;
 		}
 
-		if ( $login[ 'force_password' ] === 1 )
+		if ( $loaded_user[ 'force_password' ] == 0 )
 		{
-			$this->_db->single( 'SELECT password FROM reset_password WHERE userid = ?', $reset, $login[ 'id' ] );
-
-			if ( !Functions::VerifyPassword( $password, $reset[ 'password' ] ) )
+			if ( !Functions::VerifyPassword( $password, $loaded_user[ 'password' ] ) )
 			{
 				return false;
 			}
 		}
-		else if ( !Functions::VerifyPassword( $password, $login[ 'password' ] ) )
+		else
 		{
-			return false;
+			$db_reset_password = new Reset_Passwords( $this->_db );
+
+			if ( !$db_reset_password->Load_UserID( $loaded_user[ 'id' ], $reset_password ) || !Functions::VerifyPassword( $password, $reset_password[ 'password'] ) )
+			{
+				return false;
+			}
 		}
 
-		$this->id = $login[ 'id' ];
+		$user = $loaded_user;
 
 		return true;
 	}

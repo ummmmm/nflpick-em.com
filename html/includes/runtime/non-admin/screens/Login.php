@@ -20,7 +20,7 @@ class Screen_Login implements iScreen
 		$email 		= Functions::Post( "email" );
 		$password	= Functions::Post( "password" );
 
-		if ( !$db_users->LoginValidate( $email, $password ) )
+		if ( !$db_users->validateLogin( $email, $password, $user ) )
 		{
 			$db_settings		= new Settings( $this->_db );
 			$db_failed_logins 	= new Failed_Logins( $this->_db );
@@ -34,20 +34,14 @@ class Screen_Login implements iScreen
 			return $this->_screen->setValidationErrors( array( "Invalid email or password" ) );
 		}
 
-		return $this->_screen->setValidationData( array( "email" => $email ) );
+		return $this->_screen->setValidationData( $user );
 	}
 
 	public function update( $data )
 	{
-		$db_users		= new Users( $this->_db );
-		$db_sessions 	= new Sessions( $this->_db );
+		$db_sessions = new Sessions( $this->_db );
 
-		if ( !$db_users->Load_Email( $data[ 'email' ], $user ) )
-		{
-			return $this->_screen->setError( array( "#Error#", "Failed to load user account" ) );
-		}
-
-		if ( !$db_sessions->Generate( $user[ 'id' ] ) )
+		if ( !$db_sessions->Generate( $data[ 'id' ] ) )
 		{
 			return $this->_screen->setDBError();
 		}

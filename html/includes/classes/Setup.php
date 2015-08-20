@@ -29,13 +29,13 @@ class Setup
 
 	public function Uninstall( $email, $password )
 	{
-		$users = new Users( $this->_db );
+		$db_users = new Users( $this->_db );
 
-		if ( !$users->LoginValidate( $email, $password ) )
+		if ( !$db_users->validateLogin( $email, $password, $user ) )
 		{
 			return $this->_Set_Error( 'Invalid email / password' );
 		}
-		else if ( !$users->Load( $users->id, $loaded_user ) || $loaded_user[ 'admin' ] !== 1 )
+		else if ( !$user[ 'admin' ] != 1 )
 		{
 			return $this->_Set_Error( 'You must be an admin to uninstall the site' );
 		}
