@@ -16,7 +16,7 @@ class Reset_Passwords
 					userid 		int( 11 ),
 					password 	varchar( 255 ),
 					date 		int( 11 ),
-					UNIQUE KEY reset_password_1 ( password )
+					UNIQUE KEY reset_password_1 ( userid )
 				)";
 
 		return $this->_db->query( $sql );
