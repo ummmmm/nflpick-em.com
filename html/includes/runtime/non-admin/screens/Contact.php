@@ -103,7 +103,7 @@ class Screen_Contact implements iScreen
 			<textarea name="message" cols="50" rows="10" id="message"><?php print htmlentities( $message ); ?></textarea>
 			<br />
 			<input type="hidden" name="update" value="1" />
-			<input type="submit" name="contact" id="contact" value="Send Me Now!" />
+			<input type="submit" name="contact" id="contact" value="Send" />
 		</fieldset>
 	</form>
 <?php
