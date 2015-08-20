@@ -35,7 +35,7 @@ class Setup
 		{
 			return $this->_Set_Error( 'Invalid email / password' );
 		}
-		else if ( !$user[ 'admin' ] != 1 )
+		else if ( $user[ 'admin' ] != 1 )
 		{
 			return $this->_Set_Error( 'You must be an admin to uninstall the site' );
 		}
