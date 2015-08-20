@@ -1,7 +1,7 @@
 $( document ).ready( function(){
-	$.fn.json = function( module, variables, callback )
+	$.fn.json = function( action, variables, callback )
 	{
-		var data = 'module=' + encodeURIComponent( module ) + ( variables == '' ? '' : '&' + variables );
+		var data = 'action=' + encodeURIComponent( action ) + ( variables == '' ? '' : '&' + variables );
 
 		$.ajax( json_url, {
 			type	: 'POST',
@@ -17,7 +17,7 @@ $( document ).ready( function(){
 				response.success		= 0;
 				response.error_code		= '#Error#';
 				response.error_message	= 'The server returned an invalid response.\n' +
-										  'Module: ' + module + '\n' +
+										  'Action: ' + action + '\n' +
 										  'Response: ' + jqXHR.responseText;
 
 				if ( textStatus != 'error' )

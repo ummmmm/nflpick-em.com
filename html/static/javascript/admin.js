@@ -1,13 +1,13 @@
 $( document ).ready( function()
 {
-	$.fn.json = function( module, data, callback )
+	$.fn.json = function( action, data, callback )
 	{		
 		$.ajax( {
 			type: 'POST',
 			url: json_url,
 			dataType: 'JSON',
 			async: false,
-			data: 'admin=true&module=' + encodeURIComponent( module ) + '&token=' + token + '&' + data,
+			data: 'admin=true&action=' + encodeURIComponent( action ) + '&token=' + token + '&' + data,
 			success: function( response )
 			{
 				callback( response );
@@ -20,7 +20,7 @@ $( document ).ready( function()
 					response.success		= 0;
 					response.error_code		= '#Error#';
 					response.error_message	= 'The server returned an invalid response.\n' +
-											  'Module: ' + module + '\n' +
+											  'Action: ' + action + '\n' +
 											  'Response: ' + jqXHR.responseText;
 					callback( response );
 				}
@@ -41,14 +41,14 @@ $( document ).ready( function()
 		} );
 	}
 	
-	$.fn.sort = function( module, sort, callback )
+	$.fn.sort = function( action, sort, callback )
 	{
 		var field 		= $( '#' + sort );
 		var direction 	= field.attr( 'direction' );
 	
 		field.attr( 'direction', ( direction == 'asc' ) ? 'desc' : 'asc' );
 	
-		$.fn.json( module, 'sort=' + encodeURIComponent( sort ) + '&direction=' + encodeURIComponent( direction ), callback );
+		$.fn.json( action, 'sort=' + encodeURIComponent( sort ) + '&direction=' + encodeURIComponent( direction ), callback );
 	}
 
 	$.fn.sort_user_callback = function( response )

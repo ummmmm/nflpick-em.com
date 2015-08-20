@@ -4,10 +4,10 @@ header( 'Content-type: application/json' );
 
 require_once( 'includes/classes/JSON.php' );
 
-$json	= new JSON();
 $admin	= Functions::Post_Boolean( 'admin' );
-$action	= Functions::Post( 'module' );
+$action	= Functions::Post( 'action' );
 $token	= Functions::Get( 'token' );
+$json	= new JSON();
 
 $json->initialize( $admin, $action, $token );
 
