@@ -33,4 +33,9 @@ class Reset_Passwords
 	{
 		return $this->_db->query( 'DELETE FROM reset_password WHERE userid = ?', $user_id );
 	}
+
+	public function Load_User( $user_id, &$record )
+	{
+		return $this->_db->single( "SELECT * FROM reset_password WHERE userid = ?", $record, $user_id );
+	}
 }
