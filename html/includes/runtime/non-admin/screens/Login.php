@@ -39,11 +39,18 @@ class Screen_Login implements iScreen
 
 	public function update( $data )
 	{
-		$db_sessions = new Sessions( $this->_db );
+		$user 			= &$data;
+		$db_sessions 	= new Sessions( $this->_db );
 
-		if ( !$db_sessions->Generate( $data[ 'id' ] ) )
+		if ( !$db_sessions->Generate( $user[ 'id' ] ) )
 		{
 			return $this->_screen->setDBError();
+		}
+
+		if ( $user[ 'force_password' ] )
+		{
+			header( "Location: ?screen=forgot_password&action=changepassword" );
+			die();
 		}
 
 		header( sprintf( 'Location: %s', INDEX ) );
