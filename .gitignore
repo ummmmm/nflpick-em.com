@@ -1,7 +1,6 @@
-data/backups/*
-data/crons/backup.sh
-sftp-config.json
-nflpick-em.com.sublime-*
 nflpickem.sublime-*
+data/crons/backup.sh
+data/crons/lock_week.php
+data/backups/*
 data/config.ini
 html/includes/config.php

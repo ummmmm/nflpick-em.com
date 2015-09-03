@@ -1,0 +1,23 @@
+<?php
+
+set_include_path( "/path/to/html" );
+
+require_once( "includes/classes/Database.php" );
+
+$db 		= new Database();
+$db_weeks	= new Weeks( $db );
+$current	= $db_weeks->Current();
+
+if ( $current === false )
+{
+	return;
+}
+
+if ( !$db_weeks->Load( $current, $week ) )
+{
+	return;
+}
+
+$week[ 'locked' ] = 1;
+
+$db_weeks->Update( $week );
