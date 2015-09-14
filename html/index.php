@@ -28,7 +28,6 @@ $screen->execute();
 	<script src="static/javascript/jqueryui.js" type="text/javascript"></script>
 	<script src="static/javascript/javascript.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		var json_url = <?php print json_encode( sprintf( "json.php?token=%s", urlencode( $users->token ) ) ); ?>;
 		var token = <?php print json_encode( $users->token ); ?>;
 	</script>
 	<?php

@@ -1,13 +1,15 @@
 $( document ).ready( function()
 {
-	$.fn.json = function( action, data, callback )
-	{		
+	$.fn.json = function( action, variables, callback )
+	{
+		var data = 'action=' + encodeURIComponent( action ) + ( variables == '' ? '' : '&' ) + variables;
+
 		$.ajax( {
 			type: 'POST',
-			url: json_url,
+			url: 'json.php',
 			dataType: 'JSON',
 			async: false,
-			data: 'admin=true&action=' + encodeURIComponent( action ) + '&token=' + token + '&' + data,
+			data: 'admin=true&token=' + token + '&' + data,
 			success: function( response )
 			{
 				callback( response );

@@ -6,7 +6,7 @@ require_once( 'includes/classes/JSON.php' );
 
 $admin	= Functions::Post_Boolean( 'admin' );
 $action	= Functions::Post( 'action' );
-$token	= Functions::Get( 'token' );
+$token	= Functions::Post( 'token' );
 $json	= new JSON();
 
 $json->initialize( $admin, $action, $token );

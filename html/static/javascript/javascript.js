@@ -1,10 +1,11 @@
 $( document ).ready( function(){
 	$.fn.json = function( action, variables, callback )
 	{
-		var data = 'action=' + encodeURIComponent( action ) + ( variables == '' ? '' : '&' + variables );
+		var data = 'action=' + encodeURIComponent( action ) + ( variables == '' ? '' : '&' ) + variables;
 
-		$.ajax( json_url, {
+		$.ajax( {
 			type	: 'POST',
+			url		: 'json.php',
 			dataType: 'JSON',
 			data	:  'token=' + token + '&' + data,
 			success	: function( response, status )
