@@ -42,13 +42,13 @@ class Screen
 	{
 		$this->_db 					= new Database();
 		$this->_auth				= new Authentication();
-		
+
 		$this->_screen				= null;
 		$this->_error				= array();
 		$this->_error_level			= 0x0;
 		$this->_execute_success		= false;
 		$this->_validation_errors	= null;
-		
+
 		$this->_validation_data 	= null;
 		$this->_jquery_data			= null;
 		$this->_head_data			= null;
@@ -72,7 +72,7 @@ class Screen
 
 		if ( $this->_run_update )
 		{
-			
+
 			if ( !$this->_screen->validate() )
 			{
 				return $this->_setErrorLevel( self::FLAG_ERROR_VALIDATE );
@@ -99,7 +99,7 @@ class Screen
 			else								$this->_setJQueryData( ob_get_contents() );
 			ob_clean();
 		}
-		
+
 		ob_start();
 		if ( !$this->_screen->content() )
 		{
@@ -283,6 +283,10 @@ class Screen
 		if ( !$errors )
 		{
 			return;
+		}
+		else if ( !is_array( $errors ) )
+		{
+			$errors = array( $errors );
 		}
 
 		$count 		= count( $errors );

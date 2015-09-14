@@ -172,7 +172,7 @@ class Users
 		{
 			$db_reset_password = new Reset_Passwords( $this->_db );
 
-			if ( !$db_reset_password->Load_UserID( $loaded_user[ 'id' ], $reset_password ) || !Functions::VerifyPassword( $password, $reset_password[ 'password'] ) )
+			if ( !$db_reset_password->Load_User( $loaded_user[ 'id' ], $reset_password ) || !Functions::VerifyPassword( $password, $reset_password[ 'password'] ) )
 			{
 				return false;
 			}
