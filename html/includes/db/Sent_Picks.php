@@ -44,9 +44,9 @@ class Sent_Picks
 		return $this->_db->insert( 'sent_picks', $picks );
 	}
 
-	public function Delete_User( $picks )
+	public function Delete_User( $user_id )
 	{
-		return $this->_db->query( 'DELETE FROM sent_picks WHERE user_id = ?', $userid );
+		return $this->_db->query( 'DELETE FROM sent_picks WHERE user_id = ?', $user_id );
 	}
 
 	public function Reset_Active_User_Week( $user_id, $week )
