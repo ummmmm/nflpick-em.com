@@ -194,12 +194,12 @@ class Screen
 
 		if ( ( $flags & self::FLAG_REQ_USER ) && !$this->_auth->isUser() )
 		{
-			return $this->_setError( array( '#Error#', 'You must be a user to complete this action' ) );
+			return $this->_setError( array( '#Error#', 'You must be a user to view this screen' ) );
 		}
 
 		if ( ( $flags & self::FLAG_REQ_ADMIN ) && !$this->_auth->isAdmin() )
 		{
-			return $this->_setError( array( '#Error#', 'You must be an administrator to complete this action' ) );
+			return $this->_setError( array( '#Error#', 'You must be an administrator to view this screen' ) );
 		}
 
 		if ( ( $flags & self::FLAG_REQ_TOKEN ) && !$this->_auth->isValidToken( $token ) )
