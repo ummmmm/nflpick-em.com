@@ -1,0 +1,72 @@
+<?php
+
+set_include_path( "/path/to/html" );
+
+require_once( "includes/classes/Database.php" );
+
+try
+{
+	$db 		= new Database();
+	$db_games	= new Games( $db );
+	$db_teams	= new Teams( $db );
+	$db_users	= new Users( $db );
+	$db_weeks	= new Weeks( $db );
+	$doc 		= new SimpleXMLElement( 'http://www.nfl.com/liveupdate/scorestrip/ss.xml', 0, true );
+	$week		= ( int ) $doc->gms->attributes()->w;
+
+	if ( !$db_weeks->IsLocked( $week ) )
+	{
+		exit;
+	}
+
+	foreach( $doc->gms->g as $nfl_game )
+	{
+		$g			= $nfl_game->attributes();
+		$quarter	= ( string ) $g->q;
+		$home 		= ( string ) $g->h;
+		$away		= ( string ) $g->v;
+		$homeScore	= ( int ) $g->hs;
+		$awayScore	= ( int ) $g->vs;
+
+		if ( !$db_teams->Load_Abbr( $home, $homeTeam ) ||
+			 !$db_teams->Load_Abbr( $away, $awayTeam ) )
+		{
+			continue;
+		}
+
+		if ( $quarter != 'F' && $quarter != 'FO' )
+		{
+			continue;
+		}
+
+		if ( $homeScore == $awayScore )
+		{
+			continue;
+		}
+
+		if ( !$db_games->Load_Week_Teams( $week, $awayTeam[ 'id' ], $homeTeam[ 'id' ], $game ) )
+		{
+			continue;
+		}
+
+		$game[ 'winner' ] 		= ( $homeScore > $awayScore ) ? $homeTeam[ 'id' ] : $awayTeam[ 'id' ];
+		$game[ 'loser' ]		= ( $homeScore > $awayScore ) ? $awayTeam[ 'id' ] : $homeTeam[ 'id' ];
+		$game[ 'homeScore' ]	= $homeScore;
+		$game[ 'awayScore' ]	= $awayScore;
+
+		if ( !$db_games->Update( $game ) )
+		{
+			exit;
+		}
+	}
+
+	if ( !$db_teams->Recalculate_Records() || !$db_users->Recalculate_Records()	)
+	{
+		exit;
+	}
+
+}
+catch( Exception $e )
+{
+	exit;
+}
