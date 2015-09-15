@@ -71,13 +71,13 @@ $( document ).ready( function()
 										text: user.name
 									} )
 							} );
-			$( '<div/>', {
-				html:
+			$( '<div/>' ).append(
 					$( '<a/>', {
 						href: 'mailto:' + user.email,
 						text: user.email
-					} )
-			} ).appendTo( fieldset );
+					} ) ).append( ' - ' ).append( 
+							$( '<a/>', { 'href': 'javascript:;', 'text': 'Delete' } ).bind( 'click', function() { $.fn.deleteUser( user ); } )
+			).appendTo( fieldset );
 
 			$( '<div/>', { 'text': 'Last Active: ' + user.last_on } ).appendTo( fieldset );
 			$( '<div/>', { 'text': 'Record: ' + user.wins + ' - ' + user.losses	} ).appendTo( fieldset );
@@ -96,6 +96,28 @@ $( document ).ready( function()
 				$( '<a/>', { 'href': 'javascript:;', 'text': 'Logout' } ).bind( 'click', function() { $.fn.logout( user ); } ) ).appendTo( fieldset );
 
 			fieldset.appendTo( div );
+		} );
+	}
+
+	$.fn.deleteUser = function( user )
+	{
+		var password;
+
+		if ( !confirm( "Are you absolutely sure you want to delete " + user.name + "?\n\nThis action cannot be undone." ) )
+		{
+			return;
+		}
+
+		password = prompt( "Please enter your password" );
+
+		$.fn.json_admin( 'DeleteUser', 'password=' + encodeURIComponent( password ) + '&user_id=' + encodeURIComponent( user.id ), function( response )
+		{
+			if ( !response.success )
+			{
+				return $.fn.error( response.error_message );
+			}
+
+			location.reload();
 		} );
 	}
 

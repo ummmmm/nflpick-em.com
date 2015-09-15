@@ -135,6 +135,7 @@ class Screen_ControlPanel implements iScreen
 			<p><a href="?screen=make_picks" title="Make Picks">Make Picks</a></p>
 			<p><a href="?screen=control_panel&action=changepassword" title="Change Password">Change Password</a></p>
 			<p><a href="?screen=control_panel&action=changeemail" title="Change Email">Change Email</a></p>
+			<p><a href="?screen=delete_account" title="Delete Account">Delete Account</a></p>
 			<p><a href="?screen=contact" title="File Report">Support Help</a></p>
 EOT;
 
