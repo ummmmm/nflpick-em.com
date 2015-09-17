@@ -8,7 +8,6 @@ $( document ).ready( function()
 			type: 'POST',
 			url: 'json.php',
 			dataType: 'JSON',
-			async: false,
 			data: 'admin=true&token=' + token + '&' + data,
 			success: function( response )
 			{
