@@ -560,11 +560,23 @@ $( document ).ready( function()
 
 	$.fn.add_poll_answer = function( answer )
 	{
-		var first_answer	= $( '.poll-answers:first :input[name*=\'answers\']' );
 		var tr				= $( '<tr/>', { 'class': 'poll-answers' } );
-		var total			= ( first_answer.length ) ? parseInt( first_answer.attr( 'answer_id' ) ) + 1 : 0;
-		var array_id		= ( answer == null ) ? total : answer.id;
+		var array_id		= 0;
 		var array_value		= ( answer == null ) ? '' : answer.answer;
+
+		if ( answer )
+		{
+			array_id = answer.id;
+		}
+		else
+		{
+			$.each( $( '.poll-answers :input[name*=\'answers\']' ), function( key, value )
+			{
+				array_id = parseInt( ( $( value ).attr( 'answer_id' ) > array_id ) ? $( value ).attr( 'answer_id' ) : array_id );
+			} );
+
+			array_id += 1;
+		}
 
 		$( '<td/>', { html: '<b>Answer: ' } ).appendTo( tr );
 		$( '<td/>', {
