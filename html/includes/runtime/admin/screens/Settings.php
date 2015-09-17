@@ -40,10 +40,6 @@ class Screen_Settings implements iScreen
 		print '</td>';
 		print '</tr>';
 		print '<tr>';
-		print '<td>Poll Options: </td>';
-		print '<td><input type="text" name="poll_options" size="1" value="' . htmlentities( $settings[ 'poll_options' ] ) . '" /></td>';
-		print '</tr>';
-		print '<tr>';
 		print '<td>Max News: </td>';
 		print '<td><input type="text" name="max_news" size="1" value="' . htmlentities( $settings[ 'max_news' ] ) . '" /> articles</td>';
 		print '</tr>';

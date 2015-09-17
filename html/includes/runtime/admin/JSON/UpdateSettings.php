@@ -26,7 +26,6 @@ class JSON_UpdateSettings implements iJSON
 
 		$settings[ 'email_validation' ]	= Functions::Post_Active( 'email_validation' );
 		$settings[ 'registration' ]		= Functions::Post_Active( 'registration' );
-		$settings[ 'poll_options' ]		= Functions::Post_Int( 'poll_options' );
 		$settings[ 'max_news' ]			= Functions::Post_Int( 'max_news' );
 		$settings[ 'online' ]			= Functions::Post_Int( 'online' );
 		$settings[ 'login_sleep' ]		= Functions::Post_Int( 'login_sleep' );
@@ -34,8 +33,7 @@ class JSON_UpdateSettings implements iJSON
 		$settings[ 'domain_email' ]		= Functions::Post( 'domain_email' );
 		$settings[ 'site_title' ]		= Functions::Post( 'site_title' );
 
-		if ( $settings[ 'poll_options' ] <= 0 )			return $this->_json->setError( array( '#Error#', 'Poll Options must be greater than 0' ) );
-		elseif ( $settings[ 'max_news' ] <= 0 )			return $this->_json->setError( array( '#Error#', 'Max News must be greater than 0' ) );
+		if ( $settings[ 'max_news' ] <= 0 )				return $this->_json->setError( array( '#Error#', 'Max News must be greater than 0' ) );
 		elseif ( $settings[ 'online' ] <= 0 )			return $this->_json->setError( array( '#Error#', 'Online must be greater than 0' ) );
 		elseif ( $settings[ 'login_sleep' ] <= 0 )		return $this->_json->setError( array( '#Error#', 'Login Sleep must be greater than 0' ) );
 		elseif ( $settings[ 'domain_url' ] === '' )		return $this->_json->setError( array( '#Error#', 'Domain URL cannot be blank' ) );

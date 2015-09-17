@@ -3,7 +3,6 @@
 class Settings
 {
 	public $max_news;
-	public $poll_options;
 	public $email_validation;
 	public $registration;
 	public $domain_url;
@@ -20,7 +19,6 @@ class Settings
 		if ( $this->Load( $settings ) )
 		{
 			$this->max_news 		= $settings[ 'max_news' ];
-			$this->poll_options 	= $settings[ 'poll_options' ];
 			$this->email_validation = $settings[ 'email_validation' ];
 			$this->registration 	= $settings[ 'registration' ];
 			$this->domain_url 		= $settings[ 'domain_url' ];
@@ -34,7 +32,6 @@ class Settings
 	{
 		$sql = "CREATE TABLE settings
 				(
-					poll_options 		tinyint( 3 ),
 					email_validation 	tinyint( 1 ),
 					registration 		tinyint( 1 ),
 					max_news 			tinyint( 3 ),
@@ -57,8 +54,7 @@ class Settings
 
 	private function Defaults()
 	{
-		return array( 'poll_options' 		=> 10,
-					  'email_validation'	=> 0,
+		return array( 'email_validation'	=> 0,
 					  'registration' 		=> 1,
 					  'max_news' 			=> 4,
 					  'domain_url' 			=> '',
@@ -78,7 +74,6 @@ class Settings
 		return $this->_db->query( 'UPDATE
 									settings
 								   SET
-									poll_options		= ?,
 									email_validation	= ?,
 									registration		= ?,
 									max_news			= ?,
@@ -87,8 +82,8 @@ class Settings
 									online				= ?,
 									site_title			= ?,
 									login_sleep			= ?',
-									$settings[ 'poll_options' ], $settings[ 'email_validation' ], $settings[ 'registration' ], $settings[ 'max_news' ],
-									$settings[ 'domain_url' ], $settings[ 'domain_email' ], $settings[ 'online' ], $settings[ 'site_title' ], $settings[ 'login_sleep' ] );
+									$settings[ 'email_validation' ], $settings[ 'registration' ], $settings[ 'max_news' ], $settings[ 'domain_url' ],
+									$settings[ 'domain_email' ], $settings[ 'online' ], $settings[ 'site_title' ], $settings[ 'login_sleep' ] );
 
 	}
 }
