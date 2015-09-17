@@ -128,7 +128,7 @@ class Screen_Register implements iScreen
 
 		if ( !$db_settings->Load( $settings ) || $settings[ 'registration' ] != 1 )
 		{
-			return Functions::Information( "Registration Off", "You cannot currently sign up for the NFL Pick-Em League." );
+			return Functions::Information( "Registration Disabled", "You currently cannot sign up for the NFL Pick-Em League." );
 		}
 
 ?>
