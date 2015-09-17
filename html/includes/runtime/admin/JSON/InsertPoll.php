@@ -25,12 +25,12 @@ class JSON_InsertPoll implements iJSON
 		
 		if ( $question === '' )
 		{
-			return $this->_json->setData( array( 'NFL-POLLS_INSERT-1', 'Question cannot be blank' ) );
+			return $this->_json->setError( array( 'NFL-POLLS_INSERT-1', 'Question cannot be blank' ) );
 		}
 
 		if ( count( $answers ) === 0 )
 		{
-			return $this->_json->setData( array( '#Error#', 'Must provide at least one answer' ) );
+			return $this->_json->setError( array( '#Error#', 'Must provide at least one answer' ) );
 		}
 
 		$poll_insert[ 'question' ] 	= $question;
@@ -45,6 +45,11 @@ class JSON_InsertPoll implements iJSON
 		
 		foreach( $answers as $answer )
 		{
+			if ( $answer == '' )
+			{
+				continue;
+			}
+
 			$answer_insert = array( 'poll_id' => $poll_id, 'answer' => $answer );
 			
 			if ( !$db_poll_answers->Insert( $answer_insert ) )

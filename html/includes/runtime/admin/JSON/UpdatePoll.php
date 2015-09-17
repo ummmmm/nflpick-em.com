@@ -87,9 +87,14 @@ class JSON_UpdatePoll implements iJSON
 
 			unset( $answers[ $answer[ 'id' ] ] );
 		}
-		
+
 		foreach( $answers as $key => $answer )
 		{
+			if ( $answer == '' )
+			{
+				continue;
+			}
+
 			$answer_insert[ 'poll_id' ] = $poll_id;
 			$answer_insert[ 'answer' ]	= $answer;
 			
