@@ -11,7 +11,7 @@ class Screen_DeleteAccount implements iScreen
 
 	public function requirements()
 	{
-		return array( 'user' => true );
+		return array( 'user' => true, 'token' => true );
 	}
 
 	public function validate()
@@ -44,6 +44,8 @@ class Screen_DeleteAccount implements iScreen
 
 	public function content()
 	{
+		$token = htmlentities( $this->_auth->getToken() );
+
 		print <<<EOT
 		<form action="" method="post">
 			<fieldset>
@@ -54,6 +56,7 @@ class Screen_DeleteAccount implements iScreen
 				<label for="password">Password</label>
 				<input type="password" name="password" /><br />
 				<input type="hidden" name="update" value="1" />
+				<input type="hidden" name="token" value="$token" />
 				<input type="submit" name="deleteAccount" value="Delete Account" />
 			</fieldset>
 		</form>
