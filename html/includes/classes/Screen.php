@@ -72,7 +72,6 @@ class Screen
 
 		if ( $this->_run_update )
 		{
-
 			if ( !$this->_screen->validate() )
 			{
 				return $this->_setErrorLevel( self::FLAG_ERROR_VALIDATE );
@@ -202,13 +201,15 @@ class Screen
 			return $this->_setError( array( '#Error#', 'You must be an administrator to view this screen' ) );
 		}
 
-		if ( ( $flags & self::FLAG_REQ_TOKEN ) && !$this->_auth->isValidToken( $token ) )
-		{
-			return $this->_setError( array( '#Error#', 'You must have a valid token to complete this action' ) );
-		}
-
 		if ( $run_update )
 		{
+			$token = Functions::Post( "token" );
+
+			if ( ( $flags & self::FLAG_REQ_TOKEN ) && !$this->_auth->isValidToken( $token ) )
+			{
+				return $this->_setError( array( '#Error#', 'You must have a valid token to complete this action' ) );
+			}
+
 			if ( !method_exists( $this->_screen, "validate" ) || !method_exists( $this->_screen, "update" ) )
 			{
 				return $this->_setError( array( "#Error#", "Screen is missing required methods" ) );
