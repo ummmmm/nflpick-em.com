@@ -113,13 +113,16 @@ class Screen_ViewPicks implements iScreen
 					$team = $game[ 'homeAbbr' ];
 				}
 
-				if ( $pick[ 'winner_pick' ] == $game[ 'winner' ] )
+				if ( $game[ 'winner' ] > 0 )
 				{
-					$user_records[ $loaded_user[ 'id' ] ][ 'wins' ] += 1;
-				}
-				else if ( $game[ 'winner' ] != 0 )
-				{
-					$user_records[ $loaded_user[ 'id' ] ][ 'losses' ] += 1;
+					if ( $pick[ 'winner_pick' ] == $game[ 'winner' ] )
+					{
+						$user_records[ $loaded_user[ 'id' ] ][ 'wins' ] += 1;
+					}
+					else
+					{
+						$user_records[ $loaded_user[ 'id' ] ][ 'losses' ] += 1;
+					}
 				}
 
 				$output = ( $pick[ 'winner_pick' ] == $game[ 'winner' ] && $game[ 'winner' ] != 0 ) ? sprintf( "<b>%s</b>", htmlentities( $team ) ) : $team;
