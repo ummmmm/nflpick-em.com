@@ -55,7 +55,7 @@ class JSON_EmailPicks implements iJSON
 			return $this->_json->setError( array( 'NFL-EMAILPICKS-3', 'The email failed to send. Please try again later.' ) );
 		}
 
-		$insert = array( 'user_id' => $this->_auth->getUserID(), 'picks' => json_encode( $sent ), 'week' => $week );
+		$insert = array( 'user_id' => $this->_auth->getUserID(), 'picks' => json_encode( $sent ), 'week' => $week, 'active' => 1 );
 
 		if ( !$db_sent_picks->Insert( $insert ) )
 		{
