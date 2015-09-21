@@ -328,31 +328,69 @@ class Functions
 
 	public static function Worst_Record( &$db, $week_id, &$record )
 	{
-		return $db->single( 'SELECT
-								MIN( (
-										SELECT
-											NULLIF( COUNT( p.id ), 0 )
-										FROM
-											picks p,
-											games g
-										WHERE
-											p.game_id 		= g.id 		AND
-											p.winner_pick 	= g.winner 	AND
-											p.user_id 		= u.id 		AND
-											g.week 			= ? ) ) AS wins,
-								MAX( (
-										SELECT
-											COUNT( p.id )
-										FROM
-											picks p,
-											games g
-										WHERE
-											p.game_id 		= g.id 		AND
-											p.winner_pick 	= g.loser 	AND
-											p.user_id 		= u.id		AND
-											g.week 			= ? ) ) AS losses
-						     FROM
-								users u', $record, $week_id, $week_id );
+		$db_picks	= new Picks( $db );
+		$db_games	= new Games( $db );
+		$db_users	= new Users( $db );
+		$game_count	= $db_games->List_Load_Week( $week_id, $games );
+		$wins		= 0;
+		$losses		= 0;
+
+		if ( !$game_count )
+		{
+			return false;
+		}
+
+		if ( !$db_users->List_Load( $users ) )
+		{
+			return false;
+		}
+
+		foreach ( $users as $user )
+		{
+			$user_wins 			= 0;
+			$user_losses 		= 0;
+			$user_pick_count	= $db_picks->List_Load_User_Week_Picked( $user[ 'id' ], $week_id, $picks );
+
+			if ( $game_count != $user_pick_count )
+			{
+				continue;
+			}
+
+			foreach ( $games as $game )
+			{
+				if ( $game[ 'winner' ] == 0 )
+				{
+					continue;
+				}
+
+				foreach ( $picks as $pick )
+				{
+					if ( $game[ 'id' ] != $pick[ 'game_id' ] )
+					{
+						continue;
+					}
+
+					if ( $pick[ 'winner_pick' ] == $game[ 'winner' ] )
+					{
+						$user_wins++;
+					}
+					else
+					{
+						$user_losses++;
+					}
+				}
+			}
+
+			if ( $user_losses > $losses )
+			{
+				$wins	= $user_wins;
+				$losses = $user_losses;
+			}
+		}
+
+		$record = array( 'wins' => $wins, 'losses' => $losses );
+
+		return true;
 	}
 
 	public static function Worst_Record_Calculated( &$db, $week_id, &$record )

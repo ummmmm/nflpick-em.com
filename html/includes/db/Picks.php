@@ -124,6 +124,11 @@ class Picks
 		return $this->_db->select( 'SELECT * FROM picks WHERE user_id = ? AND week = ?', $picks, $userid, $week );
 	}
 
+	public function List_Load_User_Week_Picked( $userid, $week, &$picks )
+	{
+		return $this->_db->select( 'SELECT * FROM picks WHERE user_id = ? AND week = ? AND picked = 1', $picks, $userid, $week );
+	}
+
 	public function List_Load( &$picks )
 	{
 		return $this->_db->select( 'SELECT * FROM picks ORDER BY id ASC', $picks );

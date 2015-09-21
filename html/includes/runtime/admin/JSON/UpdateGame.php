@@ -64,7 +64,7 @@ class JSON_UpdateGame implements iJSON
 			return $this->_json->DB_Error();
 		}
 		
-		if ( !$this->_Users_Update_Record( $db ) )
+		if ( !$this->_Users_Update_Record() )
 		{
 			return $this->_json->DB_Error();
 		}
@@ -175,13 +175,10 @@ class JSON_UpdateGame implements iJSON
 								t.id 		= ?', $teamid );
 	}
 
-	private function _Users_Update_Record( &$db )
+	private function _Users_Update_Record()
 	{
-		return $db->query( 'UPDATE
-								users u
-							SET
-								u.wins		= ( SELECT COUNT( p.id ) FROM picks p, games g WHERE p.game_id = g.id AND p.winner_pick = g.winner AND p.user_id = u.id AND g.winner <> 0 ),
-								u.losses	= ( SELECT COUNT( g.id ) FROM picks p, games g WHERE p.game_id = g.id AND p.user_id = u.id AND ( p.winner_pick = 0 AND g.winner <> 0 OR ( p.winner_pick = g.loser AND g.loser <> 0 ) ) )' );
+		$db_users = new Users( $this->_db );
+		return $db_users->Recalculate_Records();
 	}
 
 	private function _Users_Place_Update( &$db, &$user )

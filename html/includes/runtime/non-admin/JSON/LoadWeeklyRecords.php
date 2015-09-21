@@ -55,12 +55,12 @@ class JSON_LoadWeeklyRecords implements iJSON
 
 	function _Wins( $user_id, $week_id, &$record )
 	{
-		return $this->_db->single( 'SELECT COUNT( p.id ) AS total FROM picks p, games g WHERE p.winner_pick = g.winner AND p.user_id = ? AND p.week = ? AND p.game_id = g.id', $record, $user_id, $week_id );
+		return $this->_db->single( 'SELECT COUNT( p.id ) AS total FROM picks p, games g WHERE p.winner_pick = g.winner AND g.winner <> 0 AND p.user_id = ? AND p.week = ? AND p.game_id = g.id', $record, $user_id, $week_id );
 	}
 
 	function _Losses( $user_id, $week_id, &$record )
 	{
-		return $this->_db->single( 'SELECT COUNT( p.id ) AS total FROM picks p, games g WHERE p.user_id = ? AND p.week = ? AND p.game_id = g.id AND ( p.winner_pick = g.loser OR p.picked = 0 )', $record, $user_id, $week_id );
+		return $this->_db->single( 'SELECT COUNT( p.id ) AS total FROM picks p, games g WHERE p.winner_pick = g.loser AND g.winner <> 0 AND p.user_id = ? AND p.week = ? AND p.game_id = g.id', $record, $user_id, $week_id );
 	}
 
 	function _Users( &$users )
