@@ -79,7 +79,7 @@ class Screen_ViewPicks implements iScreen
 
 		foreach( $users as $loaded_user )
 		{
-			$initials 								= strtoupper( substr( $loaded_user[ 'fname' ], 0, 1 ) . '.' . substr( $loaded_user[ 'lname' ], 0, 1 ) ) . '.';
+			$initials 								= strtoupper( sprintf( "%s.%s.", substr( $loaded_user[ 'fname' ], 0, 1 ), substr( $loaded_user[ 'lname' ], 0, 1 ) ) );
 			$user_records[ $loaded_user[ 'id' ] ] 	= array( 'losses' => 0, 'wins' => 0 );
 			$missing_count 							= $db_picks->Missing( $loaded_user[ 'id' ], $weekid );
 
@@ -90,37 +90,41 @@ class Screen_ViewPicks implements iScreen
 
 			print '<tr>';
 			print '<td class="picks">';
-			print '<a href="javascript:;" title="' . htmlentities( $loaded_user[ 'name' ] ) . '" onclick="$.fn.highlightPicks( ' . $loaded_user[ 'id' ] . ', ' . $weekid . ');">' . htmlentities( $initials ) . '</a>';
+			printf( '<a href="javascript:;" title="%s" onclick="$.fn.highlightPicks( %d, %d );">%s</a>', htmlentities( $loaded_user[ 'name' ] ), $loaded_user[ 'id' ], $weekid, htmlentities( $initials ) );
 			print '</td>';
 
 			foreach( $games as $game )
 			{
 				if ( !$db_picks->Load_User_Game( $loaded_user[ 'id' ], $game[ 'id' ], $pick ) )
 				{
-					return false;
+					return $this->_screen->setDBError();
 				}
 
-				if ( $pick[ 'picked' ] === 0 )
+				if ( $pick[ 'picked' ] == 0 )
 				{
 					$team = '<span style="color:red;">N/A</span>';
 				}
 				else if ( $pick[ 'winner_pick' ] == $game[ 'away' ] )
 				{
 					$team = $game[ 'awayAbbr' ];
-				} else {
+				}
+				else
+				{
 					$team = $game[ 'homeAbbr' ];
 				}
 
-				if ( $pick[ 'winner_pick' ] === $game[ 'winner' ] )
+				if ( $pick[ 'winner_pick' ] == $game[ 'winner' ] )
 				{
 					$user_records[ $loaded_user[ 'id' ] ][ 'wins' ] += 1;
-				} else if ( $game[ 'winner' ] != 0 ){
+				}
+				else if ( $game[ 'winner' ] != 0 )
+				{
 					$user_records[ $loaded_user[ 'id' ] ][ 'losses' ] += 1;
 				}
 
-				$output = ( $pick[ 'winner_pick' ] == $game[ 'winner' ] ) ? "<b>{$team}</b>" : $team;
+				$output = ( $pick[ 'winner_pick' ] == $game[ 'winner' ] && $game[ 'winner' ] != 0 ) ? sprintf( "<b>%s</b>", htmlentities( $team ) ) : $team;
 
-				print '<td userid="' . $loaded_user[ 'id' ] . '" gameid="' . $game[ 'id' ] . '">' . $output . '</td>';
+				printf( '<td userid="%d" gameid="%d">%s</td>', $loaded_user[ 'id' ], $game[ 'id' ], $output );
 			}
 
 			if ( $missing_count == $games_count )
