@@ -86,26 +86,35 @@ class Screen
 		if ( method_exists( $this->_screen, "head" ) )
 		{
 			ob_start();
-			if ( !$this->_screen->head() )	return $this->_setErrorLevel( self::FLAG_ERROR_HEAD );
-			else							$this->_setHeadData( ob_get_contents() );
-			ob_clean();
+			if ( !$this->_screen->head() )
+			{
+				ob_end_clean();
+				return $this->_setErrorLevel( self::FLAG_ERROR_HEAD );
+			}
+			$this->_setHeadData( ob_get_contents() );
+			ob_end_clean();
 		}
 
 		if ( method_exists( $this->_screen, "jquery" ) )
 		{
 			ob_start();
-			if ( !$this->_screen->jquery() )	return $this->_setErrorLevel( self::FLAG_ERROR_JQUERY );
-			else								$this->_setJQueryData( ob_get_contents() );
-			ob_clean();
+			if ( !$this->_screen->jquery() )
+			{
+				ob_end_clean();
+				return $this->_setErrorLevel( self::FLAG_ERROR_JQUERY );
+			}
+			$this->_setJQueryData( ob_get_contents() );
+			ob_end_clean();
 		}
 
 		ob_start();
 		if ( !$this->_screen->content() )
 		{
+			ob_end_clean();
 			return $this->_setErrorLevel( self::FLAG_ERROR_CONTENT );
 		}
 		$this->_setContentData( ob_get_contents() );
-		ob_clean();
+		ob_end_clean();
 
 		$this->_execute_success = true;
 
