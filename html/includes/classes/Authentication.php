@@ -8,12 +8,14 @@ class Authentication
 	private $_db;
 	private $_user;
 	private $_userID;
+	private $_token;
 
 	public function __construct()
 	{
 		$this->_db		= new Database();
 		$this->_user	= array();
 		$this->_userID	= 0;
+		$this->_token	= 0;
 
 		$this->_initialize();
 	}
@@ -28,6 +30,7 @@ class Authentication
 		{
 			$this->_user 	= $user;
 			$this->_userID	= $user[ 'id' ];
+			$this->_token	= $session[ 'token' ];
 		}
 	}
 
@@ -39,6 +42,11 @@ class Authentication
 	public function getUser()
 	{
 		return $this->_user;
+	}
+
+	public function getToken()
+	{
+		return $this->_token;
 	}
 
 	public function isUser()
