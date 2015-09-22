@@ -53,17 +53,6 @@ code {
 	padding: 8px 10px;
 	white-space: pre;
 }
-blockquote {
-	background: url('../images/quote.gif') no-repeat;
-	color: #666;
-	display: block;
-	padding-left: 28px;
-	font-style:normal;
-	font-variant:normal;
-	font-weight:normal;
-	font-size:1.3em;
-	font-family:Lucida Sans Unicode, serif
-}
 h1, h2, h3 {
 	color: #654;
 	padding-top: 6px;
