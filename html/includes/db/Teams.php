@@ -166,7 +166,7 @@ class Teams
 		array_push( $teams, array( 'team' => 'New Orleans Saints', 		'conf' => 'NFC South', 	'stadium' => 'Mercedes-Benz Superdome', 			'abbr' => 'NO',		'o_abbr' => 'NOS' ) );
 		array_push( $teams, array( 'team' => 'Tampa Bay Buccaneers', 	'conf' => 'NFC South', 	'stadium' => 'Raymond James Stadium', 				'abbr' => 'TB',		'o_abbr' => 'TBB' ) );
 
-		array_push( $teams, array( 'team' => 'San Francisco 49ers', 	'conf' => 'NFC West', 	'stadium' => 'Candlestick Park', 					'abbr' => 'SF',		'o_abbr' => 'SFO' ) );
+		array_push( $teams, array( 'team' => 'San Francisco 49ers', 	'conf' => 'NFC West', 	'stadium' => 'Levi\'s Stadium', 					'abbr' => 'SF',		'o_abbr' => 'SFO' ) );
 		array_push( $teams, array( 'team' => 'Seattle Seahawks', 		'conf' => 'NFC West', 	'stadium' => 'CenturyLink Field', 					'abbr' => 'SEA',	'o_abbr' => '' ) );
 		array_push( $teams, array( 'team' => 'Los Angeles Rams', 		'conf' => 'NFC West', 	'stadium' => 'Los Angeles Memorial Coliseum',		'abbr' => 'LA',		'o_abbr' => 'RAM' ) );
 
