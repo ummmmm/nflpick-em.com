@@ -1,0 +1,6 @@
+Rename html/includes/config.php.exmaple to html/includes/config.php
+Update the defined value for CONFIG_INI in html/includes/config.php
+
+Rename data/config.ini.example to data/config.ini - Should be noted that parse_ini does not like certain special characters
+
+Run ./setup.php?Action=INSTALL
