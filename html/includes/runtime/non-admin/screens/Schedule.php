@@ -1,19 +1,7 @@
 <?php
 
-class Screen_Schedule implements iScreen
+class Screen_Schedule extends Screen
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
-	public function requirements()
-	{
-		return array();
-	}
-
 	public function content()
 	{
 		$db_games	= new Games( $this->_db );

@@ -1,19 +1,7 @@
 <?php
 
-class Screen_Games implements iScreen
+class Screen_Games extends Screen_Admin
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
-	public function requirements()
-	{
-		return array( "admin" => true );
-	}
-
 	public function jquery()
 	{
 		print "$.fn.load_games();";
@@ -23,12 +11,12 @@ class Screen_Games implements iScreen
 
 	public function content()
 	{
-		$db_teams = new Teams( $this->_db );
-		$count = $db_teams->List_Load( $teams );
+		$db_teams	= new Teams( $this->_db );
+		$count		= $db_teams->List_Load( $teams );
 		
 		if ( $count === false )
 		{
-			return $this->_screen->setDBError();
+			return $this->setDBError();
 		}
 		
 		print '<h1>Edit Weeks</h1>';

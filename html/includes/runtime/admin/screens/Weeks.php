@@ -1,19 +1,7 @@
 <?php
 
-class Screen_Weeks implements iScreen
+class Screen_Weeks extends Screen_Admin
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
-	public function requirements()
-	{
-		return array( "admin" => true );
-	}
-
 	public function jquery()
 	{
 		print "$.fn.load_weeks();";

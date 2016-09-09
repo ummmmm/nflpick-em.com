@@ -2,20 +2,8 @@
 
 require_once( "includes/classes/Mail.php" );
 
-class Screen_ForgotPassword implements iScreen
+class Screen_ForgotPassword extends Screen
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
-	public function requirements()
-	{
-		return array();
-	}
-
 	public function validate()
 	{
 		$action = Functions::Get( "action" );
@@ -24,7 +12,7 @@ class Screen_ForgotPassword implements iScreen
 		{
 			if ( !$this->_auth->getUserID() )
 			{
-				return $this->_screen->setError( array( "#Error#", "You must be logged in" ) );
+				return $this->setError( array( "#Error#", "You must be logged in" ) );
 			}
 
 			$password	= Functions::Post( "password" );
@@ -42,10 +30,10 @@ class Screen_ForgotPassword implements iScreen
 
 			if ( !empty( $errors ) )
 			{
-				return $this->_screen->setValidationErrors( $errors );
+				return $this->setValidationErrors( $errors );
 			}
 
-			return $this->_screen->setValidationData( $password );
+			return $this->setValidationData( $password );
 		}
 
 		if ( $action == '' )
@@ -56,17 +44,17 @@ class Screen_ForgotPassword implements iScreen
 
 			if ( $count === false )
 			{
-				return $this->_screen->setDBError();
+				return $this->setDBError();
 			}
 			else if ( $count === 0 )
 			{
-				return $this->_screen->setValidationErrors( "Email not found" );
+				return $this->setValidationErrors( "Email not found" );
 			}
 
-			return $this->_screen->setValidationData( $user );
+			return $this->setValidationData( $user );
 		}
 
-		return $this->_screen->setValidationErrors( array( "Invalid action" ) );
+		return $this->setValidationErrors( array( "Invalid action" ) );
 	}
 
 	public function update( $data )
@@ -83,15 +71,15 @@ class Screen_ForgotPassword implements iScreen
 
 			if ( !$db_users->Update( $user ) )
 			{
-				return $this->_screen->setDBError();
+				return $this->setDBError();
 			}
 
 			if ( !$db_reset_passwords->Delete_User( $this->_auth->getUserID() ) )
 			{
-				return $this->_screen->setDBError();
+				return $this->setDBError();
 			}
 
-			return $this->_screen->setUpdateMessage( "Your password has been updated" );
+			return $this->setUpdateMessage( "Your password has been updated" );
 		}
 
 		if ( $action == '' )
@@ -102,32 +90,32 @@ class Screen_ForgotPassword implements iScreen
 
 			if ( !$db_reset_passwords->Delete_User( $user[ 'id' ] ) )
 			{
-				return $this->_screen->setDBError();
+				return $this->setDBError();
 			}
 
 			if ( !$db_reset_passwords->Insert( $record ) )
 			{
-				return $this->_screen->setDBError();
+				return $this->setDBError();
 			}
 
 			$user[ 'force_password' ]	= 1;
 
 			if ( !$db_users->Update( $user ) )
 			{
-				return $this->_screen->setDBError();
+				return $this->setDBError();
 			}
 
 			$email = new Mail( $user[ 'email' ], "Forgot Password", sprintf( 'Your temporary password is <span style="font-weight: bold;">%s</span>', $temp_password ) );
 
 			if ( !$email->send() )
 			{
-				return $this->_screen->setError( array( "#Error#", "Failed to send email.  Please try again later."  ) );
+				return $this->setError( array( "#Error#", "Failed to send email.  Please try again later."  ) );
 			}
 
-			return $this->_screen->setUpdateMessage( "A temporary password has been emailed to you." );
+			return $this->setUpdateMessage( "A temporary password has been emailed to you." );
 		}
 
-		return $this->_screen->setError( array( "#Error#", "Invalid action" ) );
+		return $this->setError( array( "#Error#", "Invalid action" ) );
 	}
 
 	public function content()
@@ -145,7 +133,7 @@ class Screen_ForgotPassword implements iScreen
 		if ( $action == "changepassword" )	return $this->_ChangePassword();
 		else if ( $action == '' )			return $this->_ForgotPassword();
 
-		return $this->_screen->setError( array( "#Error#", "Invalid action" ) );
+		return $this->setError( array( "#Error#", "Invalid action" ) );
 	}
 
 	private function _ForgotPassword()

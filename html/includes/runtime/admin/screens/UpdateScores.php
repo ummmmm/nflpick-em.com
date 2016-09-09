@@ -1,19 +1,7 @@
 <?php
 
-class Screen_UpdateScores implements iScreen
+class Screen_UpdateScores extends Screen_Admin
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
-	public function requirements()
-	{
-		return array( "admin" => true );
-	}
-
 	public function content()
 	{
 		print '<h1>Update Scores</h1>';
@@ -75,20 +63,20 @@ class Screen_UpdateScores implements iScreen
 
 				if ( !$db_games->Update( $game ) )
 				{
-					return $this->_screen->setDBError();
+					return $this->setDBError();
 				}
 			}
 
 			if ( !$db_teams->Recalculate_Records() || !$db_users->Recalculate_Records()	)
 			{
-				return $this->_screen->setDBError();
+				return $this->setDBError();
 			}
 
 			printf( '<p><b>Games Updated</b></p>' );
 		}
 		catch( Exception $e )
 		{
-			return $this->_screen->setError( array( "#Error#", $e->getmessage() ) );
+			return $this->setError( array( "#Error#", $e->getmessage() ) );
 		}
 
 		return true;

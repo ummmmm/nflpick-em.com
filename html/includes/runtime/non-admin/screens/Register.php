@@ -1,19 +1,7 @@
 <?php
 
-class Screen_Register implements iScreen
+class Screen_Register extends Screen
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
-	public function requirements()
-	{
-		return array();
-	}
-
 	public function validate()
 	{
 		$db_users		= new Users( $this->_db );
@@ -21,12 +9,12 @@ class Screen_Register implements iScreen
 
 		if ( !$db_settings->Load( $settings ) )
 		{
-			return $this->_screen->setDBError();
+			return $this->setDBError();
 		}
 
 		if ( $settings[ 'registration' ] != 1 )
 		{
-			return $this->_screen->setValidationErrors( array( "Registration is currently disabled." ) );
+			return $this->setValidationErrors( array( "Registration is currently disabled." ) );
 		}
 
 		$register[ 'fname' ] 	= Functions::Post( 'fname' );
@@ -82,10 +70,10 @@ class Screen_Register implements iScreen
 
 		if ( !empty( $errors ) )
 		{
-			return $this->_screen->setValidationErrors( $errors );
+			return $this->setValidationErrors( $errors );
 		}
 
-		return $this->_screen->setValidationData( $register );
+		return $this->setValidationData( $register );
 	}
 
 	public function update( $data )

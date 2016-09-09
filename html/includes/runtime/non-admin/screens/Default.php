@@ -1,26 +1,14 @@
 <?php
 
-class Screen_Default implements iScreen
+class Screen_Default extends Screen
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
-	public function requirements()
-	{
-		return array();
-	}
-
 	public function content()
 	{
 		$db_settings = new Settings( $this->_db );
 
 		if ( !$db_settings->Load( $settings ) )
 		{
-			return $this->_screen->setDBError();
+			return $this->setDBError();
 		}
 
 		$action = Functions::Get( 'action' );
@@ -31,7 +19,7 @@ class Screen_Default implements iScreen
 
 		if ( $news_count === false )
 		{
-			return $this->_screen->setDBError();
+			return $this->setDBError();
 		}
 
 		if ( $news_count == 0 )

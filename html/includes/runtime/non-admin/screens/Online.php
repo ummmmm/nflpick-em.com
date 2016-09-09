@@ -1,19 +1,7 @@
 <?php
 
-class Screen_Online implements iScreen
+class Screen_Online extends Screen
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
-	public function requirements()
-	{
-		return array();
-	}
-
 	public function content()
 	{
 		$db_settings = new Settings( $this->_db );
@@ -58,7 +46,7 @@ class Screen_Online implements iScreen
 
 		if ( $online === false )
 		{
-			return $this->_screen->setDBError();
+			return $this->setDBError();
 		}
 
 		return $online;

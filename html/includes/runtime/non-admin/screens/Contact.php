@@ -2,15 +2,8 @@
 
 require_once( "includes/classes/Mail.php" );
 
-class Screen_Contact implements iScreen
+class Screen_Contact extends Screen
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
 	public function validate()
 	{
 		$name 		= Functions::Post( "name" );
@@ -41,10 +34,10 @@ class Screen_Contact implements iScreen
 
 		if ( !empty( $errors ) )
 		{
-			return $this->_screen->setValidationErrors( $errors );
+			return $this->setValidationErrors( $errors );
 		}
 
-		return $this->_screen->setValidationData( array( "name" => $name, "email" => $email, "subject" => $subject, "message" => $message ) );
+		return $this->setValidationData( array( "name" => $name, "email" => $email, "subject" => $subject, "message" => $message ) );
 	}
 
 	public function update( $data )
@@ -63,15 +56,10 @@ class Screen_Contact implements iScreen
 
 		if ( $mail->send() === false )
 		{
-			return $this->_screen->setError( array( "#Error#", "Failed to send email.  Please try again later." ) );
+			return $this->setError( array( "#Error#", "Failed to send email.  Please try again later." ) );
 		}
 
-		return $this->_screen->setUpdateMessage( "Your message has been sent and you should receive a response within the next 24 hours." );
-	}
-
-	public function requirements()
-	{
-		return array();
+		return $this->setUpdateMessage( "Your message has been sent and you should receive a response within the next 24 hours." );
 	}
 
 	public function content()

@@ -1,19 +1,7 @@
 <?php
 
-class Screen_Login implements iScreen
+class Screen_Login extends Screen
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
-	public function requirements()
-	{
-		return array();
-	}
-
 	public function validate()
 	{
 		$db_users	= new Users( $this->_db );
@@ -31,10 +19,10 @@ class Screen_Login implements iScreen
 				usleep( $settings[ 'login_sleep' ] * 1000 );
 			}
 
-			return $this->_screen->setValidationErrors( array( "Invalid email or password" ) );
+			return $this->setValidationErrors( array( "Invalid email or password" ) );
 		}
 
-		return $this->_screen->setValidationData( $user );
+		return $this->setValidationData( $user );
 	}
 
 	public function update( $data )
@@ -44,7 +32,7 @@ class Screen_Login implements iScreen
 
 		if ( !$db_sessions->Generate( $user[ 'id' ] ) )
 		{
-			return $this->_screen->setDBError();
+			return $this->setDBError();
 		}
 
 		if ( $user[ 'force_password' ] )

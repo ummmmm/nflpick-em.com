@@ -8,14 +8,15 @@ require_once( "includes/classes/functions.php" );
 require_once( "includes/classes/Database.php" );
 require_once( "includes/classes/Screen.php" );
 
-$screen 	= new Screen();
-$db			= new Database();
-$users		= new Users( $db );
-$settings	= new Settings( $db );
-$admin 		= Functions::Get( "view" ) == "admin" ? true : false;
+$db					= new Database();
+$users				= new Users( $db );
+$settings			= new Settings( $db );
+$screen_renderer 	= new ScreenRenderer();
+$admin 				= Functions::Get( "view" ) == "admin" ? true : false;
+$screen				= Functions::Get( "screen" ) === "" ? "default" : Functions::Get( "screen" );
+$update				= Functions::Post_Int( "update" ) ? true : false;
 
-$screen->initialize( $admin, Functions::Get( "screen" ), Functions::Post_Int( "update" ) );
-$screen->execute();
+$screen_renderer->build( $admin, $screen, $update );
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -36,10 +37,10 @@ $screen->execute();
 			print '<script type="text/javascript" src="static/javascript/admin.js"></script>';
 		}
 
-		print $screen->head();
+		print $screen_renderer->head();
 	?>
 	<script type="text/javascript">$( document ).ready( function() { $.fn.load_poll(); } );</script>
-	<script type="text/javascript">$( document ).ready( function() { <?php print $screen->jquery_head(); ?> } );</script>
+	<script type="text/javascript">$( document ).ready( function() { <?php print $screen_renderer->jquery_head(); ?> } );</script>
 	<script>
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -58,14 +59,14 @@ $screen->execute();
 			</div>
 		</div>
 		<div class="navigation">
-			<?php print $screen->topNavigation(); ?>
+			<?php print $screen_renderer->topNavigation(); ?>
 		</div>
 		<div class="main">
 			<div class="content">
-				<?php print $screen->content(); ?>
+				<?php print $screen_renderer->content(); ?>
 			</div>
 			<div class="sidenav">
-				<?php print $screen->sideNavigation(); ?>
+				<?php print $screen_renderer->sideNavigation(); ?>
 				<h1>Poll</h1>
 				<div id="loading_polls_nav"></div>
 			</div>

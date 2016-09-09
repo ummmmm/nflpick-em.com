@@ -5,13 +5,117 @@ require_once( "Authentication.php" );
 require_once( "functions.php" );
 require_once( "validation.php" );
 
-interface iScreen
+abstract class Screen
 {
-	function requirements();
-	function content();
+	private $_error;
+	private $_validation_errors;
+	private $_validation_data;
+	private $_update_message;
+
+	protected $_db;
+	protected $_auth;
+
+	public function __construct( Database &$db, Authentication &$auth )
+	{
+		$this->_db					= $db;
+		$this->_auth				= $auth;
+
+		$this->_error				= array();
+		$this->_validation_errors	= null;
+		$this->_validation_data		= null;
+		$this->_update_message		= null;
+	}
+
+	abstract public function content();
+
+	public function requirements()
+	{
+		return array();
+	}
+
+	public function validate()
+	{
+		return true;
+	}
+
+	public function update( $data )
+	{
+		return true;
+	}
+
+	public function head()
+	{
+		return true;
+	}
+
+	public function jquery()
+	{
+		return true;
+	}
+
+	protected function setError( $error )
+	{
+		$this->_error = $error;
+
+		return false;
+	}
+
+	protected function setDBError()
+	{
+		return $this->setError( $this->_db->Get_Error() );
+	}
+
+	protected function setValidationErrors( $errors )
+	{
+		$this->_validation_errors = $errors;
+
+		return true;
+	}
+
+	protected function setValidationData( $data )
+	{
+		$this->_validation_data = $data;
+
+		return true;
+	}
+
+	protected function setUpdateMessage( $message )
+	{
+		$this->_update_message = $message;
+
+		return true;
+	}
+
+	public function getValidationErrors()
+	{
+		return $this->_validation_errors;
+	}
+
+	public function getValidationData()
+	{
+		return $this->_validation_data;
+	}
+
+	public function getUpdateMessage()
+	{
+		return $this->_update_message;
+	}
+
+	public function getError()
+	{
+		return $this->_error;
+	}
 }
 
-class Screen
+abstract class Screen_Admin extends Screen
+{
+	public function requirements()
+	{
+		return array( "admin" => true );
+	}
+}
+
+class ScreenRenderer
 {
 	const FLAG_REQ_USER 			= 0x1;
 	const FLAG_REQ_ADMIN			= 0x2;
@@ -29,14 +133,11 @@ class Screen
 	private $_auth;
 	private $_screen;
 	private $_error;
-	private $_misconfigured;
 	private $_error_level;
 
-	private $_validation_data;
 	private $_head_data;
 	private $_jquery_data;
 	private $_content_data;
-	private $_execute_success;
 
 	public function __construct()
 	{
@@ -46,67 +147,44 @@ class Screen
 		$this->_screen				= null;
 		$this->_error				= array();
 		$this->_error_level			= 0x0;
-		$this->_execute_success		= false;
-		$this->_validation_errors	= null;
 
-		$this->_validation_data 	= null;
 		$this->_jquery_data			= null;
 		$this->_head_data			= null;
 		$this->_content_data		= null;
 
-		$this->_update_message		= null;
 		$this->_run_update			= false;
 	}
 
-	public function initialize( $admin, $screen, $update )
+	private function _build_head()
 	{
-		$this->_misconfigured = !$this->_configure( $admin, $screen, $update );
+		ob_start();
+		if ( !$this->_screen->head() )
+		{
+			ob_end_clean();
+			return $this->_setErrorLevel( self::FLAG_ERROR_HEAD );
+		}
+		$this->_setHeadData( ob_get_contents() );
+		ob_end_clean();
+
+		return true;
 	}
 
-	public function execute()
+	private function _build_jquery()
 	{
-		if ( $this->_misconfigured )
+		ob_start();
+		if ( !$this->_screen->jquery() )
 		{
-			return $this->_setErrorLevel( self::FLAG_ERROR_MISCONFIGURED );
-		}
-
-		if ( $this->_run_update )
-		{
-			if ( !$this->_screen->validate() )
-			{
-				return $this->_setErrorLevel( self::FLAG_ERROR_VALIDATE );
-			}
-
-			if ( !$this->_validation_errors && !$this->_screen->update( $this->_validation_data ) )
-			{
-				return $this->_setErrorLevel( self::FLAG_ERROR_UPDATE );
-			}
-		}
-
-		if ( method_exists( $this->_screen, "head" ) )
-		{
-			ob_start();
-			if ( !$this->_screen->head() )
-			{
-				ob_end_clean();
-				return $this->_setErrorLevel( self::FLAG_ERROR_HEAD );
-			}
-			$this->_setHeadData( ob_get_contents() );
 			ob_end_clean();
+			return $this->_setErrorLevel( self::FLAG_ERROR_JQUERY );
 		}
+		$this->_setJQueryData( ob_get_contents() );
+		ob_end_clean();
 
-		if ( method_exists( $this->_screen, "jquery" ) )
-		{
-			ob_start();
-			if ( !$this->_screen->jquery() )
-			{
-				ob_end_clean();
-				return $this->_setErrorLevel( self::FLAG_ERROR_JQUERY );
-			}
-			$this->_setJQueryData( ob_get_contents() );
-			ob_end_clean();
-		}
+		return true;
+	}
 
+	private function _build_content()
+	{
 		ob_start();
 		if ( !$this->_screen->content() )
 		{
@@ -116,14 +194,56 @@ class Screen
 		$this->_setContentData( ob_get_contents() );
 		ob_end_clean();
 
-		$this->_execute_success = true;
+		return true;
+	}
+
+	private function _run_update()
+	{
+		if ( $this->_run_update )
+		{
+			if ( !$this->_screen->validate() )
+			{
+				return $this->_setErrorLevel( self::FLAG_ERROR_VALIDATE );
+			}
+
+			if ( !$this->_screen->getValidationErrors() && !$this->_screen->update( $this->_screen->getValidationData() ) )
+			{
+				return $this->_setErrorLevel( self::FLAG_ERROR_UPDATE );
+			}
+		}
 
 		return true;
 	}
 
+	public function build( $admin, $screen, $update )
+	{
+		if ( !$this->_configure( $admin, $screen, $update ) )
+		{
+			return $this->_setErrorLevel( self::FLAG_ERROR_MISCONFIGURED );
+		}
+
+		if ( !$this->_run_update() )
+		{
+			return false;
+		}
+
+		
+		if ( !$this->_build_head() || !$this->_build_jquery() || !$this->_build_content() )
+		{
+			return false;
+		}
+		
+		return true;
+	}
+
+	private function _valid_configuration()
+	{
+		return $this->_error_level == 0x0;
+	}
+
 	public function head()
 	{
-		if ( $this->_execute_success )
+		if ( $this->_valid_configuration() )
 		{
 			return $this->_head_data;
 		}
@@ -131,7 +251,7 @@ class Screen
 
 	public function jquery_head()
 	{
-		if ( $this->_execute_success )
+		if ( $this->_valid_configuration() )
 		{
 			return $this->_jquery_data;
 		}
@@ -172,7 +292,6 @@ class Screen
 		if ( $admin )	$path = "includes/runtime/admin/screens";
 		else			$path = "includes/runtime/non-admin/screens";
 
-		$screen			= ( $screen == "" ) ? "default" : $screen;
 		$screen_name 	= $this->_screenName( $screen );
 		$class 			= sprintf( "Screen_%s", $screen_name );
 		$file_path		= sprintf( "%s/%s.php", $path, Functions::Strip_Nulls( $screen_name ) );
@@ -191,11 +310,11 @@ class Screen
 			return $this->_setError( array( "#Error#", "Screen is miscongifured" ) );
 		}
 
-		$this->_screen = new $class( $this->_db, $this->_auth, $this );
+		$this->_screen = new $class( $this->_db, $this->_auth );
 
-		if ( !$this->_screen instanceof iScreen )
+		if ( !$this->_screen instanceof Screen )
 		{
-			return $this->_setError( array( "#Error#", "Screen is missing required interface" ) );
+			return $this->_setError( array( "#Error#", "Screen is missing required inheritance" ) );
 		}
 
 		$this->_getRequirements( $flags );
@@ -217,11 +336,6 @@ class Screen
 			if ( ( $flags & self::FLAG_REQ_TOKEN ) && !$this->_auth->isValidToken( $token ) )
 			{
 				return $this->_setError( array( '#Error#', 'You must have a valid token to complete this action' ) );
-			}
-
-			if ( !method_exists( $this->_screen, "validate" ) || !method_exists( $this->_screen, "update" ) )
-			{
-				return $this->_setError( array( "#Error#", "Screen is missing required methods" ) );
 			}
 
 			$this->_run_update = true;
@@ -261,12 +375,12 @@ class Screen
 
 	private function _outputUpdateMessage()
 	{
-		if ( !$this->_update_message )
+		if ( !$this->_screen->getUpdateMessage() )
 		{
 			return;
 		}
 
-		printf( "<p><b>%s</b></p>", htmlentities( $this->_update_message ) );
+		printf( "<p><b>%s</b></p>", htmlentities( $this->_screen->getUpdateMessage() ) );
 	}
 
 	private function _outputContentData()
@@ -288,7 +402,7 @@ class Screen
 
 	private function _outputValidationErrors()
 	{
-		$errors = $this->_validation_errors;
+		$errors = $this->_screen->getValidationErrors();
 
 		if ( !$errors )
 		{
@@ -322,45 +436,11 @@ class Screen
 	private function _getRequirements( &$flags )
 	{
 		$requirements	= $this->_screen->requirements();
+
 		$flags			= 0x0;
 		$flags			|= array_key_exists( 'user', 	$requirements ) && $requirements[ 'user' ] 	? self::FLAG_REQ_USER	: 0x0;
 		$flags			|= array_key_exists( 'admin', 	$requirements ) && $requirements[ 'admin' ] ? self::FLAG_REQ_ADMIN	: 0x0;
 		$flags			|= array_key_exists( 'token', 	$requirements ) && $requirements[ 'token' ] ? self::FLAG_REQ_TOKEN	: 0x0;
-	}
-
-	// public functions that the sub-classes can use to set data/errors
-
-	public function setError( $error )
-	{
-		$this->_error = $error;
-
-		return false;
-	}
-
-	public function setDBError()
-	{
-		return $this->_setError( $this->_db->Get_Error() );
-	}
-
-	public function setValidationData( $data )
-	{
-		$this->_validation_data = $data;
-
-		return true;
-	}
-
-	public function setUpdateMessage( $message )
-	{
-		$this->_update_message = $message;
-
-		return true;
-	}
-
-	public function setValidationErrors( $errors )
-	{
-		$this->_validation_errors = $errors;
-
-		return true;
 	}
 
 	// stupid navigation stuff

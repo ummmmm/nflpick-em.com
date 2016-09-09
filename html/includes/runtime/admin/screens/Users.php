@@ -1,19 +1,7 @@
 <?php
 
-class Screen_Users implements iScreen
+class Screen_Users extends Screen_Admin
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
-	public function requirements()
-	{
-		return array( "admin" => true );
-	}
-
 	public function jquery()
 	{
 		print "$.fn.sort( 'LoadUsers', 'name', $.fn.sort_user_callback );";
@@ -26,7 +14,7 @@ class Screen_Users implements iScreen
 		$db_users 	= new Users( $this->_db );
 		$count		= $db_users->List_Load( $users );
 
-		if ( $count === false )	return $this->_screen->setDBError();
+		if ( $count === false )	return $this->setDBError();
 
 		print '<h1>Users</h1>';
 		print '<div class="sortby">Sort By: ';

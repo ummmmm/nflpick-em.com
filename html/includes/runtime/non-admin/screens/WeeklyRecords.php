@@ -1,14 +1,7 @@
 <?php
 
-class Screen_WeeklyRecords implements iScreen
+class Screen_WeeklyRecords extends Screen
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
 	public function requirements()
 	{
 		return array( "user" => true );

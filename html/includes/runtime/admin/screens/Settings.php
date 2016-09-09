@@ -1,26 +1,14 @@
 <?php
 
-class Screen_Settings implements iScreen
+class Screen_Settings extends Screen_Admin
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
-	public function requirements()
-	{
-		return array( "admin" => true );
-	}
-
 	public function content()
 	{
 		$db_settings = new Settings( $this->_db );
 
 		if ( !$db_settings->Load( $settings ) )
 		{
-			return $this->_screen->setDBError();
+			return $this->setDBError();
 		}
 
 		print '<div id="settings_addedit">';

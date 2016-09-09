@@ -1,14 +1,7 @@
 <?php
 
-class Screen_MakePicks implements iScreen
+class Screen_MakePicks extends Screen
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
 	public function requirements()
 	{
 		return array( "user" => true );
@@ -28,8 +21,8 @@ class Screen_MakePicks implements iScreen
 		$then		= new DateTime();
 		$count		= $db_weeks->Load( $week_id, $loaded_week );
 
-		if ( $count === false )	return $this->_screen->setDBError();
-		else if ( $count == 0 )	return $this->_screen->setError( array( "#Error#", "Failed to load week" ) );
+		if ( $count === false )	return $this->setDBError();
+		else if ( $count == 0 )	return $this->setError( array( "#Error#", "Failed to load week" ) );
 
 		$now->setTimezone( new DateTimeZone( 'UTC' ) );
 		$then->setTimezone( new DateTimeZone( 'UTC' ) );
@@ -81,8 +74,8 @@ EOT;
 		$db_weeks	= new Weeks( $this->_db );
 		$count		= $db_weeks->Load( $week_id, $loaded_week );
 
-		if ( $count === false )	return $this->_screen->setDBError();
-		else if ( $count == 0 )	return $this->_screen->setError( array( "#Error#", "Failed to load week" ) );
+		if ( $count === false )	return $this->setDBError();
+		else if ( $count == 0 )	return $this->setError( array( "#Error#", "Failed to load week" ) );
 
 		printf( "$.fn.load_picks( %d );", $loaded_week[ 'id' ] );
 
@@ -144,7 +137,7 @@ EOT;
 
 		if ( $games_count === false )
 		{
-			return $this->_screen->setDBError();
+			return $this->setDBError();
 		}
 
 		if ( $games_count === 0 )
@@ -154,7 +147,7 @@ EOT;
 
 		if ( !$db_weeks->Load( $week, $loaded_week ) )
 		{
-			return $this->_screen->setDBError();
+			return $this->setDBError();
 		}
 
 		$remaining = $db_picks->Remaining( $this->_auth->getUserID(), $week );

@@ -1,14 +1,7 @@
 <?php
 
-class Screen_ViewPicks implements iScreen
+class Screen_ViewPicks extends Screen
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
 	public function requirements()
 	{
 		return array( "user" => true );
@@ -97,7 +90,7 @@ class Screen_ViewPicks implements iScreen
 			{
 				if ( !$db_picks->Load_User_Game( $loaded_user[ 'id' ], $game[ 'id' ], $pick ) )
 				{
-					return $this->_screen->setDBError();
+					return $this->setDBError();
 				}
 
 				if ( $pick[ 'picked' ] == 0 )

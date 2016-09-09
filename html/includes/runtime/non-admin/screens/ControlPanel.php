@@ -1,14 +1,7 @@
 <?php
 
-class Screen_ControlPanel implements iScreen
+class Screen_ControlPanel extends Screen
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
 	public function requirements()
 	{
 		return array( "user" => true );
@@ -46,10 +39,10 @@ class Screen_ControlPanel implements iScreen
 
 			if ( !empty( $errors ) )
 			{
-				return $this->_screen->setValidationErrors( $errors );
+				return $this->setValidationErrors( $errors );
 			}
 
-			return $this->_screen->setValidationData( array( "email" => $email ) );
+			return $this->setValidationData( array( "email" => $email ) );
 		}
 
 		if ( $action == 'changepassword' )
@@ -75,10 +68,10 @@ class Screen_ControlPanel implements iScreen
 
 			if ( !empty( $errors ) )
 			{
-				return $this->_screen->setValidationErrors( $errors );
+				return $this->setValidationErrors( $errors );
 			}
 
-			return $this->_screen->setValidationData( array( "password" => Functions::HashPassword( $new_password ) ) );
+			return $this->setValidationData( array( "password" => Functions::HashPassword( $new_password ) ) );
 		}
 
 		return true;
@@ -96,10 +89,10 @@ class Screen_ControlPanel implements iScreen
 
 			if ( !$db_users->Update( $user ) )
 			{
-				return $this->_screen->setDBError();
+				return $this->setDBError();
 			}
 
-			return $this->_screen->setUpdateMessage( "Your email adddress has been updated." );
+			return $this->setUpdateMessage( "Your email adddress has been updated." );
 		}
 
 		if ( $action == 'changepassword' )
@@ -109,10 +102,10 @@ class Screen_ControlPanel implements iScreen
 
 			if ( !$db_users->Update( $user ) )
 			{
-				return $this->_screen->setDBError();
+				return $this->setDBError();
 			}
 
-			return $this->_screen->setUpdateMessage( "Your password has been updated." );
+			return $this->setUpdateMessage( "Your password has been updated." );
 		}
 
 		return true;

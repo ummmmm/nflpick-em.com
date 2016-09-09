@@ -1,14 +1,7 @@
 <?php
 
-class Screen_DeleteAccount implements iScreen
+class Screen_DeleteAccount extends Screen
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
 	public function requirements()
 	{
 		return array( 'user' => true, 'token' => true );
@@ -21,7 +14,7 @@ class Screen_DeleteAccount implements iScreen
 
 		if ( !$db_users->validateLogin( $this->_auth->getUser()[ 'email' ], $password, $null ) )
 		{
-			return $this->_screen->setValidationErrors( 'Invalid password' );
+			return $this->setValidationErrors( 'Invalid password' );
 		}
 
 		return true;
@@ -33,7 +26,7 @@ class Screen_DeleteAccount implements iScreen
 
 		if ( !$db_users->Delete( $this->_auth->getUserID() ) )
 		{
-			return $this->_screen->setDBError();
+			return $this->setDBError();
 		}
 
 		header( sprintf( "Location: %s", INDEX ) );

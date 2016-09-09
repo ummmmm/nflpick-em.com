@@ -1,17 +1,10 @@
 <?php
 
-class Screen_Leaderboard implements iScreen
+class Screen_Leaderboard extends Screen
 {
-	public function __construct( Database &$db, Authentication &$auth, Screen &$screen )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_screen	= $screen;
-	}
-
 	public function requirements()
 	{
-		return array();
+		return array( "user" => true );
 	}
 
 	public function content()
@@ -22,7 +15,7 @@ class Screen_Leaderboard implements iScreen
 		
 		if ( $count === false )
 		{
-			return $this->_screen->setDBError();
+			return $this->setDBError();
 		}
 		
 		if ( $count === 0 )
