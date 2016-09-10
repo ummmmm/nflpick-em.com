@@ -73,7 +73,7 @@ $screen_renderer->build( $admin, $screen, $update );
 			<br clear="all" />
 		</div>
 		<div class="footer">
-			&copy; 2007-2015 <a href="">NFLPick-Em.com</a>. Template design by <a href="http://templates.arcsin.se" target="_blank" title="Designed By Arcsin">Arcsin</a>.
+			&copy; 2007-<?php print date( 'Y' ); ?> <a href="">NFLPick-Em.com</a>. Template design by <a href="http://templates.arcsin.se" target="_blank" title="Designed By Arcsin">Arcsin</a>.
 		</div>
 	</div>
 </body>
