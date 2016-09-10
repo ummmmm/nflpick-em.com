@@ -74,12 +74,7 @@ class Games
 		$game[ 'homeScore' ]	= 0;
 		$game[ 'awayScore' ]	= 0;
 
-		if ( !$this->_db->insert( 'games', $game ) )
-		{
-			return $this->_Set_Error( $this->_db->Get_Error() );
-		}
-
-		return true;
+		return $this->_db->insert( 'games', $game );
 	}
 
 	public function Update( $game )
