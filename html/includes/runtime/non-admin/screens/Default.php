@@ -40,7 +40,7 @@ class Screen_Default extends Screen
 
 			print '<h1>' . $news[ 'title' ] . '</h1>';
 			print '<div class="descr">' . $date->format( 'M d, Y' ) . ' by ' . htmlentities( $news[ 'name' ] ) . '</div>';
-			print '<p>' . nl2br( htmlentities( $news[ 'news' ] ) ) . '</p>';
+			print '<p>' . nl2br( $news[ 'news' ] ) . '</p>';
 		}
 
 		if ( $action != "viewall" )
