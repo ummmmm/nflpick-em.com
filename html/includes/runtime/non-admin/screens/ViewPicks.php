@@ -131,13 +131,12 @@ class Screen_ViewPicks extends Screen
 				}
 			}
 
-			print '<td><b>' . $user_records[ $loaded_user[ 'id' ] ][ 'wins' ] . ' - ' . $user_records[ $loaded_user[ 'id' ] ][ 'losses' ] . '</b></td>';
-
+			printf( '<td><b>%d - %d</b></td>', $user_records[ $loaded_user[ 'id' ] ][ 'wins' ], $user_records[ $loaded_user[ 'id' ] ][ 'losses' ] );
 			print '</tr>';
 		}
 
 		print '</table>';
-		print '<p><a href="javascript:;" id="highlightpicks" onclick="$.fn.highlightPicks( 0, ' . $weekid . ');">Highlighting On</a></p>';
+		printf( '<p><a href="javascript:;" id="highlightpicks" onclick="$.fn.highlightPicks( 0, %d );">Highlighting On</a></p>', $weekid );
 
 		return true;
 	}
