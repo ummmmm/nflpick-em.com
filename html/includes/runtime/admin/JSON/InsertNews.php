@@ -1,14 +1,7 @@
 <?php
 
-class JSON_InsertNews implements iJSON
+class JSON_InsertNews extends JSON
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
 	public function requirements()
 	{
 		return array( 'admin' => true, 'token' => true );
@@ -23,19 +16,19 @@ class JSON_InsertNews implements iJSON
 		
 		if ( $title === '' )
 		{
-			return $this->_json->setError( array( 'NFL-NEWS_INSERT-0', 'Title cannot be blank' ) );
+			return $this->setError( array( 'NFL-NEWS_INSERT-0', 'Title cannot be blank' ) );
 		}
 		
 		if ( $message === '' )
 		{
-			return $this->_json->setError( array( 'NFL-NEWS_INSERT-1', 'Message cannot be blank' ) );
+			return $this->setError( array( 'NFL-NEWS_INSERT-1', 'Message cannot be blank' ) );
 		}
 
 		$insert = array( 'title' => $title, 'news' => $message, 'active' => $active, 'user_id' => $this->_auth->getUserID() );
 		
 		if ( !$db_news->Insert( $insert ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 
 		return true;		

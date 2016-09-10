@@ -1,14 +1,7 @@
 <?php
 
-class JSON_UpdateSettings implements iJSON
+class JSON_UpdateSettings extends JSON
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
 	public function requirements()
 	{
 		return array( 'admin' => true, 'token' => true );
@@ -21,7 +14,7 @@ class JSON_UpdateSettings implements iJSON
 
 		if ( !$db_settings->Load( $settings ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 
 		$settings[ 'email_validation' ]	= Functions::Post_Active( 'email_validation' );
@@ -33,15 +26,15 @@ class JSON_UpdateSettings implements iJSON
 		$settings[ 'domain_email' ]		= Functions::Post( 'domain_email' );
 		$settings[ 'site_title' ]		= Functions::Post( 'site_title' );
 
-		if ( $settings[ 'max_news' ] <= 0 )				return $this->_json->setError( array( '#Error#', 'Max News must be greater than 0' ) );
-		elseif ( $settings[ 'online' ] <= 0 )			return $this->_json->setError( array( '#Error#', 'Online must be greater than 0' ) );
-		elseif ( $settings[ 'login_sleep' ] <= 0 )		return $this->_json->setError( array( '#Error#', 'Login Sleep must be greater than 0' ) );
-		elseif ( $settings[ 'domain_url' ] === '' )		return $this->_json->setError( array( '#Error#', 'Domain URL cannot be blank' ) );
-		elseif ( $settings[ 'site_title' ] === '' )		return $this->_json->setError( array( '#Error#', 'Site Title cannot be blank' ) );
+		if ( $settings[ 'max_news' ] <= 0 )			return $this->setError( array( '#Error#', 'Max News must be greater than 0' ) );
+		elseif ( $settings[ 'online' ] <= 0 )		return $this->setError( array( '#Error#', 'Online must be greater than 0' ) );
+		elseif ( $settings[ 'login_sleep' ] <= 0 )	return $this->setError( array( '#Error#', 'Login Sleep must be greater than 0' ) );
+		elseif ( $settings[ 'domain_url' ] === '' )	return $this->setError( array( '#Error#', 'Domain URL cannot be blank' ) );
+		elseif ( $settings[ 'site_title' ] === '' )	return $this->setError( array( '#Error#', 'Site Title cannot be blank' ) );
 		
 		if ( !$db_settings->Update( $settings ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		return true;

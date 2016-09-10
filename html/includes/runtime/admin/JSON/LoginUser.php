@@ -1,14 +1,7 @@
 <?php
 
-class JSON_LoginUser implements iJSON
+class JSON_LoginUser extends JSON
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
 	public function requirements()
 	{
 		return array( 'admin' => true, 'token' => true );
@@ -24,17 +17,17 @@ class JSON_LoginUser implements iJSON
 		
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( $count === 0 )
 		{
-			return $this->_json->setError( array( 'NFL-USERS_LOGIN-0', 'Could not load user' ) );
+			return $this->setError( array( 'NFL-USERS_LOGIN-0', 'Could not load user' ) );
 		}
 		
 		if ( !$db_sessions->Delete_Cookie( Functions::Cookie( 'session' ) ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		$db_users->id = $loaded_user[ 'id' ];

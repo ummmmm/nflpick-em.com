@@ -1,19 +1,7 @@
 <?php
 
-class JSON_LoadNews implements iJSON
+class JSON_LoadNews extends JSONAdmin
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
-	public function requirements()
-	{
-		return array( 'admin' => true );
-	}
-
 	public function execute()
 	{
 		$db_news 	= new News( $this->_db );	
@@ -21,9 +9,9 @@ class JSON_LoadNews implements iJSON
 		
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
-		return $this->_json->setData( $news );
+		return $this->setData( $news );
 	}
 }

@@ -1,14 +1,7 @@
 <?php
 
-class JSON_UpdateGame implements iJSON
+class JSON_UpdateGame extends JSON
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
 	public function requirements()
 	{
 		return array( 'admin' => true, 'token' => true );
@@ -22,7 +15,7 @@ class JSON_UpdateGame implements iJSON
 		
 		if ( !$db_games->Load( $game_id, $loaded_game ) )
 		{
-			return $this->_json->setError( array( 'NFL-GAMES_UPDATE-6', 'Failed to load game' ) );
+			return $this->setError( array( 'NFL-GAMES_UPDATE-6', 'Failed to load game' ) );
 		}
 		
 		if ( $scored === true )
@@ -41,7 +34,7 @@ class JSON_UpdateGame implements iJSON
 		
 		if ( $awayScore === $homeScore || $awayScore < 0 || $homeScore < 0 )
 		{
-			return $this->_json->setError( array( 'NFL-GAMES_UPDATE-0', 'Invalid game score' ) );
+			return $this->setError( array( 'NFL-GAMES_UPDATE-0', 'Invalid game score' ) );
 		}
 		
 		$game[ 'winner' ]		= $homeScore > $awayScore ? $game[ 'home' ] : $game[ 'away' ];
@@ -51,40 +44,40 @@ class JSON_UpdateGame implements iJSON
 		
 		if ( !$db_games->Update( $game ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( !$this->_Teams_Update_Record( $db, $game[ 'home' ] ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( !$this->_Teams_Update_Record( $db, $game[ 'away' ] ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( !$this->_Users_Update_Record() )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( !$db_games->Load( $game[ 'id' ], $game ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		/*if ( !Missed_Week_Record_Update( $db, $game[ 'week' ] ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}*/
 		
 		if ( !$this->_Users_Place_Update( $db, $user ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
-		return $this->_json->setData( $game );
+		return $this->setData( $game );
 	}
 
 	private function _Update_Games( &$db, &$user, &$game )
@@ -105,43 +98,43 @@ class JSON_UpdateGame implements iJSON
 		
 		if ( !checkdate( $month, $day, $year ) || $mktime === false || $hour > 23 || $minute > 59 )
 		{
-			return $this->_json->setError( array( 'NFL-GAMES_UPDATE-1', 'Invalid game date' ) );
+			return $this->setError( array( 'NFL-GAMES_UPDATE-1', 'Invalid game date' ) );
 		}
 		
 		$team_count = $db_teams->Load( $away_id, $loaded_away );
 		
 		if ( $team_count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( $team_count === 0 )
 		{
-			return $this->_json->setError( array( 'NFL-GAMES_UPDATE-2', 'Failed to load the away team' ) );
+			return $this->setError( array( 'NFL-GAMES_UPDATE-2', 'Failed to load the away team' ) );
 		}
 		
 		$team_count = $db_teams->Load( $home_id, $loaded_home );
 		
 		if ( $team_count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( $team_count === 0 )
 		{
-			return $this->_json->setError( array( 'NFL-GAMES_UPDATE-3', 'Failed to load the home team' ) );
+			return $this->setError( array( 'NFL-GAMES_UPDATE-3', 'Failed to load the home team' ) );
 		}
 		
 		$week_count = $db_weeks->Load( $week_id, $loaded_week );
 		
 		if ( $week_count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( $week_count === 0 )
 		{
-			return $this->_json->setError( array( 'NFL-GAMES_UPDATE-4', 'Failed to load week' ) ); 
+			return $this->setError( array( 'NFL-GAMES_UPDATE-4', 'Failed to load week' ) ); 
 		}
 		
 		$date = new DateTime( date( 'Y-m-d H:i:s', $mktime ) );
@@ -153,15 +146,15 @@ class JSON_UpdateGame implements iJSON
 		
 		if ( !$db_games->Update( $game ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( !$db_games->Load( $game[ 'id' ], $game ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
-		return $this->_json->setData( $game );
+		return $this->setData( $game );
 	}
 
 	private function _Teams_Update_Record( &$db, $teamid )

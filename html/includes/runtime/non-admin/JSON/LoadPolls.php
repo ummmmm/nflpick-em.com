@@ -1,19 +1,7 @@
 <?php
 
-class JSON_LoadPolls implements iJSON
+class JSON_LoadPolls extends JSON
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
-	public function requirements()
-	{
-		return array();
-	}
-
 	public function execute()
 	{
 		$db_polls			= new Polls( $this->_db );
@@ -30,7 +18,7 @@ class JSON_LoadPolls implements iJSON
 		
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		foreach( $loaded_polls as &$poll )
@@ -39,14 +27,14 @@ class JSON_LoadPolls implements iJSON
 			
 			if ( $count === false )
 			{
-				return $this->_json->DB_Error();
+				return $this->setDBError();
 			}
 			
 			$vote_count = $db_poll_votes->Total_Poll( $poll[ 'id' ] );
 			
 			if ( $vote_count === false )
 			{
-				return $this->_json->DB_Error();
+				return $this->setDBError();
 			}
 			
 			$poll[ 'total_votes' ] = $vote_count;
@@ -57,7 +45,7 @@ class JSON_LoadPolls implements iJSON
 				
 				if ( $answer_count === false )
 				{
-					return $this->_json->DB_Error();
+					return $this->setDBError();
 				}
 				
 				$answer[ 'total_votes' ] = $answer_count;
@@ -75,14 +63,14 @@ class JSON_LoadPolls implements iJSON
 				
 				if ( $count === false )
 				{
-					return $this->_json->DB_Error();
+					return $this->setDBError();
 				}
 				
 				$poll[ 'voted' ] = ( $count !== 0 ) ? true : false;
 			}
 		}
 
-		return $this->_json->setData( $loaded_polls );
+		return $this->setData( $loaded_polls );
 	}
 
 	// Helper functions

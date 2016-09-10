@@ -1,18 +1,7 @@
 <?php
-class JSON_LoadUsers implements iJSON
+
+class JSON_LoadUsers extends JSONAdmin
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
-	public function requirements()
-	{
-		return array( 'admin' => true );
-	}
-
 	public function execute()
 	{
 		$sort		= Functions::Post( 'sort' );
@@ -20,7 +9,7 @@ class JSON_LoadUsers implements iJSON
 		
 		if ( !$this->_Load_Users( $sort, $direction, $users ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		foreach( $users as &$loaded_user )
@@ -29,7 +18,7 @@ class JSON_LoadUsers implements iJSON
 			$loaded_user[ 'current_place' ] 	= Functions::Place( $loaded_user[ 'current_place' ] ); 
 		}
 
-		return $this->_json->setData( $users );		
+		return $this->setData( $users );		
 	}
 
 	// Helper functions

@@ -1,19 +1,7 @@
 <?php
 
-class JSON_HighlightPicks implements iJSON
+class JSON_HighlightPicks extends JSONUser
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
-	public function requirements()
-	{
-		return array( 'user' => true );
-	}
-
 	public function execute()
 	{
 		$db_weeks	= new Weeks( $this->_db );
@@ -22,7 +10,7 @@ class JSON_HighlightPicks implements iJSON
 		
 		if ( !$db_weeks->IsLocked( $week ) )
 		{
-			return $this->_json->setError( array( "#ERROR#", sprintf( "Week '%d' has not been locked yet.", $week ) ) );
+			return $this->setError( array( "#ERROR#", sprintf( "Week '%d' has not been locked yet.", $week ) ) );
 		}
 
 		$diff_picks = array();
@@ -31,11 +19,11 @@ class JSON_HighlightPicks implements iJSON
 		{	
 			if ( $userid == $this->_auth->getUserID() )
 			{
-				return $this->_json->setError( array( "#Error#", "You cannot view picks you have different from yourself" ) );
+				return $this->setError( array( "#Error#", "You cannot view picks you have different from yourself" ) );
 			}
 			else if ( ( $count = $this->_Load_Different_Picks( $this->_auth->getUserID(), $userid, $week, $picks ) ) === false )
 			{
-				return $this->_json->DB_Error();
+				return $this->setDBError();
 			}
 			else if ( $count === 0 )
 			{
@@ -48,7 +36,7 @@ class JSON_HighlightPicks implements iJSON
 		{
 			if ( ( $count = $this->_Load_Different_Picks( $this->_auth->getUserID(), NULL, $week, $users_picks ) ) === false )
 			{
-				return $this->_json->DB_Error();
+				return $this->setDBError();
 			}
 			else if ( $count === 0 )
 			{
@@ -61,7 +49,7 @@ class JSON_HighlightPicks implements iJSON
 			}
 		}
 
-		return $this->_json->setData( $diff_picks );
+		return $this->setData( $diff_picks );
 	}
 
 	// Helper functions

@@ -4,52 +4,109 @@ require_once( "Database.php" );
 require_once( "Authentication.php" );
 require_once( "functions.php" );
 
-interface iJSON
+abstract class JSON
 {
-	function execute();
-	function requirements();
+	protected $_db;
+	protected $_auth;
+
+	protected $_data;
+	protected $_error;
+
+	public function __construct( Database &$db, Authentication &$auth )
+	{
+		$this->_db		= $db;
+		$this->_auth	= $auth;
+	}
+
+	abstract protected function execute();
+
+	public function requirements()
+	{
+		return array();
+	}
+
+	protected function setError( $error )
+	{
+		$this->_error = $error;
+
+		return false;
+	}
+
+	protected function setData( $data )
+	{
+		$this->_data = $data;
+
+		return true;
+	}
+
+	protected function setDBError()
+	{
+		return $this->setError( $this->_db->Get_Error() );
+	}
+
+	public function getError()
+	{
+		return $this->_error;
+	}
+
+	public function getData()
+	{
+		return $this->_data;
+	}
 }
 
-class JSON
+abstract class JSONUser extends JSON
 {
-	const FLAG_USER 	= 0x1;
-	const FLAG_ADMIN	= 0x2;
-	const FLAG_TOKEN	= 0x4;
+	public function requirements()
+	{
+		return array( "user" => true );
+	}
+}
+
+abstract class JSONAdmin extends JSON
+{
+	public function requirements()
+	{
+		return array( "admin" => true );
+	}
+}
+
+class JSONManager
+{
+	const FLAG_REQ_USER 	= 0x1;
+	const FLAG_REQ_ADMIN	= 0x2;
+	const FLAG_REQ_TOKEN	= 0x4;
 
 	private $_db;
-	private $_error;
 	private $_auth;
+
+	private $_error;
 	private $_action;
-	private $_misconfigured;
 	private $_data;
 
 	public function __construct()
 	{
-		$this->_db 				= new Database();
-		$this->_auth			= new Authentication();
-		$this->_misconfigured	= false;
-		$this->_action			= null;
-		$this->_error			= array();
+		$this->_db 		= new Database();
+		$this->_auth	= new Authentication();
+		$this->_action	= null;
+		$this->_error	= array();
 	}
 
-	public function initialize( $admin, $action, $token )
+	public function execute( $admin, $action, $token )
 	{
-		$this->_misconfigured = !$this->_configure( $admin, $action, $token );
-	}
-
-	public function execute()
-	{
-		if ( $this->_misconfigured )
+		if ( !$this->_configure( $admin, $action, $token ) )
 		{
-			return false;
+			return $this->_responseError();
 		}
 
 		if ( !$this->_action->execute() )
 		{
-			return false;
+			$this->_setError( $this->_action->getError() );
+
+			return $this->_responseError();
 		}
 
-		return true;
+		return $this->_responseSuccess();
 	}
 
 	private function _configure( $admin, $action, $token )
@@ -71,26 +128,26 @@ class JSON
 			return $this->_setError( array( '#Error#', 'Action is misconfigured' ) );
 		}
 
-		$this->_action = new $class( $this->_db, $this->_auth, $this );
+		$this->_action = new $class( $this->_db, $this->_auth );
 
-		if ( !$this->_action instanceof iJSON )
+		if ( !$this->_action instanceof JSON )
 		{
-			return $this->_setError( array( '#Error#', 'Action is missing required interface' ) );
+			return $this->_setError( array( '#Error#', 'Action is missing required inheritance' ) );
 		}
 
 		$this->_getRequirements( $flags );
 
-		if ( ( $flags & self::FLAG_USER ) && !$this->_auth->isUser() )
+		if ( ( $flags & self::FLAG_REQ_USER ) && !$this->_auth->isUser() )
 		{
 			return $this->_setError( array( '#Error#', 'You must be a user to complete this action' ) );
 		}
 
-		if ( ( $flags & self::FLAG_ADMIN ) && !$this->_auth->isAdmin() )
+		if ( ( $flags & self::FLAG_REQ_ADMIN ) && !$this->_auth->isAdmin() )
 		{
 			return $this->_setError( array( '#Error#', 'You must be an administrator to complete this action' ) );
 		}
 
-		if ( ( $flags & self::FLAG_TOKEN ) && !$this->_auth->isValidToken( $token ) )
+		if ( ( $flags & self::FLAG_REQ_TOKEN ) && !$this->_auth->isValidToken( $token ) )
 		{
 			return $this->_setError( array( '#Error#', 'You must have a valid token to complete this action' ) );
 		}
@@ -102,12 +159,12 @@ class JSON
 	{
 		$requirements 	= $this->_action->requirements();
 		$flags			= 0x0;
-		$flags			|= array_key_exists( 'user', 	$requirements ) && $requirements[ 'user' ] 	? self::FLAG_USER	: 0x0;
-		$flags			|= array_key_exists( 'admin', 	$requirements ) && $requirements[ 'admin' ] ? self::FLAG_ADMIN	: 0x0;
-		$flags			|= array_key_exists( 'token', 	$requirements ) && $requirements[ 'token' ] ? self::FLAG_TOKEN	: 0x0;
+		$flags			|= array_key_exists( 'user', 	$requirements ) && $requirements[ 'user' ] 	? self::FLAG_REQ_USER	: 0x0;
+		$flags			|= array_key_exists( 'admin', 	$requirements ) && $requirements[ 'admin' ] ? self::FLAG_REQ_ADMIN	: 0x0;
+		$flags			|= array_key_exists( 'token', 	$requirements ) && $requirements[ 'token' ] ? self::FLAG_REQ_TOKEN	: 0x0;
 	}
 
-	public function responseError()
+	private function _responseError()
 	{
 		$error = $this->_getError();
 
@@ -124,11 +181,10 @@ class JSON
 		return json_encode( array( 'success' => false, 'error_code' => $code, 'error_message' => $message ) );
 	}
 
-	public function responseSuccess()
+	private function _responseSuccess()
 	{
-		return json_encode( array( 'success' => true, 'data' => $this->_getData() ) );
+		return json_encode( array( 'success' => true, 'data' => $this->_action->getData() ) );
 	}
-
 
 	private function _filePath( $admin, $action )
 	{
@@ -136,11 +192,6 @@ class JSON
 		else			$path = 'includes/runtime/non-admin/JSON';
 
 		return Functions::Strip_Nulls( sprintf( '%s/%s.php', $path, $action ) );
-	}
-
-	private function _getData()
-	{
-		return $this->_data;
 	}
 
 	private function _getError()
@@ -153,26 +204,5 @@ class JSON
 		$this->_error = $error;
 
 		return false;
-	}
-
-	// public functions that the sub-classes can use to set data/errors
-
-	public function setData( $data )
-	{
-		$this->_data = $data;
-
-		return true;
-	}
-
-	public function setError( $error )
-	{
-		$this->_error = $error;
-
-		return false;
-	}
-
-	public function DB_Error()
-	{
-		return $this->_setError( $this->_db->Get_Error() );
 	}
 }

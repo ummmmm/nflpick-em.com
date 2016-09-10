@@ -2,15 +2,8 @@
 
 require_once( "includes/classes/Mail.php" );
 
-class JSON_EmailPicks implements iJSON
+class JSON_EmailPicks extends JSON
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
 	public function requirements()
 	{
 		return array( 'user' => true, 'token' => true );
@@ -25,14 +18,14 @@ class JSON_EmailPicks implements iJSON
 
 		if ( !$db_weeks->Load( $week, $null ) )
 		{
-			return $this->_json->setError( array( 'NFL-EMAILPICKS-1', sprintf( 'Failed to load week %d', $week ) ) );
+			return $this->setError( array( 'NFL-EMAILPICKS-1', sprintf( 'Failed to load week %d', $week ) ) );
 		}
 
 		$count = $db_picks->UserWeekList_Load( $this->_auth->getUserID(), $week, $picks );
 
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 
 		$sent = array( 'userid' => $this->_auth->getUserID(), 'week' => $week, 'date' => Functions::Timestamp(), 'picks' => array() );
@@ -52,17 +45,17 @@ class JSON_EmailPicks implements iJSON
 
 		if ( $mail->send() === false )
 		{
-			return $this->_json->setError( array( 'NFL-EMAILPICKS-3', 'The email failed to send. Please try again later.' ) );
+			return $this->setError( array( 'NFL-EMAILPICKS-3', 'The email failed to send. Please try again later.' ) );
 		}
 
 		$insert = array( 'user_id' => $this->_auth->getUserID(), 'picks' => json_encode( $sent ), 'week' => $week, 'active' => 1 );
 
 		if ( !$db_sent_picks->Insert( $insert ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 
-		return $this->_json->setData( sprintf( 'Your picks for week %d have been sent.', $week ) );
+		return $this->setData( sprintf( 'Your picks for week %d have been sent.', $week ) );
 	}
 
 	private function _confirmationText( &$week, &$picks )

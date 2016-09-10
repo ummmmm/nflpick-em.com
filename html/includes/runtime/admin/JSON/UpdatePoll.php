@@ -1,14 +1,7 @@
 <?php
 
-class JSON_UpdatePoll implements iJSON
+class JSON_UpdatePoll extends JSON
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
 	public function requirements()
 	{
 		return array( 'admin' => true, 'token' => true );
@@ -26,26 +19,26 @@ class JSON_UpdatePoll implements iJSON
 
 		if ( $question === '' )
 		{
-			return $this->_json->setError( array( 'NFL-POLLS_UPDATE-1', 'Question cannot be blank' ) );
+			return $this->setError( array( 'NFL-POLLS_UPDATE-1', 'Question cannot be blank' ) );
 		}
 		
 		$count = $db_polls->Load( $poll_id, $poll );
 		
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( $count === 0 )
 		{
-			return $this->_json->setError( array( 'NFL-POLLS_UPDATE-2', 'Failed to load poll' ) );
+			return $this->setError( array( 'NFL-POLLS_UPDATE-2', 'Failed to load poll' ) );
 		}
 		
 		$count = $db_poll_answers->List_Load_Poll( $poll_id, $loaded_answers );
 		
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		$poll[ 'question' ] = $question;
@@ -53,7 +46,7 @@ class JSON_UpdatePoll implements iJSON
 		
 		if ( !$db_polls->Update( $poll ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		foreach( $loaded_answers as $answer )
@@ -62,26 +55,26 @@ class JSON_UpdatePoll implements iJSON
 			{
 				if ( !$db_poll_answers->Delete( $answer[ 'id' ] ) )
 				{
-					return $this->_json->DB_Error();
+					return $this->setDBError();
 				}
 				
 				if ( !$db_poll_votes->Delete_Answer( $answer[ 'id' ] ) )
 				{
-					return $this->_json->DB_Error();
+					return $this->setDBError();
 				}
 			}
 			else
 			{
 				if ( !$db_poll_answers->Load( $answer[ 'id' ], $loaded_answer ) )
 				{
-					return $this->_json->DB_Error();	
+					return $this->setDBError();	
 				}
 				
 				$loaded_answer[ 'answer' ] = $answers[ $answer[ 'id' ] ];
 				
 				if ( !$db_poll_answers->Update( $loaded_answer ) )
 				{
-					return $this->_json->DB_Error();
+					return $this->setDBError();
 				}
 			}
 
@@ -100,7 +93,7 @@ class JSON_UpdatePoll implements iJSON
 			
 			if ( !$db_poll_answers->Insert( $answer_insert ) )
 			{
-				return $this->_json->DB_Error();
+				return $this->setDBError();
 			}
 		}
 		

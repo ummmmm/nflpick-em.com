@@ -1,19 +1,7 @@
 <?php
 
-class JSON_LoadWeeks implements iJSON
+class JSON_LoadWeeks extends JSONAdmin
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
-	public function requirements()
-	{
-		return array( 'admin' => true );
-	}
-
 	public function execute()
 	{
 		$db_weeks 	= new Weeks( $this->_db );
@@ -21,7 +9,7 @@ class JSON_LoadWeeks implements iJSON
 		
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		foreach( $weeks as &$week )
@@ -29,6 +17,6 @@ class JSON_LoadWeeks implements iJSON
 			$week[ 'formatted_date' ] = Functions::FormatDate( $week[ 'date' ] );
 		}
 		
-		return $this->_json->setData( $weeks );
+		return $this->setData( $weeks );
 	}
 }

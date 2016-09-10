@@ -1,19 +1,7 @@
 <?php
 
-class JSON_LoadPolls implements iJSON
+class JSON_LoadPolls extends JSONAdmin
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
-	public function requirements()
-	{
-		return array( 'admin' => true );
-	}
-
 	public function execute()
 	{
 		$db_poll_answers	= new Poll_Answers( $this->_db );
@@ -23,7 +11,7 @@ class JSON_LoadPolls implements iJSON
 		
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		foreach( $polls as &$poll )
@@ -32,14 +20,14 @@ class JSON_LoadPolls implements iJSON
 			
 			if ( $count === false )
 			{
-				return $this->_json->DB_Error();
+				return $this->setDBError();
 			}
 			
 			$votes_count = $db_poll_votes->Total_Poll( $poll[ 'id' ] );
 			
 			if ( $votes_count === false )
 			{
-				return $this->_json->DB_Error();
+				return $this->setDBError();
 			}
 			
 			$poll[ 'date' ] 		= Functions::FormatDate( $poll[ 'date' ] );
@@ -47,6 +35,6 @@ class JSON_LoadPolls implements iJSON
 			$poll[ 'total_votes' ]	= $votes_count;
 		}
 		
-		return $this->_json->setData( $polls );
+		return $this->setData( $polls );
 	}
 }

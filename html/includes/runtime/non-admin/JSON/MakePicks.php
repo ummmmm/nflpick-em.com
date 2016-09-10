@@ -1,14 +1,7 @@
 <?php
 
-class JSON_MakePicks implements iJSON
+class JSON_MakePicks extends JSON
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
 	public function requirements()
 	{
 		return array( 'user' => true, 'token' => true );
@@ -31,37 +24,37 @@ class JSON_MakePicks implements iJSON
 	
 		if ( $count_week === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( $count_week === 0 )
 		{
-			return $this->_json->setError( array( '#Error#', sprintf( "Week '%d' could not be loaded", $week ) ) );
+			return $this->setError( array( '#Error#', sprintf( "Week '%d' could not be loaded", $week ) ) );
 		}
 		
 		if ( $loaded_week[ 'locked' ] === 1 || $date_now > $loaded_week[ 'date' ] )
 		{
-			return $this->_json->setError( array( "#Error#", "This week has already been locked.  You can no longer make picks." ) );
+			return $this->setError( array( "#Error#", "This week has already been locked.  You can no longer make picks." ) );
 		}
 		
 		if ( !$db_games->Load( $gameid, $game ) )
 		{
-			return $this->_json->setError( array( "#Error#", "Game not found" ) );
+			return $this->setError( array( "#Error#", "Game not found" ) );
 		}
 		
 		if ( !$db_games->Exists( $gameid, $week, $winner, $loser ) )
 		{
-			return $this->_json->setError( array( "#Error#", "Invalid game data" ) );
+			return $this->setError( array( "#Error#", "Invalid game data" ) );
 		}
 		
 		if ( $date_now > $game[ 'date' ] )
 		{
-			return $this->_json->setError( array( "#Error#", "This game has already started and can no longer be updated." ) );
+			return $this->setError( array( "#Error#", "This game has already started and can no longer be updated." ) );
 		}
 		
 		if ( !$db_teams->Load( $winner, $winning_team ) || !$db_teams->Load( $loser, $losing_team ) )
 		{
-			return $this->_json->setError( array( "#Error#", "Failed to load teams" ) );
+			return $this->setError( array( "#Error#", "Failed to load teams" ) );
 		}
 		
 		$count_pick = $db_picks->Load_User_Game( $this->_auth->getUserID(), $gameid, $pick );
@@ -78,11 +71,11 @@ class JSON_MakePicks implements iJSON
 		
 		if ( !$db_picks->Update( $pick ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		$remaining = $db_picks->Remaining( $this->_auth->getUserID(), $week );
 
-		return $this->_json->setData( array( 'remaining' => $remaining, 'message' => 'You have picked the <b>' . $winning_team[ 'team' ] . '</b> to beat the <b>' . $losing_team[ 'team'] . '</b>' ) );
+		return $this->setData( array( 'remaining' => $remaining, 'message' => 'You have picked the <b>' . $winning_team[ 'team' ] . '</b> to beat the <b>' . $losing_team[ 'team'] . '</b>' ) );
 	}
 }

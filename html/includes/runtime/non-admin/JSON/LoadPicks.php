@@ -1,19 +1,7 @@
 <?php
 
-class JSON_LoadPicks implements iJSON
+class JSON_LoadPicks extends JSONUser
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
-	public function requirements()
-	{
-		return array( 'user' => true );
-	}
-
 	public function execute()
 	{
 		$db_games	= new Games( $this->_db );
@@ -25,12 +13,12 @@ class JSON_LoadPicks implements iJSON
 
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 
 		if ( $count === 0 )
 		{
-			return $this->_json->setError( array( '#Error#', 'Failed to load week' ) );
+			return $this->setError( array( '#Error#', 'Failed to load week' ) );
 		}
 
 		$db_games->List_Load_Week( $week_id, $week[ 'games' ] );
@@ -41,7 +29,7 @@ class JSON_LoadPicks implements iJSON
 
 			if ( $count === false )
 			{
-				return $this->_json->DB_Error();
+				return $this->setDBError();
 			}
 
 			$now	= new DateTime();
@@ -55,6 +43,6 @@ class JSON_LoadPicks implements iJSON
 			$game[ 'pick' ] 			= $pick;
 		}
 
-		return $this->_json->setData( $week );
+		return $this->setData( $week );
 	}
 }

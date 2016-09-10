@@ -1,14 +1,7 @@
 <?php
 
-class JSON_UpdateNews implements iJSON
+class JSON_UpdateNews extends JSON
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
 	public function requirements()
 	{
 		return array( 'admin' => true, 'token' => true );
@@ -26,22 +19,22 @@ class JSON_UpdateNews implements iJSON
 		
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( $count === 0 )
 		{
-			return $this->_json->setError( array( 'NFL-NEWS_UPDATE-0', 'Failed to load news' ) );
+			return $this->setError( array( 'NFL-NEWS_UPDATE-0', 'Failed to load news' ) );
 		}
 		
 		if ( $title === '' )
 		{
-			return $this->_json->setError( array( 'NFL-NEWS_UPDATE-1', 'Title cannot be blank' ) );
+			return $this->setError( array( 'NFL-NEWS_UPDATE-1', 'Title cannot be blank' ) );
 		}
 		
 		if ( $message === '' )
 		{
-			return $this->_json->setError( array( 'NFL-NEWS_UPDATE-2', 'Message cannot be blank' ) );
+			return $this->setError( array( 'NFL-NEWS_UPDATE-2', 'Message cannot be blank' ) );
 		}
 		
 		$news[ 'title' ] 	= $title;
@@ -50,7 +43,7 @@ class JSON_UpdateNews implements iJSON
 		
 		if ( !$db_news->Update( $news ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		return true;

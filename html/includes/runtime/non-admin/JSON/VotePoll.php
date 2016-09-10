@@ -1,14 +1,7 @@
 <?php
 
-class JSON_VotePoll implements iJSON
+class JSON_VotePoll extends JSON
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
 	public function requirements()
 	{
 		return array( 'user' => true, 'token' => true );
@@ -27,36 +20,36 @@ class JSON_VotePoll implements iJSON
 		
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( $count === 0 )
 		{
-			return $this->_json->setError( array( 'NFL-POLLS_VOTE-1', 'Failed to load poll' ) );
+			return $this->setError( array( 'NFL-POLLS_VOTE-1', 'Failed to load poll' ) );
 		}
 		
 		$count = $db_poll_answers->Load_Poll( $answer_id, $poll_id, $answer );
 		
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( $count === 0 )
 		{
-			return $this->_json->setError( array( 'NFL-POLLS_VOTE-2', 'Failed to load answer' ) );
+			return $this->setError( array( 'NFL-POLLS_VOTE-2', 'Failed to load answer' ) );
 		}
 		
 		$count = $this->_Vote_Load_Poll_User( $poll_id, $this->_auth->getUserID() );
 		
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( $count !== 0 )
 		{
-			return $this->_json->setError( array( 'already_voted', 'You have already voted on this poll' ) );
+			return $this->setError( array( 'already_voted', 'You have already voted on this poll' ) );
 		}
 		
 		$vote[ 'poll_id' ] 		= $poll_id;
@@ -65,7 +58,7 @@ class JSON_VotePoll implements iJSON
 		
 		if ( !$db_poll_votes->Insert( $vote ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		return true;

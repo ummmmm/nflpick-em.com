@@ -1,24 +1,12 @@
 <?php
 
-class JSON_LoadWeeklyRecords implements iJSON
+class JSON_LoadWeeklyRecords extends JSONUser
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
-	public function requirements()
-	{
-		return array( 'user' => true );
-	}
-
 	public function execute()
 	{
 		if ( $this->_Weeks( $loaded_weeks ) === false || $this->_Users( $loaded_users ) === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		foreach( $loaded_users as &$loaded_user )
@@ -30,14 +18,14 @@ class JSON_LoadWeeklyRecords implements iJSON
 				if ( $this->_Wins( 		$loaded_user[ 'id' ], $loaded_week[ 'id' ], $wins )	 === false ||
 					 $this->_Losses( 	$loaded_user[ 'id' ], $loaded_week[ 'id' ], $losses )	 === false )
 				{
-					return $this->_json->DB_Error();
+					return $this->setDBError();
 				}
 
 				if ( $wins[ 'total' ] === 0 && $losses[ 'total' ] === 0 )
 				{
 					if ( !Functions::Worst_Record_Calculated( $this->_db, $loaded_week[ 'id' ], $record ) )
 					{
-						return $this->_json->DB_Error();
+						return $this->setDBError();
 					}
 
 					$wins[ 'total' ] 	= $record[ 'wins' ];
@@ -48,7 +36,7 @@ class JSON_LoadWeeklyRecords implements iJSON
 			}
 		}
 		
-		return $this->_json->setData( $loaded_users );
+		return $this->setData( $loaded_users );
 	}
 
 	// Helper functions

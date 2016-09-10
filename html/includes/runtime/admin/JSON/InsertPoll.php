@@ -1,14 +1,7 @@
 <?php
 
-class JSON_InsertPoll implements iJSON
+class JSON_InsertPoll extends JSON
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
 	public function requirements()
 	{
 		return array( 'admin' => true, 'token' => true );
@@ -25,12 +18,12 @@ class JSON_InsertPoll implements iJSON
 		
 		if ( $question === '' )
 		{
-			return $this->_json->setError( array( 'NFL-POLLS_INSERT-1', 'Question cannot be blank' ) );
+			return $this->setError( array( 'NFL-POLLS_INSERT-1', 'Question cannot be blank' ) );
 		}
 
 		if ( count( $answers ) === 0 )
 		{
-			return $this->_json->setError( array( '#Error#', 'Must provide at least one answer' ) );
+			return $this->setError( array( '#Error#', 'Must provide at least one answer' ) );
 		}
 
 		$poll_insert[ 'question' ] 	= $question;
@@ -38,7 +31,7 @@ class JSON_InsertPoll implements iJSON
 		
 		if ( !$db_polls->Insert( $poll_insert ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		$poll_id = $this->_db->insertID();
@@ -54,7 +47,7 @@ class JSON_InsertPoll implements iJSON
 			
 			if ( !$db_poll_answers->Insert( $answer_insert ) )
 			{
-				return $this->_json->DB_Error();
+				return $this->setDBError();
 			}
 		}
 		

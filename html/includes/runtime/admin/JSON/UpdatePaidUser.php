@@ -1,14 +1,7 @@
 <?php
 
-class JSON_UpdatePaidUser implements iJSON
+class JSON_UpdatePaidUser extends JSON
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
 	public function requirements()
 	{
 		return array( 'admin' => true, 'token' => true );
@@ -22,19 +15,19 @@ class JSON_UpdatePaidUser implements iJSON
 		
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		if ( $count === 0 )
 		{
-			return $this->_json->setError( array( 'NFL-USERS_UPDATE-1', 'Failed to load user' ) );
+			return $this->setError( array( 'NFL-USERS_UPDATE-1', 'Failed to load user' ) );
 		}
 		
 		$loaded_user[ 'paid' ] = ( $loaded_user[ 'paid' ] === 1 ) ? 0 : 1;
 		
 		if ( !$db_users->Update( $loaded_user ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		return true;

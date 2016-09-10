@@ -1,14 +1,7 @@
 <?php
 
-class JSON_DeletePoll implements iJSON
+class JSON_DeletePoll extends JSON
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
 	public function requirements()
 	{
 		return array( 'admin' => true, 'token' => true );
@@ -21,7 +14,7 @@ class JSON_DeletePoll implements iJSON
 		
 		if ( !$db_polls->Delete( $poll_id ) )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 	
 		return true;

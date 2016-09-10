@@ -1,14 +1,7 @@
 <?php
 
-class JSON_LoadGames implements iJSON
+class JSON_LoadGames extends JSON
 {
-	public function __construct( Database &$db, Authentication &$auth, JSON &$json )
-	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
-		$this->_json	= $json;
-	}
-
 	public function requirements()
 	{
 		return array( 'admin' => true, 'token' => true );
@@ -22,7 +15,7 @@ class JSON_LoadGames implements iJSON
 		
 		if ( $count === false )
 		{
-			return $this->_json->DB_Error();
+			return $this->setDBError();
 		}
 		
 		foreach( $weeks as &$week )
@@ -31,7 +24,7 @@ class JSON_LoadGames implements iJSON
 			
 			if ( $count === false )
 			{
-				return $this->_json->DB_Error();
+				return $this->setDBError();
 			}
 
 			foreach( $week[ 'games' ] as &$game )
@@ -43,6 +36,6 @@ class JSON_LoadGames implements iJSON
 			}
 		}
 		
-		return $this->_json->setData( $weeks );
+		return $this->setData( $weeks );
 	}
 }
