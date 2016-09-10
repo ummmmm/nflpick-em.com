@@ -53,7 +53,7 @@ class Screen_ViewPicks extends Screen
 		$db_games 	= new Games( $this->_db );
 		$db_picks 	= new Picks( $this->_db );
 
-		if ( $db_users->List_Load( $users ) === false )
+		if ( $this->_Users_List_Load( $users ) === false )
 		{
 			return false;
 		}
@@ -140,5 +140,10 @@ class Screen_ViewPicks extends Screen
 		print '<p><a href="javascript:;" id="highlightpicks" onclick="$.fn.highlightPicks( 0, ' . $weekid . ');">Highlighting On</a></p>';
 
 		return true;
+	}
+
+	private function _Users_List_Load( &$users )
+	{
+		return $this->_db->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name, CONCAT( SUBSTRING( fname, 1, 1 ), \'.\', SUBSTRING( lname, 1, 1 ), \'.\' ) AS abbr FROM users ORDER BY abbr', $users );
 	}
 }
