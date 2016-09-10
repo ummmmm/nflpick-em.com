@@ -61,7 +61,7 @@ class JSON_MakePicks extends JSON
 		
 		if ( $count_pick === false )
 		{
-			return $this->_setError( $db_picks->Get_Error() );
+			return $this->setDBError();
 		}
 
 		$pick[ 'game_id' ]		= $gameid;
