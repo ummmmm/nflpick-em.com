@@ -262,22 +262,29 @@ class ScreenRenderer
 		ob_start();
 		switch ( $this->_error_level )
 		{
-			case self::FLAG_ERROR_HEAD			:
-			case self::FLAG_ERROR_JQUERY		:
-			case self::FLAG_ERROR_CONTENT		:
-			case self::FLAG_ERROR_VALIDATE		:
-			case self::FLAG_ERROR_UPDATE		:
-			case self::FLAG_ERROR_MISCONFIGURED	:
-			default								:
-			{
-				$this->_outputFatalError();
-				break;
-			}
 			case self::FLAG_ERROR_NONE			:
 			{
 				$this->_outputUpdateMessage();
 				$this->_outputValidationErrors();
 				$this->_outputContentData();
+
+				break;
+			}
+			case self::FLAG_ERROR_HEAD			:
+			case self::FLAG_ERROR_JQUERY		:
+			case self::FLAG_ERROR_CONTENT		:
+			case self::FLAG_ERROR_VALIDATE		:
+			case self::FLAG_ERROR_UPDATE		:
+			{
+				$this->_setError( $this->_screen->getError() );
+				$this->_outputFatalError();
+
+				break;
+			}
+			case self::FLAG_ERROR_MISCONFIGURED	:
+			{
+				$this->_outputFatalError();
+
 				break;
 			}
 		}
