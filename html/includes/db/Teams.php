@@ -150,7 +150,7 @@ class Teams
 		array_push( $teams, array( 'team' => 'Denver Broncos', 			'conf' => 'AFC West', 	'stadium' => 'Sports Authority Field at Mile High', 'abbr' => 'DEN',	'o_abbr' => '' ) );
 		array_push( $teams, array( 'team' => 'Kansas City Chiefs', 		'conf' => 'AFC West', 	'stadium' => 'Arrowhead Stadium', 					'abbr' => 'KC',		'o_abbr' => 'KCC' ) );
 		array_push( $teams, array( 'team' => 'Oakland Raiders', 		'conf' => 'AFC West', 	'stadium' => 'O.co Coliseum', 						'abbr' => 'OAK',	'o_abbr' => '' ) );
-		array_push( $teams, array( 'team' => 'San Diego Chargers', 		'conf' => 'AFC West', 	'stadium' => 'Qualcomm Stadium', 					'abbr' => 'SD',		'o_abbr' => 'SDC' ) );
+		array_push( $teams, array( 'team' => 'San Diego Chargers', 		'conf' => 'AFC West', 	'stadium' => 'StubHub Center',	 					'abbr' => 'LAC',	'o_abbr' => 'LAC' ) );
 
 		array_push( $teams, array( 'team' => 'Dallas Cowboys', 			'conf' => 'NFC East', 	'stadium' => 'AT&T Stadium', 						'abbr' => 'DAL',	'o_abbr' => '' ) );
 		array_push( $teams, array( 'team' => 'New York Giants', 		'conf' => 'NFC East', 	'stadium' => 'MetLife Stadium', 					'abbr' => 'NYG',	'o_abbr' => '' ) );
