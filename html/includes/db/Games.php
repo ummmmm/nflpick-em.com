@@ -159,45 +159,44 @@ class Games
 		$games		= array();
 		$db_teams	= new Teams( $this->_db );
 		$db_weeks	= new Weeks( $this->_db );
-		$url 		= sprintf( 'http://football.myfantasyleague.com/%d/export?TYPE=nflSchedule&W=', date( 'Y' ) );
+		$url 		= sprintf( 'http://www.nfl.com/ajax/scorestrip?season=%d&seasonType=REG&week=', date( 'Y' ) );
 
 		for ( $i = 1; $i <= 17; $i++ )
 		{
 			$xml = simplexml_load_file( sprintf( '%s%d', $url, $i ) );
 
-			foreach ( $xml->matchup as $matchup )
+			foreach ( $xml->gms->g as $game )
 			{
-				$kickoff 	= ( int ) 		$matchup[ 'kickoff' ];
-				$team1 		= ( string ) 	$matchup->team[ 0 ][ 'id' ];
-				$team2 		= ( string ) 	$matchup->team[ 1 ][ 'id' ];
+				/*
+				 * The format the date is returned in appears to be YYYYMMDD<2 digit game ID>
+				 * E.g. 2018090901
+				 */
+
+				$date		= substr( ( string ) $game[ 'eid' ], 0, 8 );
+				$time		= ( string ) $game[ 't' ];
+				$date_time	= new DateTime( sprintf( '%s %s +12 hours', $date, $time ), new DateTimeZone( 'America/New_York' ) );
 
 				if ( !$db_weeks->Load( $i, $null ) )
 				{
 					return $this->_Set_Error( sprintf( 'Failed to load week %d', $i ) );
 				}
 
-				if ( !$db_teams->Load_O_Abbr( $team1, $loaded_team1 ) || !$db_teams->Load_O_Abbr( $team2, $loaded_team2 ) )
+				if ( !$db_teams->Load_Abbr( ( string ) $game[ 'h' ], $home_team ) )
 				{
-					return $this->_Set_Error( sprintf( 'Failed to load either %s or %s', $team1, $team2 ) );
+					return $this->_Set_Error( sprintf( 'Failed to load home team %s', ( string ) $game[ 'h' ] ) );
 				}
 
-				if ( ( int ) $matchup->team[ 0 ][ 'isHome' ] )
+				if ( !$db_teams->Load_Abbr( ( string ) $game[ 'v' ], $away_team ) )
 				{
-					$away = $loaded_team2[ 'id' ];
-					$home = $loaded_team1[ 'id' ];
-				}
-				else
-				{
-					$away = $loaded_team1[ 'id' ];
-					$home = $loaded_team2[ 'id' ];	
+					return $this->_Set_Error( sprintf( 'Failed to load away team %s', ( string ) $game[ 'v' ] ) );
 				}
 
-				if ( $this->Exists_Week_Teams( $i, $home, $away, $null ) )
+				if ( $this->Exists_Week_Teams( $i, $home_team[ 'id' ], $away_team[ 'id' ], $null ) )
 				{
-					return $this->_Set_Error( sprintf( 'Game already exists: %s vs. %s for week %d', $team1, $team2, $i ) );
+					return $this->_Set_Error( sprintf( 'Game already exists: %s vs. %s for week %d', $away_team[ 'team' ], $home_team[ 'team' ], $i ) );
 				}
 
-				array_push( $games, array( 'away' => $away, 'home' => $home, 'date' => $kickoff, 'week' => $i ) );
+				array_push( $games, array( 'away' => $away_team[ 'id' ], 'home' => $home_team[ 'id' ], 'date' => $date_time->getTimestamp(), 'week' => $i ) );
 			}
 		}
 
