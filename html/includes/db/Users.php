@@ -248,11 +248,11 @@ class Users
 	public function Update_Record( $userid, $wins, $losses )
 	{
 		return $this->_db->query( 'UPDATE
-								users
-							SET
-								wins 	= ?,
-								losses 	= ?
-							WHERE
-								id = ?', $wins, $losses, $userid );
+									users
+								   SET
+									wins 	= ?,
+									losses 	= ?
+								   WHERE
+									id		= ?', $wins, $losses, $userid );
 	}
 }
