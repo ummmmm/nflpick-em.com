@@ -2,13 +2,8 @@
 
 require_once( "includes/classes/Mail.php" );
 
-class JSON_EmailPicks extends JSON
+class JSON_EmailPicks extends JSONUserAction
 {
-	public function requirements()
-	{
-		return array( 'user' => true, 'token' => true );
-	}
-
 	public function execute()
 	{
 		$db_picks		= new Picks( $this->_db );

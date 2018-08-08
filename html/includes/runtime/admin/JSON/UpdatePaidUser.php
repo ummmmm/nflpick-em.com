@@ -1,12 +1,7 @@
 <?php
 
-class JSON_UpdatePaidUser extends JSON
+class JSON_UpdatePaidUser extends JSONAdminAction
 {
-	public function requirements()
-	{
-		return array( 'admin' => true, 'token' => true );
-	}
-
 	public function execute()
 	{
 		$user_id	= Functions::Post( 'user_id' );

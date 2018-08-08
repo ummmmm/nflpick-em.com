@@ -63,11 +63,27 @@ abstract class JSONUser extends JSON
 	}
 }
 
+abstract class JSONUserAction extends JSON
+{
+	public function requirements()
+	{
+		return array( "user" => true, "token" => true );
+	}
+}
+
 abstract class JSONAdmin extends JSON
 {
 	public function requirements()
 	{
 		return array( "admin" => true );
+	}
+}
+
+abstract class JSONAdminAction extends JSON
+{
+	public function requirements()
+	{
+		return array( "admin" => true, "token" => true );
 	}
 }
 

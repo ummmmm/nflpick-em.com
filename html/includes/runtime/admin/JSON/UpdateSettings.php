@@ -1,12 +1,7 @@
 <?php
 
-class JSON_UpdateSettings extends JSON
+class JSON_UpdateSettings extends JSONAdminAction
 {
-	public function requirements()
-	{
-		return array( 'admin' => true, 'token' => true );
-	}
-
 	public function execute()
 	{
 		$db_settings = new Settings( $this->_db );

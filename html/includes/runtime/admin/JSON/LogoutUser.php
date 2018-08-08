@@ -1,12 +1,7 @@
 <?php
 
-class JSON_LogoutUser extends JSON
+class JSON_LogoutUser extends JSONAdminAction
 {
-	public function requirements()
-	{
-		return array( 'admin' => true, 'token' => true );
-	}
-
 	public function execute()
 	{
 		$db_sessions	= new Sessions( $this->_db );

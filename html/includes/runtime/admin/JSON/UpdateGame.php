@@ -1,12 +1,7 @@
 <?php
 
-class JSON_UpdateGame extends JSON
+class JSON_UpdateGame extends JSONAdminAction
 {
-	public function requirements()
-	{
-		return array( 'admin' => true, 'token' => true );
-	}
-
 	public function execute()
 	{
 		$db_games	= new Games( $this->_db );

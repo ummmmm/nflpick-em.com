@@ -1,12 +1,7 @@
 <?php
 
-class JSON_UpdateNews extends JSON
+class JSON_UpdateNews extends JSONAdminAction
 {
-	public function requirements()
-	{
-		return array( 'admin' => true, 'token' => true );
-	}
-
 	public function execute()
 	{
 		$db_news	= new News( $this->_db );

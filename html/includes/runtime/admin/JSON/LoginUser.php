@@ -1,12 +1,7 @@
 <?php
 
-class JSON_LoginUser extends JSON
+class JSON_LoginUser extends JSONAdminAction
 {
-	public function requirements()
-	{
-		return array( 'admin' => true, 'token' => true );
-	}
-
 	public function execute()
 	{
 		$user_id 		= Functions::Post_Int( 'user_id' );

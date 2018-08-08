@@ -1,12 +1,7 @@
 <?php
 
-class JSON_DeleteUser extends JSON
+class JSON_DeleteUser extends JSONAdminAction
 {
-	public function requirements()
-	{
-		return array( 'admin' => true, 'token' => true );
-	}
-
 	public function execute()
 	{
 		$db_users	= new Users( $this->_db );

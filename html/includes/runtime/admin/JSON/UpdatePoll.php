@@ -1,12 +1,7 @@
 <?php
 
-class JSON_UpdatePoll extends JSON
+class JSON_UpdatePoll extends JSONAdminAction
 {
-	public function requirements()
-	{
-		return array( 'admin' => true, 'token' => true );
-	}
-
 	public function execute()
 	{
 		$poll_id			= Functions::Post( 'poll_id' );

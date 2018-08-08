@@ -1,12 +1,7 @@
 <?php
 
-class JSON_VotePoll extends JSON
+class JSON_VotePoll extends JSONUserAction
 {
-	public function requirements()
-	{
-		return array( 'user' => true, 'token' => true );
-	}
-
 	public function execute()
 	{
 		$db_polls			= new Polls( $this->_db );

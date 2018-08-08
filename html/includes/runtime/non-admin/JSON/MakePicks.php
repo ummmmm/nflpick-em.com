@@ -1,12 +1,7 @@
 <?php
 
-class JSON_MakePicks extends JSON
+class JSON_MakePicks extends JSONUserAction
 {
-	public function requirements()
-	{
-		return array( 'user' => true, 'token' => true );
-	}
-
 	public function execute()
 	{
 		$db_games	= new Games( $this->_db );

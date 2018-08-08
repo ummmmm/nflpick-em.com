@@ -1,12 +1,7 @@
 <?php
 
-class JSON_DeletePoll extends JSON
+class JSON_DeletePoll extends JSONAdminAction
 {
-	public function requirements()
-	{
-		return array( 'admin' => true, 'token' => true );
-	}
-
 	public function execute()
 	{
 		$db_polls	= new Polls( $this->_db );

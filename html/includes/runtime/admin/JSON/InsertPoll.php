@@ -1,12 +1,7 @@
 <?php
 
-class JSON_InsertPoll extends JSON
+class JSON_InsertPoll extends JSONAdminAction
 {
-	public function requirements()
-	{
-		return array( 'admin' => true, 'token' => true );
-	}
-
 	public function execute()
 	{
 		$db_poll_answers	= new Poll_Answers( $this->_db );
