@@ -174,7 +174,7 @@ class Setup
 
 		if ( !$db_users->Create() )
 		{
-			return $this->_Set_Error( 'Failed to create the Users table' );
+			return $this->_Set_Error( 'Failed to create the Users database table' );
 		}
 
 		if ( !$db_weeks->Create() )
