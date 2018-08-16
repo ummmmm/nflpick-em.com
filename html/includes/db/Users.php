@@ -97,7 +97,7 @@ class Users
 		$cookieid		= sha1( session_id() );
 		$token			= sha1( uniqid( rand(), TRUE ) );
 
-		setcookie( 'session', $cookieid, time() + 60 * 60 * 24 * 30, INDEX, '', false, true );
+		setcookie( 'session', $cookieid, time() + 60 * 60 * 24 * 30, INDEX, '', SECURE_COOKIES, true );
 
 		if ( !$db_sessions->Insert( array( 'token' => $token, 'cookieid' => $cookieid, 'userid' => $this->id ) ) )
 		{

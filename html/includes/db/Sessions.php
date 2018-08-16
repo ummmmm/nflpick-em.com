@@ -31,7 +31,7 @@ class Sessions
 		$token		= sha1( uniqid( rand(), TRUE ) );
 		$session	= array( 'token' => $token, 'cookieid' => $cookie_id, 'userid' => $user_id );
 
-		setcookie( 'session', $cookie_id, time() + 60 * 60 * 24 * 30, '/', '', false, true );
+		setcookie( 'session', $cookie_id, time() + 60 * 60 * 24 * 30, INDEX, '', SECURE_COOKIES, true );
 
 		return $this->Insert( $session );
 	}
