@@ -11,7 +11,7 @@ try
 	$db_teams	= new Teams( $db );
 	$db_users	= new Users( $db );
 	$db_weeks	= new Weeks( $db );
-	$doc 		= new SimpleXMLElement( sprintf( 'http://www.nfl.com/ajax/scorestrip?seasonType=REG&week=%d', $db_weeks->Previous() ), 0, true );
+	$doc 		= new SimpleXMLElement( sprintf( 'https://www.nfl.com/ajax/scorestrip?seasonType=REG&week=%d', $db_weeks->Previous() ), 0, true );
 	$week		= ( int ) $doc->gms->attributes()->w;
 
 	if ( !$db_weeks->IsLocked( $week ) )

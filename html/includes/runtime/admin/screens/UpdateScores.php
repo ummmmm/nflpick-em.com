@@ -12,7 +12,7 @@ class Screen_UpdateScores extends Screen_Admin
 			$db_teams	= new Teams( $this->_db );
 			$db_users	= new Users( $this->_db );
 			$db_weeks	= new Weeks( $this->_db );
-			$doc 		= new SimpleXMLElement( sprintf( 'http://www.nfl.com/ajax/scorestrip?seasonType=REG&week=%d', $db_weeks->Previous() ), 0, true );
+			$doc 		= new SimpleXMLElement( sprintf( 'https://www.nfl.com/ajax/scorestrip?seasonType=REG&week=%d', $db_weeks->Previous() ), 0, true );
 			$week		= ( int ) $doc->gms->attributes()->w;
 
 			if ( !$db_weeks->IsLocked( $week ) )

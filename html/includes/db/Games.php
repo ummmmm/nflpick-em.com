@@ -159,7 +159,7 @@ class Games
 		$games		= array();
 		$db_teams	= new Teams( $this->_db );
 		$db_weeks	= new Weeks( $this->_db );
-		$url 		= sprintf( 'http://www.nfl.com/ajax/scorestrip?season=%d&seasonType=REG&week=', date( 'Y' ) );
+		$url 		= sprintf( 'https://www.nfl.com/ajax/scorestrip?season=%d&seasonType=REG&week=', date( 'Y' ) );
 
 		for ( $i = 1; $i <= 17; $i++ )
 		{
