@@ -77,9 +77,9 @@ $( document ).ready( function(){
 		return $( '<a/>', { 'href': 'javascript:;', 'text': team } ).bind( 'click', function() { $.fn.makePicks( week_id, game_id, winner_id, loser_id ); } );
 	}
 
-	$.fn.picks_build_record = function( wins, losses )
+	$.fn.picks_build_record = function( wins, losses, ties )
 	{
-		return $( '<span/>', { 'class': 'record', 'text': ' (' + wins + ' - ' + losses + ')' } )
+		return $( '<span/>', { 'class': 'record', 'text': ' (' + wins + ' - ' + losses + ( ( ties == 0 ) ? '' : ' - ' + ties ) + ')' } )
 	}
 
 	$.fn.load_picks = function( week_id )
@@ -125,7 +125,7 @@ $( document ).ready( function(){
 					$.fn.picks_build_link( game.awayTeam, week.id, game.id, game.away, game.home ).appendTo( pick );
 				}
 
-				$.fn.picks_build_record( game.awayWins, game.awayLosses ).appendTo( pick );
+				$.fn.picks_build_record( game.awayWins, game.awayLosses, game.awayTies ).appendTo( pick );
 				$( '<b/>', { 'text': ' vs. ' } ).appendTo( pick );
 
 				if ( past )
@@ -135,7 +135,7 @@ $( document ).ready( function(){
 					$.fn.picks_build_link( game.homeTeam, week.id, game.id, game.home, game.away ).appendTo( pick );
 				}
 
-				$.fn.picks_build_record( game.homeWins, game.homeLosses ).appendTo( pick );
+				$.fn.picks_build_record( game.homeWins, game.homeLosses, game.homeTies ).appendTo( pick );
 				pick.append( '<br />' + game.stadium + ' - ' + game.time_formatted );
 
 				if ( game.pick.picked )

@@ -39,20 +39,27 @@ try
 			continue;
 		}
 
-		if ( $homeScore == $awayScore )
-		{
-			continue;
-		}
-
 		if ( !$db_games->Load_Week_Teams( $week, $awayTeam[ 'id' ], $homeTeam[ 'id' ], $game ) )
 		{
 			continue;
 		}
 
-		$game[ 'winner' ] 		= ( $homeScore > $awayScore ) ? $homeTeam[ 'id' ] : $awayTeam[ 'id' ];
-		$game[ 'loser' ]		= ( $homeScore > $awayScore ) ? $awayTeam[ 'id' ] : $homeTeam[ 'id' ];
+		if ( $homeScore == $awayScore )
+		{
+			$game[ 'tied' ]		= 1;
+			$game[ 'winner' ]	= 0;
+			$game[ 'loser' ]	= 0;
+		}
+		else
+		{
+			$game[ 'tied' ]		= 0;
+			$game[ 'winner' ] 	= ( $homeScore > $awayScore ) ? $homeTeam[ 'id' ] : $awayTeam[ 'id' ];
+			$game[ 'loser' ]	= ( $homeScore > $awayScore ) ? $awayTeam[ 'id' ] : $homeTeam[ 'id' ];
+		}
+
 		$game[ 'homeScore' ]	= $homeScore;
 		$game[ 'awayScore' ]	= $awayScore;
+		$game[ 'final' ]		= 1;
 
 		if ( !$db_games->Update( $game ) )
 		{
@@ -64,7 +71,6 @@ try
 	{
 		exit;
 	}
-
 }
 catch( Exception $e )
 {

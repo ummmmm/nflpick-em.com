@@ -51,7 +51,7 @@ class Screen_Schedule extends Screen
 
 		foreach( $games as $game )
 		{
-			print "<p>{$game[ 'awayTeam' ]} ({$game[ 'awayWins' ]} - {$game[ 'awayLosses' ]}) <b>vs.</b> {$game[ 'homeTeam' ]} ({$game[ 'homeWins' ]} - {$game[ 'homeLosses' ]})</p>";
+			print "<p>{$game[ 'awayTeam' ]} ({$game[ 'awayWins' ]} - {$game[ 'awayLosses' ]} - {$game[ 'awayTies' ]}) <b>vs.</b> {$game[ 'homeTeam' ]} ({$game[ 'homeWins' ]} - {$game[ 'homeLosses' ]} - {$game[ 'homeTies' ]})</p>";
 		}
 
 		if ( is_null( $teams[ 'bye_teams' ] ) === false )

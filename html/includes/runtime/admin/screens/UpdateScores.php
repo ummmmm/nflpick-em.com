@@ -38,6 +38,12 @@ class Screen_UpdateScores extends Screen_Admin
 					continue;
 				}
 
+				if ( !$db_games->Load_Week_Teams( $week, $awayTeam[ 'id' ], $homeTeam[ 'id' ], $game ) )
+				{
+					printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the game could not be found<br />', $awayTeam[ 'team' ], $homeTeam[ 'team' ] );
+					continue;
+				}
+
 				if ( $quarter != 'F' && $quarter != 'FO' )
 				{
 					printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the game is not over yet<br />', $awayTeam[ 'team' ], $homeTeam[ 'team' ] );
@@ -46,20 +52,20 @@ class Screen_UpdateScores extends Screen_Admin
 
 				if ( $homeScore == $awayScore )
 				{
-					printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the game ended in a tie<br />', $awayTeam[ 'team' ], $homeTeam[ 'team' ] );
-					continue;
+					$game[ 'tied' ]		= 1;
+					$game[ 'winner' ]	= 0;
+					$game[ 'loser' ]	= 0;
 				}
-
-				if ( !$db_games->Load_Week_Teams( $week, $awayTeam[ 'id' ], $homeTeam[ 'id' ], $game ) )
+				else
 				{
-					printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the game could not be found<br />', $awayTeam[ 'team' ], $homeTeam[ 'team' ] );
-					continue;
+					$game[ 'tied' ]		= 0;
+					$game[ 'winner' ] 	= ( $homeScore > $awayScore ) ? $homeTeam[ 'id' ] : $awayTeam[ 'id' ];
+					$game[ 'loser' ]	= ( $homeScore > $awayScore ) ? $awayTeam[ 'id' ] : $homeTeam[ 'id' ];
 				}
 
-				$game[ 'winner' ] 		= ( $homeScore > $awayScore ) ? $homeTeam[ 'id' ] : $awayTeam[ 'id' ];
-				$game[ 'loser' ]		= ( $homeScore > $awayScore ) ? $awayTeam[ 'id' ] : $homeTeam[ 'id' ];
 				$game[ 'homeScore' ]	= $homeScore;
 				$game[ 'awayScore' ]	= $awayScore;
+				$game[ 'final' ]		= 1;
 
 				if ( !$db_games->Update( $game ) )
 				{

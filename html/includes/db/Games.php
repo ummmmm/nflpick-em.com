@@ -23,6 +23,8 @@ class Games
 					loser 		int( 2 ),
 					homeScore 	int( 2 ),
 					awayScore 	int( 2 ),
+					tied		boolean,
+					final		boolean,
 					PRIMARY KEY ( id )
 				)";
 
@@ -33,8 +35,8 @@ class Games
 	{
 		return $this->_db->select( 'SELECT
 										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, homeTeam.stadium AS stadium,
-										awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.abbr AS awayAbbr,
-										homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.abbr AS homeAbbr
+										awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.ties AS awayTies, awayTeam.abbr AS awayAbbr,
+										homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.ties AS homeTies, homeTeam.abbr AS homeAbbr
 									FROM
 										games s,
 										teams awayTeam,
@@ -51,8 +53,8 @@ class Games
 	{
 		return $this->_db->select( 'SELECT
 										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, homeTeam.stadium AS stadium,
-										awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.abbr AS awayAbbr,
-										homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.abbr AS homeAbbr
+										awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.ties AS awayTies, awayTeam.abbr AS awayAbbr,
+										homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.ties AS homeTies, homeTeam.abbr AS homeAbbr
 									FROM
 										games s,
 										teams awayTeam,
@@ -73,6 +75,8 @@ class Games
 		$game[ 'loser' ]		= 0;
 		$game[ 'homeScore' ]	= 0;
 		$game[ 'awayScore' ]	= 0;
+		$game[ 'tied' ]			= 0;
+		$game[ 'final' ]		= 0;
 
 		return $this->_db->insert( 'games', $game );
 	}
@@ -80,19 +84,22 @@ class Games
 	public function Update( $game )
 	{
 		return $this->_db->query( 'UPDATE
-								games
-							SET
-								away 		= ?,
-								home		= ?,
-								date		= ?,
-								week		= ?,
-								winner		= ?,
-								loser		= ?,
-								homeScore	= ?,
-								awayScore	= ?
-							WHERE
-								id = ?',
-							$game[ 'away' ], $game[ 'home' ], $game[ 'date' ], $game[ 'week' ], $game[ 'winner' ], $game[ 'loser' ], $game[ 'homeScore' ], $game[ 'awayScore' ], $game[ 'id' ] );
+									games
+								   SET
+									away 		= ?,
+									home		= ?,
+									date		= ?,
+									week		= ?,
+									winner		= ?,
+									loser		= ?,
+									homeScore	= ?,
+									awayScore	= ?,
+									tied		= ?,
+									final		= ?
+								   WHERE
+									id = ?',
+							$game[ 'away' ], $game[ 'home' ], $game[ 'date' ], $game[ 'week' ], $game[ 'winner' ], $game[ 'loser' ], $game[ 'homeScore' ], $game[ 'awayScore' ], $game[ 'tied' ], $game[ 'final' ],
+							$game[ 'id' ] );
 	}
 
 	public function Delete( $gameid )

@@ -24,30 +24,38 @@ class JSON_UpdateGame extends JSONAdminAction
 	private function _Update_Scores( &$db, &$user, &$game )
 	{
 		$db_games	= new Games( $db );
+		$db_teams	= new Teams( $db );
 		$awayScore	= Functions::Post_Int( 'awayScore' );
 		$homeScore	= Functions::Post_Int( 'homeScore' );
 		
-		if ( $awayScore === $homeScore || $awayScore < 0 || $homeScore < 0 )
+		if ( $awayScore < 0 || $homeScore < 0 )
 		{
 			return $this->setError( array( 'NFL-GAMES_UPDATE-0', 'Invalid game score' ) );
 		}
-		
-		$game[ 'winner' ]		= $homeScore > $awayScore ? $game[ 'home' ] : $game[ 'away' ];
-		$game[ 'loser' ]		= $homeScore > $awayScore ? $game[ 'away' ] : $game[ 'home' ];
+
+		if ( $homeScore == $awayScore )
+		{
+			$game[ 'tied' ]		= 1;
+			$game[ 'winner' ]	= 0;
+			$game[ 'loser' ]	= 0;
+		}
+		else
+		{
+			$game[ 'tied' ]		= 0;
+			$game[ 'winner' ]	= $homeScore > $awayScore ? $game[ 'home' ] : $game[ 'away' ];
+			$game[ 'loser' ]	= $homeScore > $awayScore ? $game[ 'away' ] : $game[ 'home' ];
+		}
+
 		$game[ 'homeScore' ]	= $homeScore;
 		$game[ 'awayScore' ] 	= $awayScore;
+		$game[ 'final' ]		= 1;
 		
 		if ( !$db_games->Update( $game ) )
 		{
 			return $this->setDBError();
 		}
 		
-		if ( !$this->_Teams_Update_Record( $db, $game[ 'home' ] ) )
-		{
-			return $this->setDBError();
-		}
-		
-		if ( !$this->_Teams_Update_Record( $db, $game[ 'away' ] ) )
+		if ( !$db_teams->Recalculate_Records() )
 		{
 			return $this->setDBError();
 		}
@@ -61,11 +69,6 @@ class JSON_UpdateGame extends JSONAdminAction
 		{
 			return $this->setDBError();
 		}
-		
-		/*if ( !Missed_Week_Record_Update( $db, $game[ 'week' ] ) )
-		{
-			return $this->setDBError();
-		}*/
 		
 		if ( !$this->_Users_Place_Update( $db, $user ) )
 		{
@@ -150,17 +153,6 @@ class JSON_UpdateGame extends JSONAdminAction
 		}
 		
 		return $this->setData( $game );
-	}
-
-	private function _Teams_Update_Record( &$db, $teamid )
-	{
-		return $db->query( 'UPDATE
-								teams t
-							SET
-								t.wins 		= ( SELECT COUNT( g.id ) FROM games g WHERE g.winner 	= t.id ),
-								t.losses	= ( SELECT COUNT( g.id ) FROM games g WHERE g.loser		= t.id )
-							WHERE
-								t.id 		= ?', $teamid );
 	}
 
 	private function _Users_Update_Record()

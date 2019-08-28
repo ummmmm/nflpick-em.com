@@ -19,6 +19,7 @@ class Teams
 					stadium varchar( 255 ),
 					wins 	int( 11 ),
 					losses 	int( 11 ),
+					ties	int( 11 ),
 					abbr 	varchar( 3 ),
 					PRIMARY KEY ( id )
 				)";
@@ -111,8 +112,9 @@ class Teams
 		return $this->_db->query( 'UPDATE
 									teams t
 								   SET
-									t.wins 		= ( SELECT COUNT( g.id ) FROM games g WHERE g.winner 	= t.id ),
-									t.losses	= ( SELECT COUNT( g.id ) FROM games g WHERE g.loser		= t.id )' );
+									t.wins 		= ( SELECT COUNT( g.id ) FROM games g WHERE g.winner 	= t.id AND g.final = 1 AND g.tied = 0 ),
+									t.losses	= ( SELECT COUNT( g.id ) FROM games g WHERE g.loser		= t.id AND g.final = 1 AND g.tied = 0 ),
+									t.ties		= ( SELECT COUNT( g.id ) FROM games g WHERE ( g.away	= t.id OR g.home = t.id ) AND g.final = 1 AND g.tied = 1 )' );
 	}
 
 	private function _Default_Teams()
