@@ -430,7 +430,7 @@ class ScreenRenderer
 		}
 
 		printf( "<div class=\"error\">\n" );
-		printf( "<span class=\"error_text_top\">The Following %s Ocurred!</span><br />\n", $title );
+		printf( "<span class=\"error_text_top\">The Following %s Occurred!</span><br />\n", $title );
 		printf( "<span class=\"error_text\">%s</span>\n", $message );
 		printf( "</div>\n" );
 	}
