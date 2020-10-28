@@ -46,6 +46,7 @@ class Teams
 	{
 		$team[ 'wins' ] 	= 0;
 		$team[ 'losses' ]	= 0;
+		$team[ 'ties' ]		= 0;
 
 		return $this->_db->insert( 'teams', $team );
 	}
