@@ -72,11 +72,11 @@ $( document ).ready( function()
 							} );
 			$( '<div/>' ).append(
 					$( '<a/>', {
-						href: 'mailto:' + user.email,
-						text: user.email
-					} ) ).append( ' - ' ).append( 
-							$( '<a/>', { 'href': 'javascript:;', 'text': 'Delete' } ).bind( 'click', function() { $.fn.deleteUser( user ); } )
-			).appendTo( fieldset );
+						href: 'javascript:;',
+						text: user.email,
+					} ).bind( 'click', function() { $.fn.editUser( user ); } ) ).append( ' - ' ).append( 
+					$( '<a/>', { 'href': 'javascript:;', 'text': 'Delete' } ).bind( 'click', function() { $.fn.deleteUser( user ); } ) ).append( ( user.active == 0 ? ' - Inactive' : '' ) )
+					.appendTo( fieldset );
 
 			$( '<div/>', { 'text': 'Last Active: ' + user.last_on } ).appendTo( fieldset );
 			$( '<div/>', { 'text': 'Record: ' + user.wins + ' - ' + user.losses	} ).appendTo( fieldset );
@@ -118,6 +118,52 @@ $( document ).ready( function()
 
 			location.reload();
 		} );
+	}
+
+	$.fn.editUser = function( user )
+	{
+		$.fn.modalShow( 'user_edit', function() { $.fn.update_user( user ); }, function() { $.fn.hide_edit_user(); } );
+		$( '#user_edit_cancel' ).bind( 'click', function() { $.fn.hide_edit_user(); } );
+		$( '#user_edit_update' ).bind( 'click', function() { $.fn.update_user( user ); } );
+		$( '#user_edit_first_name' ).val( user.fname );
+		$( '#user_edit_last_name' ).val( user.lname );
+		$( '#user_edit_message' ).val( user.message );
+	}
+
+	$.fn.update_user = function( user )
+	{
+		if ( $( '#user_edit_first_name' ).val().trim().length == 0 )
+		{
+			$( '#user_edit_first_name' ).focus();
+			return $.fn.error( 'First name cannot be blank' );
+		}
+
+		if ( $( '#user_edit_last_name' ).val().trim().length == 0 )
+		{
+			$( '#user_edit_last_name' ).focus();
+			return $.fn.error( 'Last name cannot be blank' );
+		}
+
+		$.fn.json_admin( 'UpdateUser', 'user_id=' + encodeURIComponent( user.id ) + '&first_name=' + encodeURIComponent( $( '#user_edit_first_name' ).val() ) + '&last_name=' + encodeURIComponent( $( '#user_edit_last_name' ).val() ) + '&message=' + encodeURIComponent( $( '#user_edit_message' ).val() ), function( response )
+		{
+			if ( !response.success )
+			{
+				return $.fn.error( response.error_message );
+			}
+
+			$.fn.hide_edit_user();
+			$.fn.sort( 'LoadUsers', 'name', $.fn.sort_user_callback );
+		} );
+	}
+
+	$.fn.hide_edit_user = function()
+	{
+		$.fn.modalHide( 'user_edit' );
+	}
+
+	$.fn.activate_deactivate_user_hide = function()
+	{
+		$.fn.modalHide( 'activate_deactivate_user' );
 	}
 
 	$.fn.login = function( user )

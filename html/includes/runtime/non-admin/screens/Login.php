@@ -22,6 +22,11 @@ class Screen_Login extends Screen
 			return $this->setValidationErrors( array( "Invalid email or password" ) );
 		}
 
+		if ( !$user[ 'active' ] )
+		{
+			return $this->setValidationErrors( array( $user[ 'message' ] ) );
+		}
+
 		return $this->setValidationData( $user );
 	}
 

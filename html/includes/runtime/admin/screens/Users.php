@@ -27,6 +27,29 @@ class Screen_Users extends Screen_Admin
 		print '<a href="javascript:;" id="remaining" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'remaining\', $.fn.sort_user_callback );">Remaining Picks</a>';
 		print '</div>';
 		print '<div id="users_loading">Loading...</div>';
+		print '<div id="user_edit">';
+		print '<div id="user_edit_dialog">Edit User</div>';
+		print '<table>';
+		print '<tr>';
+		print '<td valign="top" nowrap>First Name:</td>';
+		print '<td width="100%"><input type="text" id="user_edit_first_name" /></td>';
+		print '</tr>';
+		print '<tr>';
+		print '<td valign="top" nowrap>Last Name:</td>';
+		print '<td width="100%"><input type="text" id="user_edit_last_name" /></td>';
+		print '</tr>';
+		print '<tr>';
+		print '<td valign="top" nowrap>Message:</td>';
+		print '<td width="100%"><textarea id="user_edit_message" cols="50"></textarea><br />Enter any message to deactivate the user</td>';
+		print '</tr>';
+		print '</table>';
+		print '<div class="buttons_left">
+			<input type="button" id="user_edit_cancel" value="Cancel" />
+		</div>
+		<div class="buttons_right">
+			<input type="button" id="user_edit_update" value="Update" />
+		</div>';
+		print '</div>';
 
 	return true;
 	}
