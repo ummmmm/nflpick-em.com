@@ -122,45 +122,45 @@ class Teams
 	{
 		$teams = array();
 
-		array_push( $teams, array( 'team' => 'Buffalo Bills', 			'conf' => 'AFC East',	'stadium' => 'Bills Stadium', 						'abbr' => 'BUF'	 ) );
-		array_push( $teams, array( 'team' => 'Miami Dolphins', 			'conf' => 'AFC East',	'stadium' => 'Hard Rock Stadium', 					'abbr' => 'MIA'	 ) );
-		array_push( $teams, array( 'team' => 'New England Patriots', 	'conf' => 'AFC East',	'stadium' => 'Gillette Stadium', 					'abbr' => 'NE'	 ) );
-		array_push( $teams, array( 'team' => 'New York Jets', 			'conf' => 'AFC East',	'stadium' => 'MetLife Stadium', 					'abbr' => 'NYJ'	 ) );
+		array_push( $teams, array( 'team' => 'Buffalo Bills', 				'conf' => 'AFC East',	'stadium' => 'New Era Field', 						'abbr' => 'BUF'	 ) );
+		array_push( $teams, array( 'team' => 'Miami Dolphins', 				'conf' => 'AFC East',	'stadium' => 'Hard Rock Stadium', 					'abbr' => 'MIA'	 ) );
+		array_push( $teams, array( 'team' => 'New England Patriots', 		'conf' => 'AFC East',	'stadium' => 'Gillette Stadium', 					'abbr' => 'NE'	 ) );
+		array_push( $teams, array( 'team' => 'New York Jets', 				'conf' => 'AFC East',	'stadium' => 'MetLife Stadium', 					'abbr' => 'NYJ'	 ) );
 
-		array_push( $teams, array( 'team' => 'Baltimore Ravens', 		'conf' => 'AFC North', 	'stadium' => 'M&T Bank Stadium', 					'abbr' => 'BAL' ) );
-		array_push( $teams, array( 'team' => 'Carolina Panthers', 		'conf' => 'AFC North', 	'stadium' => 'Bank of America Stadium', 			'abbr' => 'CAR' ) );
-		array_push( $teams, array( 'team' => 'Cincinnati Bengals', 		'conf' => 'AFC North', 	'stadium' => 'Paul Brown Stadium', 					'abbr' => 'CIN' ) );
-		array_push( $teams, array( 'team' => 'Cleveland Browns', 		'conf' => 'AFC North', 	'stadium' => 'FirstEnergy Stadium', 				'abbr' => 'CLE' ) );
-		array_push( $teams, array( 'team' => 'Pittsburgh Steelers', 	'conf' => 'AFC North', 	'stadium' => 'Heinz Field', 						'abbr' => 'PIT' ) );
+		array_push( $teams, array( 'team' => 'Baltimore Ravens', 			'conf' => 'AFC North', 	'stadium' => 'M&T Bank Stadium', 					'abbr' => 'BAL' ) );
+		array_push( $teams, array( 'team' => 'Carolina Panthers', 			'conf' => 'AFC North', 	'stadium' => 'Bank of America Stadium', 			'abbr' => 'CAR' ) );
+		array_push( $teams, array( 'team' => 'Cincinnati Bengals', 			'conf' => 'AFC North', 	'stadium' => 'Paul Brown Stadium', 					'abbr' => 'CIN' ) );
+		array_push( $teams, array( 'team' => 'Cleveland Browns', 			'conf' => 'AFC North', 	'stadium' => 'FirstEnergy Stadium', 				'abbr' => 'CLE' ) );
+		array_push( $teams, array( 'team' => 'Pittsburgh Steelers', 		'conf' => 'AFC North', 	'stadium' => 'Heinz Field', 						'abbr' => 'PIT' ) );
 
-		array_push( $teams, array( 'team' => 'Houston Texans', 			'conf' => 'AFC South', 	'stadium' => 'NRG Stadium', 						'abbr' => 'HOU' ) );
-		array_push( $teams, array( 'team' => 'Indianapolis Colts', 		'conf' => 'AFC South', 	'stadium' => 'Lucas Oil Stadium', 					'abbr' => 'IND' ) );
-		array_push( $teams, array( 'team' => 'Jacksonville Jaguars', 	'conf' => 'AFC South', 	'stadium' => 'TIAA Bank Field', 					'abbr' => 'JAX' ) );
-		array_push( $teams, array( 'team' => 'Tennessee Titans', 		'conf' => 'AFC South', 	'stadium' => 'Nissan Stadium', 						'abbr' => 'TEN' ) );
+		array_push( $teams, array( 'team' => 'Houston Texans', 				'conf' => 'AFC South', 	'stadium' => 'NRG Stadium', 						'abbr' => 'HOU' ) );
+		array_push( $teams, array( 'team' => 'Indianapolis Colts', 			'conf' => 'AFC South', 	'stadium' => 'Lucas Oil Stadium', 					'abbr' => 'IND' ) );
+		array_push( $teams, array( 'team' => 'Jacksonville Jaguars', 		'conf' => 'AFC South', 	'stadium' => 'EverBank Field', 						'abbr' => 'JAX' ) );
+		array_push( $teams, array( 'team' => 'Tennessee Titans', 			'conf' => 'AFC South', 	'stadium' => 'Nissan Field', 						'abbr' => 'TEN' ) );
 
-		array_push( $teams, array( 'team' => 'Arizona Cardinals', 		'conf' => 'AFC West', 	'stadium' => 'State Farm Stadium', 					'abbr' => 'ARI' ) );
-		array_push( $teams, array( 'team' => 'Denver Broncos', 			'conf' => 'AFC West', 	'stadium' => 'Empower Field at Mile High',			'abbr' => 'DEN' ) );
-		array_push( $teams, array( 'team' => 'Kansas City Chiefs', 		'conf' => 'AFC West', 	'stadium' => 'Arrowhead Stadium', 					'abbr' => 'KC'	) );
-		array_push( $teams, array( 'team' => 'Las Vegas Raiders', 		'conf' => 'AFC West', 	'stadium' => 'Allegiant Stadium',					'abbr' => 'OAK' ) );
-		array_push( $teams, array( 'team' => 'Los Angeles Chargers', 	'conf' => 'AFC West', 	'stadium' => 'SoFi Stadium',				 		'abbr' => 'LAC' ) );
+		array_push( $teams, array( 'team' => 'Arizona Cardinals', 			'conf' => 'AFC West', 	'stadium' => 'University of Phoenix Stadium', 		'abbr' => 'ARI' ) );
+		array_push( $teams, array( 'team' => 'Denver Broncos', 				'conf' => 'AFC West', 	'stadium' => 'Sports Authority Field at Mile High', 'abbr' => 'DEN' ) );
+		array_push( $teams, array( 'team' => 'Kansas City Chiefs', 			'conf' => 'AFC West', 	'stadium' => 'Arrowhead Stadium', 					'abbr' => 'KC'	) );
+		array_push( $teams, array( 'team' => 'Oakland Raiders', 			'conf' => 'AFC West', 	'stadium' => 'O.co Coliseum', 						'abbr' => 'OAK' ) );
+		array_push( $teams, array( 'team' => 'Los Angeles Chargers', 		'conf' => 'AFC West', 	'stadium' => 'Dignity Health Sports Park',	 		'abbr' => 'LAC' ) );
 
-		array_push( $teams, array( 'team' => 'Dallas Cowboys', 			'conf' => 'NFC East', 	'stadium' => 'AT&T Stadium', 						'abbr' => 'DAL' ) );
-		array_push( $teams, array( 'team' => 'New York Giants', 		'conf' => 'NFC East', 	'stadium' => 'MetLife Stadium', 					'abbr' => 'NYG' ) );
-		array_push( $teams, array( 'team' => 'Philadelphia Eagles', 	'conf' => 'NFC East', 	'stadium' => 'Lincoln Financial Field', 			'abbr' => 'PHI' ) );
-		array_push( $teams, array( 'team' => 'Washington Redskins', 	'conf' => 'NFC East', 	'stadium' => 'FedExField', 							'abbr' => 'WAS' ) );
+		array_push( $teams, array( 'team' => 'Dallas Cowboys', 				'conf' => 'NFC East', 	'stadium' => 'AT&T Stadium', 						'abbr' => 'DAL' ) );
+		array_push( $teams, array( 'team' => 'New York Giants', 			'conf' => 'NFC East', 	'stadium' => 'MetLife Stadium', 					'abbr' => 'NYG' ) );
+		array_push( $teams, array( 'team' => 'Philadelphia Eagles', 		'conf' => 'NFC East', 	'stadium' => 'Lincoln Financial Field', 			'abbr' => 'PHI' ) );
+		array_push( $teams, array( 'team' => 'Washington Football Team',	'conf' => 'NFC East', 	'stadium' => 'FedExField', 							'abbr' => 'WAS' ) );
 
-		array_push( $teams, array( 'team' => 'Chicago Bears', 			'conf' => 'NFC North', 	'stadium' => 'Soldier Field', 						'abbr' => 'CHI'	) );
-		array_push( $teams, array( 'team' => 'Detroit Lions', 			'conf' => 'NFC North', 	'stadium' => 'Ford Field', 							'abbr' => 'DET'	) );
-		array_push( $teams, array( 'team' => 'Green Bay Packers', 		'conf' => 'NFC North', 	'stadium' => 'Lambeau Field', 						'abbr' => 'GB'	) );
-		array_push( $teams, array( 'team' => 'Minnesota Vikings', 		'conf' => 'NFC North', 	'stadium' => 'U.S. Bank Stadium',	 				'abbr' => 'MIN'	) );
+		array_push( $teams, array( 'team' => 'Chicago Bears', 				'conf' => 'NFC North', 	'stadium' => 'Soldier Field', 						'abbr' => 'CHI'	) );
+		array_push( $teams, array( 'team' => 'Detroit Lions', 				'conf' => 'NFC North', 	'stadium' => 'Ford Field', 							'abbr' => 'DET'	) );
+		array_push( $teams, array( 'team' => 'Green Bay Packers', 			'conf' => 'NFC North', 	'stadium' => 'Lambeau Field', 						'abbr' => 'GB'	) );
+		array_push( $teams, array( 'team' => 'Minnesota Vikings', 			'conf' => 'NFC North', 	'stadium' => 'U.S. Bank Stadium',	 				'abbr' => 'MIN'	) );
 
-		array_push( $teams, array( 'team' => 'Atlanta Falcons', 		'conf' => 'NFC South', 	'stadium' => 'Mercedes-Benz Stadium', 				'abbr' => 'ATL'	) );
-		array_push( $teams, array( 'team' => 'New Orleans Saints', 		'conf' => 'NFC South', 	'stadium' => 'Mercedes-Benz Superdome', 			'abbr' => 'NO'	) );
-		array_push( $teams, array( 'team' => 'Tampa Bay Buccaneers', 	'conf' => 'NFC South', 	'stadium' => 'Raymond James Stadium', 				'abbr' => 'TB'	) );
+		array_push( $teams, array( 'team' => 'Atlanta Falcons', 			'conf' => 'NFC South', 	'stadium' => 'Mercedes-Benz Stadium', 				'abbr' => 'ATL'	) );
+		array_push( $teams, array( 'team' => 'New Orleans Saints', 			'conf' => 'NFC South', 	'stadium' => 'Mercedes-Benz Superdome', 			'abbr' => 'NO'	) );
+		array_push( $teams, array( 'team' => 'Tampa Bay Buccaneers', 		'conf' => 'NFC South', 	'stadium' => 'Raymond James Stadium', 				'abbr' => 'TB'	) );
 
-		array_push( $teams, array( 'team' => 'San Francisco 49ers', 	'conf' => 'NFC West', 	'stadium' => 'Levi\'s Stadium', 					'abbr' => 'SF'	) );
-		array_push( $teams, array( 'team' => 'Seattle Seahawks', 		'conf' => 'NFC West', 	'stadium' => 'CenturyLink Field', 					'abbr' => 'SEA'	) );
-		array_push( $teams, array( 'team' => 'Los Angeles Rams', 		'conf' => 'NFC West', 	'stadium' => 'SoFi Stadium',						'abbr' => 'LA'	) );
+		array_push( $teams, array( 'team' => 'San Francisco 49ers', 		'conf' => 'NFC West', 	'stadium' => 'Levi\'s Stadium', 					'abbr' => 'SF'	) );
+		array_push( $teams, array( 'team' => 'Seattle Seahawks', 			'conf' => 'NFC West', 	'stadium' => 'CenturyLink Field', 					'abbr' => 'SEA'	) );
+		array_push( $teams, array( 'team' => 'Los Angeles Rams', 			'conf' => 'NFC West', 	'stadium' => 'Los Angeles Memorial Coliseum',		'abbr' => 'LA'	) );
 
 		return $teams;
 	}

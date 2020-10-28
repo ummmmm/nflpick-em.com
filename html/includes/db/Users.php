@@ -33,6 +33,8 @@ class Users
 					current_place 		int( 11 ),
 					email_preference 	tinyint( 1 ),
 					force_password 		tinyint( 1 ),
+					active				tinyint( 1 ),
+					message				varchar( 255 ),
 					PRIMARY KEY ( id )
 				)";
 
@@ -198,11 +200,14 @@ class Users
 										paid				= ?,
 										current_place		= ?,
 										email_preference	= ?,
-										force_password		= ?
+										force_password		= ?,
+										active				= ?,
+										message				= ?
 									WHERE
 										id					= ?',
 								$user[ 'fname' ], $user[ 'lname' ], $user[ 'email' ], $user[ 'password' ], $user[ 'last_on' ],
-								$user[ 'wins' ], $user[ 'losses' ],	$user[ 'paid' ], $user[ 'current_place' ], $user[ 'email_preference' ], $user[ 'force_password' ],
+								$user[ 'wins' ], $user[ 'losses' ],	$user[ 'paid' ], $user[ 'current_place' ], $user[ 'email_preference' ],
+								$user[ 'force_password' ], $user[ 'active' ], $user[ 'message' ],
 								$user[ 'id' ] );
 	}
 

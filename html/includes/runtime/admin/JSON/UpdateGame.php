@@ -147,12 +147,27 @@ class JSON_UpdateGame extends JSONAdminAction
 			return $this->setDBError();
 		}
 		
+		if ( !$this->_Picks_Update_Week( $db, $game[ 'id' ], $week_id ) )
+		{
+			return $this->setDBError();
+		}
+
 		if ( !$db_games->Load( $game[ 'id' ], $game ) )
 		{
 			return $this->setDBError();
 		}
 		
 		return $this->setData( $game );
+	}
+
+	private function _Picks_Update_Week( &$db, $game_id, $week )
+	{
+		if ( !$db->query( 'UPDATE picks SET week = ? WHERE game_id = ?', $week, $game_id ) )
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	private function _Users_Update_Record()

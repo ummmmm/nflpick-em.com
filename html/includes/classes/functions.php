@@ -134,7 +134,7 @@ class Functions
 			}
 
 			print '<div class="error">';
-			printf( '<span class="error_text_top">The Following %s Ocurred!</span><br />', htmlentities( $title ) );
+			printf( '<span class="error_text_top">The Following %s Occurred!</span><br />', htmlentities( $title ) );
 			printf( '<span class="error_text">%s</span>', $message );
 			print '</div>';
 

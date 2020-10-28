@@ -92,7 +92,9 @@ class Screen_Register extends Screen
 								 'paid' 			=> 0,
 								 'current_place' 	=> 1,
 								 'email_preference' => 1,
-								 'force_password' 	=> 0 );
+								 'force_password' 	=> 0,
+								 'active'			=> 1,
+								 'message'			=> "" );
 
 		if ( !$db_users->Insert( $user ) || !$db_sessions->Generate( $user[ 'id' ] ) )
 		{
