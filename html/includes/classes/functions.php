@@ -80,7 +80,7 @@ class Draw
 
 	public static function Weeks( $default = null )
 	{
-		for( $i = 1; $i <= 17; $i++ )
+		for( $i = 1; $i <= 18; $i++ )
 		{
 			Draw::Option( $i, $default, $i );
 		}

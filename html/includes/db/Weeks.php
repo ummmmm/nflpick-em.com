@@ -108,7 +108,7 @@ class Weeks
 		if ( $count === false )		return false;
 		else if ( $count !== 0 )	return $this->_Set_Error( 'Weeks table must be empty to call Create_Weeks' );
 
-		for ( $i = 1; $i <= 17; $i++ )
+		for ( $i = 1; $i <= 18; $i++ )
 		{
 			$week[ 'id' ] 		= $i;
 			$week[ 'date']		= $start_date;

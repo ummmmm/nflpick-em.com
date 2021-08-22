@@ -168,7 +168,7 @@ class Games
 		$db_weeks	= new Weeks( $this->_db );
 		$url 		= sprintf( 'https://www.nfl.com/ajax/scorestrip?season=%d&seasonType=REG&week=', date( 'Y' ) );
 
-		for ( $i = 1; $i <= 17; $i++ )
+		for ( $i = 1; $i <= 18; $i++ )
 		{
 			$xml = simplexml_load_file( sprintf( '%s%d', $url, $i ) );
 
