@@ -111,7 +111,7 @@ class Picks
 
 	public function UserWeekList_Load( $userid, $week, &$picks )
 	{
-		return $this->_db->select( 'SELECT p.*, ( SELECT t.team FROM teams t WHERE t.id = p.winner_pick ) AS winner, ( SELECT t.team FROM teams t WHERE t.id = p.loser_pick ) AS loser FROM picks p WHERE user_id = ? AND week = ?', $picks, $userid, $week );
+		return $this->_db->select( 'SELECT p.*, ( SELECT t.team FROM teams t WHERE t.id = p.winner_pick ) AS winner, ( SELECT t.team FROM teams t WHERE t.id = p.loser_pick ) AS loser FROM picks p, games g WHERE p.user_id = ? AND p.week = ? AND p.game_id = g.id ORDER BY g.date, g.id', $picks, $userid, $week );
 	}
 
 	public function Load_User_Game( $userid, $gameid, &$pick )
