@@ -108,21 +108,31 @@ class Weeks
 		if ( $count === false )		return false;
 		else if ( $count !== 0 )	return $this->_Set_Error( 'Weeks table must be empty to call Create_Weeks' );
 
-		for ( $i = 1; $i <= 18; $i++ )
+		$data = json_decode( file_get_contents( 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?week=0' ) ); 
+
+		foreach ( $data->leagues[ 0 ]->calendar as $entry )
 		{
-			$week[ 'id' ] 		= $i;
-			$week[ 'date']		= $start_date;
-			$week[ 'locked' ]	= 0;
-
-			if ( !$this->Insert( $week ) )
+			if ( $entry->label == 'Regular Season' )
 			{
-				return false;
-			}
+				foreach ( $entry->entries as $entry )
+				{
+					$week[ 'id' ]		= $entry->value;
+					$week[ 'date' ]		= $start_date;
+					$week[ 'locked' ]	= 0;
 
-			$start_date = strtotime( '+1 week', $start_date );
+					$start_date			= strtotime( '+1 week', $start_date );
+
+					if ( !$this->Insert( $week ) )
+					{
+						return false;
+					}		
+				}
+
+				return true;
+			}
 		}
 
-		return true;
+		return $this->_Set_Error( 'Failed to get the regular season weeks' );
 	}
 
 	private function _Set_Error( $error )

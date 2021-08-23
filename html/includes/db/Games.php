@@ -17,6 +17,7 @@ class Games
 					id 			int( 3 ) AUTO_INCREMENT,
 					away 		int( 2 ),
 					home 		int( 2 ),
+					stadium		varchar( 255 ),
 					date 		int( 11 ),
 					week 		int( 2 ),
 					winner 		int( 2 ),
@@ -34,7 +35,7 @@ class Games
 	public function List_Load( &$games )
 	{
 		return $this->_db->select( 'SELECT
-										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, homeTeam.stadium AS stadium,
+										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, s.stadium,
 										awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.ties AS awayTies, awayTeam.abbr AS awayAbbr,
 										homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.ties AS homeTies, homeTeam.abbr AS homeAbbr
 									FROM
@@ -52,7 +53,7 @@ class Games
 	public function List_Load_Week( $week, &$games )
 	{
 		return $this->_db->select( 'SELECT
-										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, homeTeam.stadium AS stadium,
+										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, s.stadium,
 										awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.ties AS awayTies, awayTeam.abbr AS awayAbbr,
 										homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.ties AS homeTies, homeTeam.abbr AS homeAbbr
 									FROM
@@ -88,6 +89,7 @@ class Games
 								   SET
 									away 		= ?,
 									home		= ?,
+									stadium		= ?,
 									date		= ?,
 									week		= ?,
 									winner		= ?,
@@ -98,7 +100,7 @@ class Games
 									final		= ?
 								   WHERE
 									id = ?',
-							$game[ 'away' ], $game[ 'home' ], $game[ 'date' ], $game[ 'week' ], $game[ 'winner' ], $game[ 'loser' ], $game[ 'homeScore' ], $game[ 'awayScore' ], $game[ 'tied' ], $game[ 'final' ],
+							$game[ 'away' ], $game[ 'home' ], $game[ 'stadium' ], $game[ 'date' ], $game[ 'week' ], $game[ 'winner' ], $game[ 'loser' ], $game[ 'homeScore' ], $game[ 'awayScore' ], $game[ 'tied' ], $game[ 'final' ],
 							$game[ 'id' ] );
 	}
 
@@ -122,7 +124,7 @@ class Games
 	public function Load( $gameid, &$game )
 	{
 		return $this->_db->single( 'SELECT
-										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, homeTeam.stadium AS stadium,
+										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, s.stadium,
 										awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.abbr AS awayAbbr,
 										homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.abbr AS homeAbbr
 									FROM
@@ -166,44 +168,52 @@ class Games
 		$games		= array();
 		$db_teams	= new Teams( $this->_db );
 		$db_weeks	= new Weeks( $this->_db );
-		$url 		= sprintf( 'https://www.nfl.com/ajax/scorestrip?season=%d&seasonType=REG&week=', date( 'Y' ) );
 
-		for ( $i = 1; $i <= 18; $i++ )
+		$null		= $db_weeks->List_Load( $weeks );
+		$url		= 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?week=%d';
+
+		foreach ( $weeks as $week )
 		{
-			$xml = simplexml_load_file( sprintf( '%s%d', $url, $i ) );
+			$data = json_decode( file_get_contents( sprintf( $url, $week[ 'id' ] ) ) );
 
-			foreach ( $xml->gms->g as $game )
+			foreach ( $data->events as $event )
 			{
-				/*
-				 * The format the date is returned in appears to be YYYYMMDD<2 digit game ID>
-				 * E.g. 2018090901
-				 */
+				$competition	= $event->competitions[ 0 ];
+				$team1			= $competition->competitors[ 0 ];
+				$team2			= $competition->competitors[ 1 ];
 
-				$date		= substr( ( string ) $game[ 'eid' ], 0, 8 );
-				$time		= ( string ) $game[ 't' ];
-				$date_time	= new DateTime( sprintf( '%s %s +12 hours', $date, $time ), new DateTimeZone( 'America/New_York' ) );
-
-				if ( !$db_weeks->Load( $i, $null ) )
+				if ( $team1->homeAway == 'home' )
 				{
-					return $this->_Set_Error( sprintf( 'Failed to load week %d', $i ) );
+					$home = $team1;
+					$away = $team2;
+				}
+				else
+				{
+					$home = $team2;
+					$away = $team1;
 				}
 
-				if ( !$db_teams->Load_Abbr( ( string ) $game[ 'h' ], $home_team ) )
+				$away_abbr	= $away->team->abbreviation;
+				$home_abbr	= $home->team->abbreviation;
+				$stadium	= $competition->venue->fullName;
+				$date		= new DateTime( $event->date );
+
+				if ( !$db_teams->Load_Abbr( $away_abbr, $away_team ) )
 				{
-					return $this->_Set_Error( sprintf( 'Failed to load home team %s', ( string ) $game[ 'h' ] ) );
+					return $this->_Set_Error( sprintf( 'Failed to load away team %s', $away_abbr ) );
 				}
 
-				if ( !$db_teams->Load_Abbr( ( string ) $game[ 'v' ], $away_team ) )
+				if ( !$db_teams->Load_Abbr( $home_abbr, $home_team ) )
 				{
-					return $this->_Set_Error( sprintf( 'Failed to load away team %s', ( string ) $game[ 'v' ] ) );
+					return $this->_Set_Error( sprintf( 'Failed to load home team %s', $home_abbr ) );
 				}
 
-				if ( $this->Exists_Week_Teams( $i, $home_team[ 'id' ], $away_team[ 'id' ], $null ) )
+				if ( $this->Exists_Week_Teams( $week[ 'id' ], $home_team[ 'id' ], $away_team[ 'id' ], $null ) )
 				{
-					return $this->_Set_Error( sprintf( 'Game already exists: %s vs. %s for week %d', $away_team[ 'team' ], $home_team[ 'team' ], $i ) );
+					return $this->_Set_Error( sprintf( 'Game already exists: %s vs. %s for week %d', $away_team[ 'team' ], $home_team[ 'team' ], $week[ 'id' ] ) );
 				}
 
-				array_push( $games, array( 'away' => $away_team[ 'id' ], 'home' => $home_team[ 'id' ], 'date' => $date_time->getTimestamp(), 'week' => $i ) );
+				array_push( $games, array( 'away' => $away_team[ 'id' ], 'home' => $home_team[ 'id' ], 'stadium' => $stadium, 'date' => $date->getTimestamp(), 'week' => $week[ 'id' ] ) );
 			}
 		}
 

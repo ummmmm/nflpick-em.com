@@ -152,5 +152,21 @@ function uninstall()
 
 function first_sunday()
 {
-	return date( 'm/d/Y', strtotime( 'First Sunday of September ' . date( 'Y' ) ) );
+	$url 	= 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?week=0';
+	$data	= json_decode( file_get_contents( $url ) );
+
+	foreach ( $data->leagues[ 0 ]->calendar as $entry )
+	{
+		if ( $entry->label == 'Regular Season' )
+		{
+			$date = new DateTime( $week_1 = $entry->entries[ 0 ]->startDate );
+
+			if ( date( 'w', $date->getTimestamp() ) == 0 )	$timestamp = $date->getTimestamp();
+			else											$timestamp = strtotime( 'Next Sunday', $date->getTimestamp() );
+
+			return date( 'm/d/Y', $timestamp );
+		}
+	}
+
+	return 'Estimated for ' . date( 'm/d/Y', strtotime( 'First Sunday of September ' . date( 'Y' ) ) );
 }

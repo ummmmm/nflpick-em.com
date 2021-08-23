@@ -12,45 +12,56 @@ class Screen_UpdateScores extends Screen_Admin
 			$db_teams	= new Teams( $this->_db );
 			$db_users	= new Users( $this->_db );
 			$db_weeks	= new Weeks( $this->_db );
-			$doc 		= new SimpleXMLElement( sprintf( 'https://www.nfl.com/ajax/scorestrip?seasonType=REG&week=%d', $db_weeks->Previous() ), 0, true );
-			$week		= ( int ) $doc->gms->attributes()->w;
+			$data		= json_decode( file_get_contents( sprintf( 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?week=%d', $db_weeks->Previous() ) ) );
+			$week_id	= $data->week->number;
 
-			if ( !$db_weeks->IsLocked( $week ) )
+			if ( !$db_weeks->IsLocked( $week_id ) )
 			{
-				printf( 'Week %d is not locked yet, no scores updated', $week );
+				printf( 'Week %d is not locked yet, no scores updated', $week_id );
 
 				return true;
 			}
 
-			foreach( $doc->gms->g as $nfl_game )
+			foreach ( $data->events as $event )
 			{
-				$g			= $nfl_game->attributes();
-				$quarter	= ( string ) $g->q;
-				$home 		= ( string ) $g->h;
-				$away		= ( string ) $g->v;
-				$homeScore	= ( int ) $g->hs;
-				$awayScore	= ( int ) $g->vs;
+				$competition	= $event->competitions[ 0 ];
+				$team1			= $competition->competitors[ 0 ];
+				$team2			= $competition->competitors[ 1 ];
 
-				if ( !$db_teams->Load_Abbr( $home, $homeTeam ) ||
-					 !$db_teams->Load_Abbr( $away, $awayTeam ) )
+				if ( $team1->homeAway == 'home' )
 				{
-					printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the teams could not be loaded<br />', $away, $home );
+					$home = $team1;
+					$away = $team2;
+				}
+				else
+				{
+					$home = $team2;
+					$away = $team1;
+				}
+
+				if ( !$db_teams->Load_Abbr( $home->team->abbreviation, $homeTeam ) ||
+					 !$db_teams->Load_Abbr( $away->team->abbreviation, $awayTeam ) )
+				{
+					printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the teams could not be loaded<br />', $away->team->displayName, $home->team->displayName );
 					continue;
 				}
 
-				if ( !$db_games->Load_Week_Teams( $week, $awayTeam[ 'id' ], $homeTeam[ 'id' ], $game ) )
+				if ( !$db_games->Load_Week_Teams( $week_id, $awayTeam[ 'id' ], $homeTeam[ 'id' ], $game ) )
 				{
 					printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the game could not be found<br />', $awayTeam[ 'team' ], $homeTeam[ 'team' ] );
 					continue;
 				}
 
-				if ( $quarter != 'F' && $quarter != 'FO' )
+				if ( !$competition->status->type->completed )
 				{
 					printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the game is not over yet<br />', $awayTeam[ 'team' ], $homeTeam[ 'team' ] );
 					continue;
 				}
 
-				if ( $homeScore == $awayScore )
+				$away_score = $away->score;
+				$home_score = $home->score;
+
+				if ( $home_score == $away_score )
 				{
 					$game[ 'tied' ]		= 1;
 					$game[ 'winner' ]	= 0;
@@ -59,12 +70,12 @@ class Screen_UpdateScores extends Screen_Admin
 				else
 				{
 					$game[ 'tied' ]		= 0;
-					$game[ 'winner' ] 	= ( $homeScore > $awayScore ) ? $homeTeam[ 'id' ] : $awayTeam[ 'id' ];
-					$game[ 'loser' ]	= ( $homeScore > $awayScore ) ? $awayTeam[ 'id' ] : $homeTeam[ 'id' ];
+					$game[ 'winner' ] 	= ( $home_score > $away_score ) ? $homeTeam[ 'id' ] : $awayTeam[ 'id' ];
+					$game[ 'loser' ]	= ( $home_score > $away_score ) ? $awayTeam[ 'id' ] : $homeTeam[ 'id' ];
 				}
 
-				$game[ 'homeScore' ]	= $homeScore;
-				$game[ 'awayScore' ]	= $awayScore;
+				$game[ 'homeScore' ]	= $home_score;
+				$game[ 'awayScore' ]	= $away_score;
 				$game[ 'final' ]		= 1;
 
 				if ( !$db_games->Update( $game ) )
