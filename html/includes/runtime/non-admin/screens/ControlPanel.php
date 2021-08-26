@@ -27,7 +27,7 @@ class Screen_ControlPanel extends Screen
 			{
 				array_push( $errors, 'Email address\' do not match.' );
 			}
-			else if ( $db_users->Load_Email( $email, $null ) )
+			else if ( $db_users->Load_Email( $email, $loaded_user ) && $loaded_user[ 'id' ] != $this->_auth->getUserID() )
 			{
 				array_push( $errors, 'The email address is already in use.' );
 			}
