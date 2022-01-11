@@ -33,7 +33,7 @@ class Validation
 
 	public static function Week( $week )
 	{
-		if ( !preg_match( "/^([1-9]|1[0-7])$/", $week ) )
+		if ( !preg_match( "/^([1-9]|1[0-8])$/", $week ) )
 		{
 			return false;
 		}
