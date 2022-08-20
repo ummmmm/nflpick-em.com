@@ -33,6 +33,11 @@ class Weeks
 		return $this->_db->select( 'SELECT w.*, ( SELECT COUNT( id ) FROM games g WHERE g.week = w.id ) AS total_games FROM weeks w ORDER BY id', $weeks );
 	}
 
+	public function List_Load_Locked( &$weeks )
+	{
+		return $this->_db->select( 'SELECT w.*, ( SELECT COUNT( id ) FROM games g WHERE g.week = w.id ) AS total_games FROM weeks w WHERE w.locked = 1 ORDER BY id', $weeks );
+	}
+
 	public function Insert( &$week )
 	{
 		return $this->_db->insert( 'weeks', $week );
