@@ -35,7 +35,7 @@ class Games
 	public function List_Load( &$games )
 	{
 		return $this->_db->select( 'SELECT
-										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, s.stadium,
+										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, s.stadium, s.tied, s.final,
 										awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.ties AS awayTies, awayTeam.abbr AS awayAbbr,
 										homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.ties AS homeTies, homeTeam.abbr AS homeAbbr
 									FROM
@@ -53,7 +53,7 @@ class Games
 	public function List_Load_Week( $week, &$games )
 	{
 		return $this->_db->select( 'SELECT
-										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, s.stadium,
+										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, s.stadium, s.tied, s.final,
 										awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.ties AS awayTies, awayTeam.abbr AS awayAbbr,
 										homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.ties AS homeTies, homeTeam.abbr AS homeAbbr
 									FROM
@@ -124,7 +124,7 @@ class Games
 	public function Load( $gameid, &$game )
 	{
 		return $this->_db->single( 'SELECT
-										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, s.stadium,
+										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, s.stadium, s.tied, s.final,
 										awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.abbr AS awayAbbr,
 										homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.abbr AS homeAbbr
 									FROM
