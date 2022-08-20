@@ -32,6 +32,11 @@ class JSON_LoadPicks extends JSONUser
 				return $this->setDBError();
 			}
 
+			if ( $count === 0 )
+			{
+				$pick = null;
+			}
+
 			$now	= new DateTime();
 			$date 	= new DateTime();
 			$date->setTimestamp( $game[ 'date' ] );

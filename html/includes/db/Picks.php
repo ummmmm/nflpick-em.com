@@ -30,13 +30,16 @@ class Picks
 		return $this->_db->query( $sql );
 	}
 
-	public function Insert_All( $user_id )
+	public function Insert( $pick )
 	{
 		$ip 		= $_SERVER[ 'REMOTE_ADDR' ];
 		$updated	= time();
 
-		return $this->_db->query( 'INSERT INTO picks ( user_id, game_id, winner_pick, loser_pick, ip, updated, week, picked )
-							SELECT ?, id, 0, 0, ?, ?, week, 0 FROM games', $user_id, $ip, $updated );
+		return $this->_db->query( 'INSERT INTO picks
+								   ( user_id, game_id, winner_pick, loser_pick, ip, updated, week, picked )
+								   VALUES
+								   ( ?, ?, ?, ?, ?, ?, ?, 1 )',
+								   $pick[ 'user_id' ], $pick[ 'game_id' ], $pick[ 'winner_pick' ], $pick[ 'loser_pick' ], $ip, $updated, $pick[ 'week' ] );
 	}
 
 	public function Update( $pick )
@@ -45,18 +48,16 @@ class Picks
 		$time 	= time();
 
 		return $this->_db->query( 'UPDATE
-								picks
-						    SET
-								winner_pick	= ?,
-								loser_pick	= ?,
-								ip			= ?,
-								updated		= ?,
-								picked		= ?
-						    WHERE
-								user_id		= ? AND
-								game_id		= ?',
-							$pick[ 'winner_pick' ], $pick[ 'loser_pick' ], $ip, $time, $pick[ 'picked' ],
-							$pick[ 'user_id' ], $pick[ 'game_id' ] );
+									picks
+							       SET
+									winner_pick	= ?,
+									loser_pick	= ?,
+									ip			= ?,
+									updated		= ?
+							       WHERE
+									id			= ?',
+							$pick[ 'winner_pick' ], $pick[ 'loser_pick' ], $ip, $time,
+							$pick[ 'id' ] );
 	}
 
 	public function Delete( $pick_id )
@@ -76,18 +77,16 @@ class Picks
 
 	public function Remaining( $userid, $weekid )
 	{
-		$date	= time();
-		$count 	= $this->_db->single( 'SELECT
-									COUNT( p.id ) AS remaining
-								FROM
-									picks p, games g
-								WHERE
-									p.user_id 		= ? 	AND
-									p.week 			= ? 	AND
-									p.picked	 	= 0 	AND
-									p.game_id 		= g.id 	AND
-									g.date 			> ?',
-								$remaining, $userid, $weekid, $date );
+		$count = $this->_db->single( 'SELECT
+										COUNT( g.id ) AS remaining
+								      FROM
+										games g
+										LEFT OUTER JOIN picks p ON p.game_id = g.id AND p.user_id = ?
+									   WHERE
+										g.week = ? AND
+										g.date > ? AND
+										p.id IS NULL',
+									   $remaining, $userid, $weekid, time() );
 
 		if ( $count === false )
 		{
@@ -99,7 +98,15 @@ class Picks
 
 	public function Missing( $userid, $weekid )
 	{
-		$count = $this->_db->single( 'SELECT COUNT( id ) AS count FROM picks WHERE user_id = ? AND week = ? AND picked = 0', $missing, $userid, $weekid );
+		$count = $this->_db->single( 'SELECT
+										COUNT( * ) AS count
+									  FROM
+									  	games g
+									  	LEFT OUTER JOIN picks p ON p.game_id = g.id AND p.user_id = ?
+									  WHERE
+									  	g.week = ? AND
+									  	p.id IS NULL',
+									  $missing, $userid, $weekid );
 
 		if ( $count === false )
 		{

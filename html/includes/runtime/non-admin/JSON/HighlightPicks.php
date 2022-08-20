@@ -77,7 +77,6 @@ class JSON_HighlightPicks extends JSONUser
 					p2.user_id 		{$sign} ? 			AND
 					p1.week 		= 		? 			AND
 					p1.game_id 		= 		p2.game_id 	AND
-					p2.picked		= 		1			AND
 					p1.winner_pick	<> 		p2.winner_pick
 				  GROUP BY
 					p2.user_id";

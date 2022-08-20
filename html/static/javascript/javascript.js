@@ -64,7 +64,7 @@ $( document ).ready( function(){
 
 		$.each( user.weeks, function( key, week )
 		{
-			$( '<div/>', { 'text': 'Week ' + week.id + ': ' + week.wins + ' wins - ' + week.losses + ' losses' } ).appendTo( div );
+			$( '<div/>', { 'text': 'Week ' + week.id + ': ' + week.wins + ' wins - ' + week.losses + ' losses' + ( week.manual ? ' (Manually calculated)' : '' ) } ).appendTo( div );
 		} );
 
 		$( '<div/>', { 'text': 'Total Wins = ' + user.total_wins + ' ' + 'Total Losses = ' + user.total_losses } ).appendTo( div );
@@ -114,7 +114,7 @@ $( document ).ready( function(){
 				}
 
 				var past		= ( week.locked || game.past ) ? true : false;
-				var pick_class 	= ( past ) ? 'past' : ( ( game.pick.picked ) ? 'made' : 'notMade' );
+				var pick_class 	= ( past ) ? 'past' : ( ( game.pick ) ? 'made' : 'notMade' );
 				var pick 		= $( '<div/>', { 'id': 'picks' + game.id, 'class': 'make_picks ' + pick_class } );
 				var status		= $( '<div/>', { 'id': 'status' + game.id } );
 
@@ -138,7 +138,7 @@ $( document ).ready( function(){
 				$.fn.picks_build_record( game.homeWins, game.homeLosses, game.homeTies ).appendTo( pick );
 				pick.append( '<br />' + game.stadium + ' - ' + game.time_formatted );
 
-				if ( game.pick.picked )
+				if ( game.pick )
 				{
 					var winner 	= ( game.pick.winner_pick == game.home ) ? game.homeTeam : game.awayTeam;
 					var loser	= ( game.pick.loser_pick == game.home ) ? game.homeTeam : game.awayTeam;

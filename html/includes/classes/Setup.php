@@ -111,6 +111,7 @@ class Setup
 		$db_teams			= new Teams( $this->_db );
 		$db_users			= new Users( $this->_db );
 		$db_weeks			= new Weeks( $this->_db );
+		$db_weekly_records	= new Weekly_Records( $this->_db );
 
 		if ( !$db_failed_logins->Create() )
 		{
@@ -180,6 +181,11 @@ class Setup
 		if ( !$db_weeks->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the Weeks database table' );
+		}
+
+		if ( !$db_weekly_records->Create() )
+		{
+			return $this->_Set_Error( 'Failed to create the Weekly Records database table' );
 		}
 
 		return true;

@@ -74,7 +74,7 @@ $( document ).ready( function()
 					$( '<a/>', {
 						href: 'javascript:;',
 						text: user.email,
-					} ).bind( 'click', function() { $.fn.editUser( user ); } ) ).append( ' - ' ).append( 
+					} ).bind( 'click', function() { $.fn.editUser( user ); } ) ).append( ' - ' ).append(
 					$( '<a/>', { 'href': 'javascript:;', 'text': 'Delete' } ).bind( 'click', function() { $.fn.deleteUser( user ); } ) ).append( ( user.active == 0 ? ' - Inactive' : '' ) )
 					.appendTo( fieldset );
 
@@ -249,7 +249,7 @@ $( document ).ready( function()
 					key++;
 
 					$( '<p/>', {
-						style: ( game.winner ? 'text-decoration: line-through;' : '' ),
+						style: ( game.final ? 'text-decoration: line-through;' : '' ),
 						html: $( '<a/>', {
 							href: 'javascript:;',
 							html: game.awayTeam + ' <b>vs.</b> ' + game.homeTeam
@@ -745,6 +745,19 @@ $( document ).ready( function()
 			}
 
 			$.fn.load_weeks();
+		} );
+	}
+
+	$.fn.update_weekly_records = function( user_id, week_id )
+	{
+		$.fn.json_admin( 'UpdateWeeklyRecords', 'user_id=' + encodeURIComponent( user_id ) + '&week_id=' + encodeURIComponent( week_id ) + '&wins=' + encodeURIComponent( $( '#wins' ).val().trim() ) + ' &losses=' + encodeURIComponent( $( '#losses' ).val().trim() ), function( response )
+		{
+			if ( !response.success )
+			{
+				return $.fn.error( response.error_message );
+			}
+
+			alert( 'Updated' );
 		} );
 	}
 } );

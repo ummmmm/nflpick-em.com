@@ -49,9 +49,10 @@ class Screen_ViewPicks extends Screen
 
 	private function _PickLayout( $weekid )
 	{
-		$db_users	= new Users( $this->_db );
-		$db_games 	= new Games( $this->_db );
-		$db_picks 	= new Picks( $this->_db );
+		$db_users			= new Users( $this->_db );
+		$db_games 			= new Games( $this->_db );
+		$db_picks 			= new Picks( $this->_db );
+		$db_weekly_records	= new Weekly_Records( $this->_db );
 
 		if ( $this->_Users_List_Load( $users ) === false )
 		{
@@ -68,17 +69,19 @@ class Screen_ViewPicks extends Screen
 		print "<h1>Week {$weekid} User Picks</h1>";
 		print '<table class="picks" style="font-size:8px;" width="100%">';
 
-		$user_records = array();
-
 		foreach( $users as $loaded_user )
 		{
-			$initials 								= strtoupper( sprintf( "%s.%s.", substr( $loaded_user[ 'fname' ], 0, 1 ), substr( $loaded_user[ 'lname' ], 0, 1 ) ) );
-			$user_records[ $loaded_user[ 'id' ] ] 	= array( 'losses' => 0, 'wins' => 0 );
-			$missing_count 							= $db_picks->Missing( $loaded_user[ 'id' ], $weekid );
+			$initials 		= strtoupper( sprintf( "%s.%s.", substr( $loaded_user[ 'fname' ], 0, 1 ), substr( $loaded_user[ 'lname' ], 0, 1 ) ) );
+			$missing_count 	= $db_picks->Missing( $loaded_user[ 'id' ], $weekid );
 
 			if ( $missing_count === false )
 			{
 				return false;
+			}
+
+			if ( !$db_weekly_records->Load_User_Week( $loaded_user[ 'id' ], $weekid, $weekly_record ) )
+			{
+				return $this->setError( 'Unable to load weekly records' );
 			}
 
 			print '<tr>';
@@ -88,61 +91,95 @@ class Screen_ViewPicks extends Screen
 
 			foreach( $games as $game )
 			{
-				if ( !$db_picks->Load_User_Game( $loaded_user[ 'id' ], $game[ 'id' ], $pick ) )
+				$result = $db_picks->Load_User_Game( $loaded_user[ 'id' ], $game[ 'id' ], $pick );
+
+				if ( $result === false )
 				{
 					return $this->setDBError();
 				}
 
-				if ( $pick[ 'picked' ] == 0 )
+				if ( $result === 0 )
 				{
-					$team = '<span style="color:red;">N/A</span>';
+					$output = '<span style="color:red;">N/A</span>';
 				}
-				else if ( $pick[ 'winner_pick' ] == $game[ 'away' ] )
+				else if ( $game[ 'tied' ] )
 				{
-					$team = $game[ 'awayAbbr' ];
+					$output = sprintf( '<s>%s</s>', ( $pick[ 'winner_pick' ] == $game[ 'home' ] ) ? $game[ 'homeAbbr' ] : $game[ 'awayAbbr' ] );
+				}
+				else if ( $pick[ 'winner_pick' ] == $game[ 'home' ] )
+				{
+					$output = ( $pick[ 'winner_pick' ] == $game[ 'winner' ] && $game[ 'final' ] )  ? sprintf( '<b>%s</b>', $game[ 'homeAbbr' ] ) : $game[ 'homeAbbr' ];
 				}
 				else
 				{
-					$team = $game[ 'homeAbbr' ];
+					$output = ( $pick[ 'winner_pick' ] == $game[ 'winner' ] && $game[ 'final' ] ) ? sprintf( '<b>%s</b>', $game[ 'awayAbbr' ] ) : $game[ 'awayAbbr' ];
 				}
-
-				if ( $game[ 'winner' ] > 0 )
-				{
-					if ( $pick[ 'winner_pick' ] == $game[ 'winner' ] )
-					{
-						$user_records[ $loaded_user[ 'id' ] ][ 'wins' ] += 1;
-					}
-					else
-					{
-						$user_records[ $loaded_user[ 'id' ] ][ 'losses' ] += 1;
-					}
-				}
-
-				$output = ( $pick[ 'winner_pick' ] == $game[ 'winner' ] && $game[ 'winner' ] != 0 ) ? sprintf( "<b>%s</b>", htmlentities( $team ) ) : $team;
 
 				printf( '<td userid="%d" gameid="%d">%s</td>', $loaded_user[ 'id' ], $game[ 'id' ], $output );
 			}
 
-			if ( $missing_count == $games_count )
+			if ( $missing_count == 0 ) // no missing picks, the weely record is correct
 			{
-				if ( !Functions::Worst_Record_Calculated( $this->_db, $weekid, $user_records[ $loaded_user[ 'id' ] ] ) )
-				{
-					return false;
-				}
+				printf( '<td><b>%d - %d</b></td>', $weekly_record[ 'wins' ], $weekly_record[ 'losses' ] );
+			}
+			else if ( $weekly_record[ 'manual' ] == 1 ) // missing picks and the weekly record was manually set
+			{
+				printf( '<td style="color:red;"><b>%d - %d</b></td>', $weekly_record[ 'wins' ], $weekly_record[ 'losses' ] );
+			}
+			else // missing picks and the weekly record has not been manually set yet
+			{
+				printf( '<td style="color:red;"><b>%d - %d (TBD)</b></td>', $weekly_record[ 'wins' ], $weekly_record[ 'losses' ] );
 			}
 
-			printf( '<td><b>%d - %d</b></td>', $user_records[ $loaded_user[ 'id' ] ][ 'wins' ], $user_records[ $loaded_user[ 'id' ] ][ 'losses' ] );
 			print '</tr>';
 		}
 
 		print '</table>';
 		printf( '<p><a href="javascript:;" id="highlightpicks" onclick="$.fn.highlightPicks( 0, %d );">Highlighting On</a></p>', $weekid );
+		print( <<<EOD
+			<table cellspacing="5">
+				<tr>
+					<td><h3>Key</h3></td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td><span style="color:red;">N/A</td>
+					<td>Pick not submitted</td>
+				</tr>
+				<tr>
+					<td><b>LAC</b></td>
+					<td>Game won</td>
+				</tr>
+				<tr>
+					<td>LAC</td>
+					<td>Game loss / not yet final</td>
+				</tr>
+				<tr>
+					<td><s>LAC</s></td>
+					<td>Game tied</td>
+				</tr>
+				<tr>
+					<td><b>11-5</b></td>
+					<td>Number of wins and losses (all picks submitted)</td>
+				</tr>
+				<tr>
+					<td><span style="color:red;"><b>11-5</b></style></td>
+					<td>Number of wins and losses (with picks missing and the final record has been manually calculated)</td>
+				</tr>
+				<tr>
+					<td><span style="color:red;"><b>9-5 (TBD)</b></style></td>
+					<td>Number of wins and losses (with picks missing and final record yet to be manually calculated)</td>
+				</tr>
+			</table>
+			<br />
+			<p>Manually calculated records will not happen until ALL games are final for the week.</p>
+EOD );
 
 		return true;
 	}
 
 	private function _Users_List_Load( &$users )
 	{
-		return $this->_db->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name, CONCAT( SUBSTRING( fname, 1, 1 ), \'.\', SUBSTRING( lname, 1, 1 ), \'.\' ) AS abbr FROM users ORDER BY abbr', $users );
+		return $this->_db->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name, CONCAT( SUBSTRING( fname, 1, 1 ), \'.\', SUBSTRING( lname, 1, 1 ), \'.\' ) AS abbr FROM users ORDER BY abbr, fname, lname, id', $users );
 	}
 }

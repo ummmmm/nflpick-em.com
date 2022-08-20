@@ -69,12 +69,7 @@ class JSON_UpdateGame extends JSONAdminAction
 		{
 			return $this->setDBError();
 		}
-		
-		if ( !$this->_Users_Place_Update( $db, $user ) )
-		{
-			return $this->setDBError();
-		}
-		
+
 		return $this->setData( $game );
 	}
 
@@ -172,33 +167,16 @@ class JSON_UpdateGame extends JSONAdminAction
 
 	private function _Users_Update_Record()
 	{
-		$db_users = new Users( $this->_db );
-		return $db_users->Recalculate_Records();
-	}
+		if ( !Functions::Update_Weekly_Records( $this->_db ) )
+		{
+			return $this->setError( 'Failed to update weekly records' );
+		}
 
-	private function _Users_Place_Update( &$db, &$user )
-	{
-		$db_users	= new Users( $db );
-		$count 		= $db_users->List_Load( $users );
-		
-		if ( $count === false )
+		if ( !Functions::Update_User_Records( $this->_db ) )
 		{
-			return false;
+			return $this->setError( 'Failed to update user records' );
 		}
-		
-		foreach( $users as $loaded_user )
-		{
-			if ( !$db->single( 'SELECT COUNT( id ) + 1 AS place FROM users WHERE wins > ?', $current, $loaded_user[ 'wins' ] ) )
-			{
-				return false;
-			}
-			
-			if ( !$db->query( 'UPDATE users SET current_place = ? WHERE id = ?', $current[ 'place' ], $loaded_user[ 'id' ] ) )
-			{
-				return false;
-			}
-		}
-		
+
 		return true;
 	}
 

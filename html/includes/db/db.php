@@ -14,3 +14,4 @@ require_once( 'Settings.php' );
 require_once( 'Teams.php' );
 require_once( 'Users.php' );
 require_once( 'Weeks.php' );
+require_once( 'Weekly_Records.php' );

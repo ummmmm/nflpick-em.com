@@ -111,8 +111,8 @@ class Users
 
 	public function Insert( &$user )
 	{
-		$db_picks			= new Picks( $this->_db );
-		$user[ 'password' ] = Functions::HashPassword( $user[ 'password' ] );
+		$db_weekly_records		= new Weekly_Records( $this->_db );
+		$user[ 'password' ]		= Functions::HashPassword( $user[ 'password' ] );
 
 		if ( !$this->_Insert_LowLevel( $user ) )
 		{
@@ -122,7 +122,7 @@ class Users
 		$this->id 		= $this->_db->insertID();
 		$user[ 'id' ] 	= $this->_db->insertID();
 
-		if ( !$db_picks->Insert_All( $this->id ) )
+		if ( !$db_weekly_records->Insert_User( $user[ 'id' ] ) )
 		{
 			return false;
 		}
@@ -213,41 +213,7 @@ class Users
 
 	public function Recalculate_Records()
 	{
-		$query = $this->_db->query( 'UPDATE
-										users u
-									 SET
-										u.wins		= ( SELECT COUNT( p.id ) FROM picks p, games g WHERE p.game_id = g.id AND p.winner_pick = g.winner AND p.user_id = u.id AND g.winner != 0 ),
-										u.losses	= ( SELECT COUNT( g.id ) FROM picks p, games g WHERE p.game_id = g.id AND p.loser_pick = g.winner AND p.user_id = u.id AND g.winner != 0 )' );
-
-		if ( !$query )
-		{
-			return false;
-		}
-
-		if ( $this->List_Load( $users ) === false )
-		{
-			return false;
-		}
-
-		if ( !Functions::Fix_User_Records( $this->_db, $users ) )
-		{
-			return false;
-		}
-
-		foreach( $users as $user )
-		{
-			if ( !$this->_db->single( 'SELECT COUNT( id ) + 1 AS place FROM users WHERE wins > ?', $current, $user[ 'wins' ] ) )
-			{
-				return false;
-			}
-
-			if ( !$this->_db->query( 'UPDATE users SET current_place = ? WHERE id = ?', $current[ 'place' ], $user[ 'id' ] ) )
-			{
-				return false;
-			}
-		}
-
-		return true;
+		return Functions::Update_User_Records( $this->_db );
 	}
 
 	public function Update_Record( $userid, $wins, $losses )

@@ -4,60 +4,49 @@ class JSON_LoadWeeklyRecords extends JSONUser
 {
 	public function execute()
 	{
-		if ( $this->_Weeks( $loaded_weeks ) === false || $this->_Users( $loaded_users ) === false )
+		$output				= array();
+		$db_users			= new Users( $this->_db );
+		$db_weeks			= new Weeks( $this->_db );
+		$db_weekly_records	= new Weekly_Records( $this->_db );
+
+		if ( !$db_users->List_Load( $users ) )
 		{
 			return $this->setDBError();
 		}
-		
-		foreach( $loaded_users as &$loaded_user )
+
+		if ( !$db_weeks->List_Load_Locked( $weeks ) )
 		{
-			$loaded_user[ 'weeks' ] = array();
-			
-			foreach( $loaded_weeks as $loaded_week )
-			{
-				if ( $this->_Wins( 		$loaded_user[ 'id' ], $loaded_week[ 'id' ], $wins )	 === false ||
-					 $this->_Losses( 	$loaded_user[ 'id' ], $loaded_week[ 'id' ], $losses )	 === false )
-				{
-					return $this->setDBError();
-				}
-
-				if ( $wins[ 'total' ] === 0 && $losses[ 'total' ] === 0 )
-				{
-					if ( !Functions::Worst_Record_Calculated( $this->_db, $loaded_week[ 'id' ], $record ) )
-					{
-						return $this->setDBError();
-					}
-
-					$wins[ 'total' ] 	= $record[ 'wins' ];
-					$losses[ 'total' ]	= $record[ 'losses' ];
-				}
-				
-				array_push( $loaded_user[ 'weeks' ], array( 'id' => $loaded_week[ 'id' ], 'wins' => $wins[ 'total' ], 'losses' => $losses[ 'total' ] ) );
-			}
+			return $this->setDBError();
 		}
-		
-		return $this->setData( $loaded_users );
-	}
 
-	// Helper functions
+		foreach ( $users as &$user )
+		{
+			$data_entry						= array();
+			$data_entry[ 'id' ]				= $user[ 'id' ];
+			$data_entry[ 'name' ]			= $user[ 'name' ];
+			$data_entry[ 'total_wins' ]		= $user[ 'wins' ];
+			$data_entry[ 'total_losses' ]	= $user[ 'losses' ];
+			$data_entry[ 'weeks' ]			= array();
 
-	function _Wins( $user_id, $week_id, &$record )
-	{
-		return $this->_db->single( 'SELECT COUNT( p.id ) AS total FROM picks p, games g WHERE p.winner_pick = g.winner AND g.winner <> 0 AND p.user_id = ? AND p.week = ? AND p.game_id = g.id', $record, $user_id, $week_id );
-	}
+			foreach ( $weeks as &$week )
+			{
+				if ( !$db_weekly_records->Load_User_Week( $user[ 'id' ], $week[ 'id' ], $weekly_record ) )
+				{
+					return $this->setError( 'Unable to load all user records' );
+				}
 
-	function _Losses( $user_id, $week_id, &$record )
-	{
-		return $this->_db->single( 'SELECT COUNT( p.id ) AS total FROM picks p, games g WHERE p.winner_pick = g.loser AND g.winner <> 0 AND p.user_id = ? AND p.week = ? AND p.game_id = g.id', $record, $user_id, $week_id );
-	}
+				$week_entry				= array();
+				$week_entry[ 'id' ]		= $weekly_record[ 'week_id' ];
+				$week_entry[ 'wins' ]	= $weekly_record[ 'wins' ];
+				$week_entry[ 'losses' ]	= $weekly_record[ 'losses' ];
+				$week_entry[ 'manual' ]	= $weekly_record[ 'manual' ];
 
-	function _Users( &$users )
-	{
-		return $this->_db->select( 'SELECT id, CONCAT( fname, \' \', lname ) AS name, wins AS total_wins, losses AS total_losses FROM users ORDER BY fname ASC, lname ASC', $users );
-	}
+				array_push( $data_entry[ 'weeks' ], $week_entry );
+			}
 
-	function _Weeks( &$weeks )
-	{
-		return $this->_db->select( 'SELECT w.id, ( SELECT COUNT( g.id ) FROM games g WHERE g.week = w.id AND g.winner <> 0 ) AS total_games FROM weeks w WHERE locked = 1 ORDER BY id ASC', $weeks );
+			array_push( $output, $data_entry );
+		}
+
+		return $this->setData( $output );
 	}
 }
