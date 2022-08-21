@@ -3,6 +3,7 @@
 set_include_path( "/path/to/html" );
 
 require_once( "includes/classes/Database.php" );
+require_once( "includes/classes/Functions.php" );
 
 try
 {
@@ -78,7 +79,12 @@ try
 		}
 	}
 
-	if ( !$db_teams->Recalculate_Records() || !$db_users->Recalculate_Records()	)
+	if ( !$db_teams->Recalculate_Records()	)
+	{
+		exit;
+	}
+
+	if ( !Functions::Update_Records( $db ) )
 	{
 		exit;
 	}
