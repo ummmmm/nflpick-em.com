@@ -4,12 +4,26 @@ require_once( "includes/classes/Mail.php" );
 
 class Screen_Contact extends Screen
 {
+	public function head()
+	{
+		print( <<<EOF
+			<style type="text/css">
+				#hidden
+				{
+					display: none;
+				}
+			</style>
+EOF );
+		return true;
+	}
+
 	public function validate()
 	{
 		$name 		= Functions::Post( "name" );
 		$email		= Functions::Post( "email" );
 		$subject	= Functions::Post( "subject" );
 		$message	= Functions::Post( "message" );
+		$hidden		= Functions::Post( "hidden" );
 		$errors		= array();
 
 		if ( $name == "" )
@@ -30,6 +44,11 @@ class Screen_Contact extends Screen
 		if ( $subject == "" )
 		{
 			$subject = "No Subject";
+		}
+
+		if ( $hidden != "" )
+		{
+			array_push( $errors, "Go away bot" );
 		}
 
 		if ( !empty( $errors ) )
@@ -90,6 +109,7 @@ class Screen_Contact extends Screen
 			<label for="message">Message</label>
 			<textarea name="message" cols="50" rows="10" id="message"><?php print htmlentities( $message ); ?></textarea>
 			<br />
+			<input type="text" name="hidden" id="hidden" value="" />
 			<input type="hidden" name="update" value="1" />
 			<input type="submit" name="contact" id="contact" value="Send" />
 		</fieldset>
