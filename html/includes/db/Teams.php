@@ -96,7 +96,14 @@ class Teams
 
 	public function Byes( $week_id, &$bye_teams )
 	{
-		return $this->_db->single( 'SELECT GROUP_CONCAT( team ORDER BY team SEPARATOR \', \' ) AS bye_teams FROM teams t WHERE NOT EXISTS( SELECT g.id FROM games g WHERE ( g.away = t.id OR g.home = t.id ) AND g.week = ? )', $bye_teams, $week_id );
+		return $this->_db->single( 'SELECT
+										GROUP_CONCAT( \' \', team ORDER BY team ) AS bye_teams
+									FROM
+										teams t
+										LEFT OUTER JOIN games g ON g.week = ? AND ( g.away = t.id OR g.home = t.id )
+									WHERE
+										g.id IS NULL',
+									$bye_teams, $week_id );
 	}
 
 	public function Load_Abbr( $abbr, &$team )
