@@ -21,7 +21,6 @@ class Picks
 					ip 			varchar( 50 ),
 					updated 	int( 11 ),
 					week 		int( 11 ),
-					picked 		tinyint( 1 ),
 					PRIMARY KEY ( id ),
 					UNIQUE KEY picks_1 ( user_id, game_id ),
 					KEY picks_2 ( user_id, week )
@@ -36,9 +35,9 @@ class Picks
 		$updated	= time();
 
 		return $this->_db->query( 'INSERT INTO picks
-								   ( user_id, game_id, winner_pick, loser_pick, ip, updated, week, picked )
+								   ( user_id, game_id, winner_pick, loser_pick, ip, updated, week )
 								   VALUES
-								   ( ?, ?, ?, ?, ?, ?, ?, 1 )',
+								   ( ?, ?, ?, ?, ?, ?, ? )',
 								   $pick[ 'user_id' ], $pick[ 'game_id' ], $pick[ 'winner_pick' ], $pick[ 'loser_pick' ], $ip, $updated, $pick[ 'week' ] );
 	}
 
@@ -129,11 +128,6 @@ class Picks
 	public function List_Load_User_Week( $userid, $week, &$picks )
 	{
 		return $this->_db->select( 'SELECT * FROM picks WHERE user_id = ? AND week = ?', $picks, $userid, $week );
-	}
-
-	public function List_Load_User_Week_Picked( $userid, $week, &$picks )
-	{
-		return $this->_db->select( 'SELECT * FROM picks WHERE user_id = ? AND week = ? AND picked = 1', $picks, $userid, $week );
 	}
 
 	public function List_Load( &$picks )
