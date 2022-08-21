@@ -288,7 +288,7 @@ class Functions
 		$then->setTimestamp( $time );
 		$interval	= $now->diff( $then );
 
-		return $interval->format( '%d days %h hours %i minutes %s seconds' );
+		return sprintf( '%d days %d hours %d minutes %d seconds', $interval->d, $interval->h, $interval->i, $interval->s );
 	}
 
 	public static function VerifyPassword( $plaintext, $hashed )

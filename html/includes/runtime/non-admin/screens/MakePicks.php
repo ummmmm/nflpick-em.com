@@ -24,8 +24,6 @@ class Screen_MakePicks extends Screen
 		if ( $count === false )	return $this->setDBError();
 		else if ( $count == 0 )	return $this->setError( array( "#Error#", "Failed to load week" ) );
 
-		$now->setTimezone( new DateTimeZone( 'UTC' ) );
-		$then->setTimezone( new DateTimeZone( 'UTC' ) );
 		$then->setTimestamp( $loaded_week[ 'date' ] );
 
 		if ( $now > $then )
@@ -35,13 +33,13 @@ class Screen_MakePicks extends Screen
 
 		print <<<EOT
 <script type="text/javascript">\n
-	var now 		= new Date( {$now->format( 'Y, m, d, H, i, s' )} );
-	var then 		= new Date( {$then->format( 'Y, m, d, H, i, s' )} );
+	var now 		= new Date( {$now->getTimestamp()} * 1000 + 1 ); // add one second since the interval doesn't fire for 1 second
+	var then 		= new Date( {$then->getTimestamp()} * 1000 );
 	var interval	= setInterval( function()
 	{
 		var diff, seconds, minutes, hours, days;
 
-		now.setUTCSeconds( now.getUTCSeconds() + 1 );
+		now.setSeconds( now.getSeconds() + 1 );
 		diff	= ( then.getTime() - now.getTime() ) / 1000;
 		seconds = Math.floor( diff % 60 );
 		minutes = Math.floor( ( diff / 60 ) % 60 );
