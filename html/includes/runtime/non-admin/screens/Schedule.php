@@ -22,7 +22,7 @@ class Screen_Schedule extends Screen
 
 			foreach( $weeks as $loaded_week )
 			{
-				print '<p><a href="?screen=schedule&week=' . $loaded_week[ 'id' ] . '">Week ' . $loaded_week[ 'id' ]. '</a></p>';
+				printf( '<p><a href="?screen=schedule&week=%d">Week %d</a></p>', $loaded_week[ 'id' ], $loaded_week[ 'id' ] );
 			}
 
 			return true;
@@ -33,11 +33,9 @@ class Screen_Schedule extends Screen
 			return false;
 		}
 
-		$count = $db_games->List_Load_Week( $week_id, $games );
-
-		if ( $count === false )
+		if ( !$db_games->List_Load_Week( $week_id, $games ) )
 		{
-			return false;
+			return $this->setDBError();
 		}
 
 		$count = $db_teams->Byes( $week_id, $teams );
@@ -47,16 +45,16 @@ class Screen_Schedule extends Screen
 			return false;
 		}
 
-		print '<h1>Week ' . $week_id . '</h1>';
+		printf( '<h1>Week %d</h1>', $week_id );
 
 		foreach( $games as $game )
 		{
-			print "<p>{$game[ 'awayTeam' ]} ({$game[ 'awayWins' ]} - {$game[ 'awayLosses' ]} - {$game[ 'awayTies' ]}) <b>vs.</b> {$game[ 'homeTeam' ]} ({$game[ 'homeWins' ]} - {$game[ 'homeLosses' ]} - {$game[ 'homeTies' ]})</p>";
+			printf( "<p>%s (%d - %d - %d) <b>vs.</b> %s (%d - %d - %d)</p>", htmlentities( $game[ 'awayTeam' ] ), $game[ 'awayWins' ], $game[ 'awayLosses' ], $game[ 'awayTies' ], htmlentities( $game[ 'homeTeam' ] ), $game[ 'homeWins' ], $game[ 'homeLosses' ], $game[ 'homeTies' ] );
 		}
 
-		if ( is_null( $teams[ 'bye_teams' ] ) === false )
+		if ( $teams[ 'bye_teams' ] != '' )
 		{
-			print '<p><b>Bye Teams:</b> ' . $teams[ 'bye_teams' ] . '</p>';
+			printf( '<p><b>Bye Teams:</b> %s</p>', htmlentities( $teams[ 'bye_teams' ] ) );
 		}
 
 		return true;
