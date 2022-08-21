@@ -42,19 +42,19 @@ class Screen_UpdateScores extends Screen_Admin
 				if ( !$db_teams->Load_Abbr( $home->team->abbreviation, $homeTeam ) ||
 					 !$db_teams->Load_Abbr( $away->team->abbreviation, $awayTeam ) )
 				{
-					printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the teams could not be loaded<br />', $away->team->displayName, $home->team->displayName );
+					printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the teams could not be loaded<br />', htmlentities( $away->team->displayName ), htmlentities( $home->team->displayName ) );
 					continue;
 				}
 
 				if ( !$db_games->Load_Week_Teams( $week_id, $awayTeam[ 'id' ], $homeTeam[ 'id' ], $game ) )
 				{
-					printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the game could not be found<br />', $awayTeam[ 'team' ], $homeTeam[ 'team' ] );
+					printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the game could not be found<br />', htmlentities( $awayTeam[ 'team' ] ), htmlentities( $homeTeam[ 'team' ] ) );
 					continue;
 				}
 
 				if ( !$competition->status->type->completed )
 				{
-					printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the game is not over yet<br />', $awayTeam[ 'team' ], $homeTeam[ 'team' ] );
+					printf( 'Skipped <b>%s</b> vs. <b>%s</b> because the game is not over yet<br />', htmlentities( $awayTeam[ 'team' ] ), htmlentities( $homeTeam[ 'team' ] ) );
 					continue;
 				}
 
