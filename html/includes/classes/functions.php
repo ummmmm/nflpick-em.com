@@ -370,6 +370,11 @@ class Functions
 		return true;
 	}
 
+	public static function Update_Records( &$db )
+	{
+		return Functions::Update_Weekly_Records( $db ) && Functions::Update_User_Records( $db );
+	}
+
 	public static function Update_Weekly_Records( &$db )
 	{
 		return $db->query( 'UPDATE

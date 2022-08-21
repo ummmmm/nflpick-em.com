@@ -84,9 +84,14 @@ class Screen_UpdateScores extends Screen_Admin
 				}
 			}
 
-			if ( !$db_teams->Recalculate_Records() || !$db_users->Recalculate_Records()	)
+			if ( !$db_teams->Recalculate_Records() )
 			{
 				return $this->setDBError();
+			}
+
+			if ( !Functions::Update_Records( $this->_db ) )
+			{
+				return $this->setError( array( '#Error#', 'Failed to update weekly / user records' ) );
 			}
 
 			printf( '<p><b>Games Updated</b></p>' );
