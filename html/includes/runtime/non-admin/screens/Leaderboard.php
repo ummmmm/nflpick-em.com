@@ -27,7 +27,7 @@ class Screen_Leaderboard extends Screen
 		
 		foreach ( $leaders as $leader )
 		{
-			printf( "<p>%s %s - %d Wins - %s Losses</p>\n", Functions::Place( $leader[ 'current_place' ] ), htmlentities( ucwords( $leader[ 'name' ] ) ), $leader[ 'wins' ], $leader[ 'losses' ] );
+			printf( "<p>%s %s - %d Wins - %d Losses</p>\n", Functions::Place( $leader[ 'current_place' ] ), htmlentities( ucwords( $leader[ 'name' ] ) ), $leader[ 'wins' ], $leader[ 'losses' ] );
 		}
 		
 		return true;
@@ -35,6 +35,6 @@ class Screen_Leaderboard extends Screen
 
 	private function _Leaderboard( &$users )
 	{
-		return $this->_db->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name FROM users ORDER BY current_place, fname', $users );
+		return $this->_db->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name FROM users ORDER BY current_place, name, id', $users );
 	}
 }
