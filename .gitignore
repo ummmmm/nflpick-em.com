@@ -1,7 +1,6 @@
 nflpickem.sublime-*
 data/crons/backup.sh
-data/crons/lock_week.php
-data/crons/update_scores.php
+data/crons/*.php
 data/backups/*
 data/config.ini
 html/includes/config.php
