@@ -98,21 +98,42 @@ class Screen_ViewPicks extends Screen
 					return $this->setDBError();
 				}
 
-				if ( $result === 0 )
+				if ( count( $pick ) === 0 )
 				{
 					$output = '<span style="color:red;">N/A</span>';
 				}
-				else if ( $game[ 'tied' ] )
+				else if ( $game[ 'final' ] )
 				{
-					$output = sprintf( '<s>%s</s>', ( $pick[ 'winner_pick' ] == $game[ 'home' ] ) ? $game[ 'homeAbbr' ] : $game[ 'awayAbbr' ] );
-				}
-				else if ( $pick[ 'winner_pick' ] == $game[ 'home' ] )
-				{
-					$output = ( $pick[ 'winner_pick' ] == $game[ 'winner' ] && $game[ 'final' ] )  ? sprintf( '<b>%s</b>', $game[ 'homeAbbr' ] ) : $game[ 'homeAbbr' ];
+					if ( $game[ 'tied' ] )
+					{
+						$output = sprintf( '<u>%s</u>', ( $pick[ 'winner_pick' ] == $game[ 'home' ] ) ? $game[ 'homeAbbr' ] : $game[ 'awayAbbr' ] );
+					}
+					else if ( $pick[ 'winner_pick' ] == $game[ 'home' ] )
+					{
+						if ( $pick[ 'winner_pick' ] == $game[ 'winner' ] )
+						{
+							$output = sprintf( '<b>%s</b>', htmlentities( $game[ 'homeAbbr' ] ) );
+						}
+						else
+						{
+							$output = sprintf( '<s>%s</s>', htmlentities( $game[ 'homeAbbr' ] ) );
+						}
+					}
+					else
+					{
+						if ( $pick[ 'winner_pick' ] == $game[ 'winner' ] )
+						{
+							$output = sprintf( '<b>%s</b>', htmlentities( $game[ 'awayAbbr' ] ) );
+						}
+						else
+						{
+							$output = sprintf( '<s>%s</s>', htmlentities( $game[ 'awayAbbr' ] ) );
+						}
+					}
 				}
 				else
 				{
-					$output = ( $pick[ 'winner_pick' ] == $game[ 'winner' ] && $game[ 'final' ] ) ? sprintf( '<b>%s</b>', $game[ 'awayAbbr' ] ) : $game[ 'awayAbbr' ];
+					$output = htmlentities( $pick[ 'winner_pick' ] == $game[ 'home' ] ? $game[ 'homeAbbr' ] : $game[ 'awayAbbr' ] );
 				}
 
 				printf( '<td userid="%d" gameid="%d">%s</td>', $loaded_user[ 'id' ], $game[ 'id' ], $output );
@@ -143,20 +164,24 @@ class Screen_ViewPicks extends Screen
 					<td>&nbsp;</td>
 				</tr>
 				<tr>
-					<td><span style="color:red;">N/A</td>
-					<td>Pick not submitted</td>
-				</tr>
-				<tr>
 					<td><b>LAC</b></td>
 					<td>Game won</td>
 				</tr>
 				<tr>
-					<td>LAC</td>
-					<td>Game loss / not yet final</td>
+					<td><s>LAC</s></td>
+					<td>Game lost</td>
 				</tr>
 				<tr>
-					<td><s>LAC</s></td>
+					<td>LAC</td>
+					<td>Game not yet final</td>
+				</tr>
+				<tr>
+					<td><u>LAC</u></td>
 					<td>Game tied</td>
+				</tr>
+				<tr>
+					<td><span style="color:red;">N/A</td>
+					<td>Pick not submitted</td>
 				</tr>
 				<tr>
 					<td><b>11-5</b></td>
