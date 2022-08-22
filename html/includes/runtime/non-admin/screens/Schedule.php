@@ -49,7 +49,7 @@ class Screen_Schedule extends Screen
 
 		foreach( $games as $game )
 		{
-			printf( "<p>%s (%d - %d - %d) <b>vs.</b> %s (%d - %d - %d)</p>", htmlentities( $game[ 'awayTeam' ] ), $game[ 'awayWins' ], $game[ 'awayLosses' ], $game[ 'awayTies' ], htmlentities( $game[ 'homeTeam' ] ), $game[ 'homeWins' ], $game[ 'homeLosses' ], $game[ 'homeTies' ] );
+			printf( "<p>%s (%d - %d%s) <b>vs.</b> %s (%d - %d%s)</p>", htmlentities( $game[ 'awayTeam' ] ), $game[ 'awayWins' ], $game[ 'awayLosses' ], ( $game[ 'awayTies' ] ? sprintf( ' - %d', $game[ 'awayTies' ] ) : '' ), htmlentities( $game[ 'homeTeam' ] ), $game[ 'homeWins' ], $game[ 'homeLosses' ], ( $game[ 'homeTies' ] ? sprintf( ' - %d', $game[ 'homeTies' ] ) : '' ) );
 		}
 
 		if ( $teams[ 'bye_teams' ] != '' )
