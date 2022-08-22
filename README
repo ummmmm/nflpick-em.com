@@ -3,7 +3,6 @@ Update the defined value for CONFIG_INI in html/includes/config.php
 
 Rename data/config.ini.example to data/config.ini - Should be noted that parse_ini does not like certain special characters
 Rename data/crons/backup.sh.example to data/crons/backup.sh
-Rename data/crons/lock_week.php.example to data/crons/lock_week.php
-Rename data/crons/update_scores.php.example to data/crons/update_scores.php
+Rename all data/crons/*.php.example to data/crons/*.php and configure them accordingly
 
 Run ./setup.php?Action=INSTALL
