@@ -1,0 +1,121 @@
+<?php
+
+set_include_path( "/path/to/html" );
+
+require_once( "includes/classes/Database.php" );
+require_once( "includes/classes/Mail.php" );
+
+$db				= new Database();
+$db_picks		= new Picks( $db );
+$db_weeks		= new Weeks( $db );
+$db_users		= new Users( $db );
+$db_settings	= new Settings( $db );
+
+if ( !$db_settings->Load( $settings ) )
+{
+	exit;
+}
+
+$current	= $db_weeks->Current();
+
+if ( $current === false )
+{
+	exit;
+}
+
+if ( !$db_users->List_Load( $users ) )
+{
+	exit;
+}
+
+switch ( date( 'l' ) )
+{
+	case 'Thursday'	:
+	case 'Friday'	:
+	case 'Saturday'	:
+	{
+		$start_time_t	= strtotime( 'today' );
+		$end_time_t		= $start_time_t + ( 60 * 60 * 24 * 1 ) - 1;
+		$subject		= sprintf( 'Week %d: Missing %s Picks', $current, date( 'N' ) );
+
+		break;
+	}
+	case 'Sunday'	:
+	{
+		// group Sunday through the end of the week together (use 5 days to cover any makeup games on Tuesday, Wednesday, etc...)
+		$start_time_t	= strtotime( 'today' );
+		$end_time_t		= $start_time_t + ( 60 * 60 * 24 * 3 ) - 1;
+		$subject		= sprintf( 'Week %d: Missing Picks', $current );
+
+		break;
+	}
+	default			:
+	{
+		// this script should only be run Thursday - Sunday
+		exit;
+	}
+}
+
+foreach ( $users as &$user )
+{
+	if ( $user[ 'email_preference' ] == 0 )
+	{
+		continue;
+	}
+
+	if ( GameList_Load_Missing( $db, $current, $user[ 'id' ], $start_time_t, $end_time_t, $games ) === false )
+	{
+		@list( $code, $message ) = $db->Get_Error();
+
+		print( $code . ': ' . $message );
+		exit;
+	}
+
+	if ( count( $games ) == 0 )
+	{
+		continue;
+	}
+
+	$mail = new Mail( $user[ 'email' ], $subject, Generate_Email_Message( $settings, $user, $games ) );
+	$mail->send();
+}
+
+function GameList_Load_Missing( &$db, $week_id, $user_id, $start_time_t, $end_time_t, &$games )
+{
+	return $db->select( 'SELECT
+							g.*,
+							awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.ties AS awayTies, awayTeam.abbr AS awayAbbr,
+							homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.ties AS homeTies, homeTeam.abbr AS homeAbbr
+						 FROM
+							games g
+							LEFT OUTER JOIN picks p ON g.id = p.game_id AND p.user_id = ?,
+							teams awayTeam,
+							teams homeTeam
+						 WHERE
+							g.week = ?				AND
+							g.date > ?				AND
+							g.date < ?				AND
+							g.away = awayTeam.id	AND
+							g.home = homeTeam.id	AND
+							p.id IS NULL
+						 ORDER BY
+							g.date, g.id',
+						 $games, $user_id, $week_id, $start_time_t, $end_time_t );
+}
+
+function Generate_Email_Message( &$settings, &$user, &$games )
+{
+	$output = sprintf( 'Hi %s,<br /><br />', $user[ 'name' ] );
+	$output .= 'You are missing the following picks and they are due today:';
+
+	$output .= '<ol>';
+	foreach ( $games as &$game )
+	{
+		$output .= sprintf( '<li>%s vs. %s</li>', htmlentities( $game[ 'awayTeam' ] ), htmlentities( $game[ 'homeTeam' ] ) );
+	}
+	$output .= '</ol>';
+
+	$output .= sprintf( '<br /><br />You can disable these notifications in your <a href="%s?screen=userpreferences">User Preferences</a>.', $settings[ 'domain_url' ] );
+
+	return $output;
+}
