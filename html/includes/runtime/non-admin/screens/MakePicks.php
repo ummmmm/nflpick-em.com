@@ -92,13 +92,6 @@ EOT;
 			return $this->_WeekList( $db_weeks );
 		}
 
-		$count = $db_games->List_Load_Week( $weekid, $games );
-
-		foreach( $games as &$game )
-		{
-			$db_picks->Load_User_Game( $this->_auth->getUserID(), $game[ 'id' ], $game[ 'pick' ] );
-		}
-
 		return $this->_GameLayout( $weekid, $db_weeks );
 	}
 
@@ -210,7 +203,9 @@ EOT;
 					$display 	= 'none';
 					$text		= '&nbsp;';
 					$class		= 'notMade';
-				} else {
+				}
+				else
+				{
 					$class		= 'made';
 					$display	= 'block';
 					$winnerPick	= ( $pick[ 'winner_pick' ] == $game[ 'home' ] ) ? $game[ 'homeTeam' ] : $game[ 'awayTeam' ];
