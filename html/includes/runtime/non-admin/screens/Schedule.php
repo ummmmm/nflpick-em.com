@@ -9,7 +9,7 @@ class Screen_Schedule extends Screen
 		$db_weeks	= new Weeks( $this->_db );
 		$week_id 	= Functions::Get( 'week' );
 
-		if ( !Validation::Week( $week_id ) )
+		if ( $week_id == '' )
 		{
 			$count = $db_weeks->List_Load( $weeks );
 
@@ -30,7 +30,7 @@ class Screen_Schedule extends Screen
 
 		if ( !$db_weeks->Load( $week_id, $loaded_week ) )
 		{
-			return false;
+			return $this->setError( array( '#Error#', 'Invalid week' ) );
 		}
 
 		if ( !$db_games->List_Load_Week( $week_id, $games ) )
