@@ -4,25 +4,32 @@ class Screen_WeeklyRecords extends Screen_Admin
 {
 	public function content()
 	{
-		$week_id = Functions::Get( 'week' );
-		$user_id = Functions::Get( 'user' );
+		$week_id	= Functions::Get( 'week' );
+		$user_id	= Functions::Get( 'user' );
+		$db_weeks	= new Weeks( $this->_db );
+		$db_users	= new Users( $this->_db );
 
 		if ( $week_id == '' )
 		{
 			return $this->_WeekList();
 		}
 
-		if ( !Validation::Week( $week_id ) )
+		if ( !$db_weeks->Load( $week_id, $week ) )
 		{
 			return Functions::Information( 'Error', 'Invalid week.' );
 		}
 
 		if ( $user_id == '' )
 		{
-			return $this->_WeekPicks( $week_id );
+			return $this->_WeekPicks( $week );
 		}
 
-		return $this->_WeekUserPicks( $week_id, $user_id );
+		if ( !$db_users->Load( $user_id, $user ) )
+		{
+			return Functions::Information( 'Error', 'Invalid user.' );
+		}
+
+		return $this->_WeekUserPicks( $week, $user );
 	}
 
 	private function _WeekList()
@@ -49,25 +56,19 @@ class Screen_WeeklyRecords extends Screen_Admin
 		return true;
 	}
 
-	private function _WeekPicks( $week_id )
+	private function _WeekPicks( &$week )
 	{
 		$db_games			= new Games( $this->_db );
-		$db_weeks			= new Weeks( $this->_db );
 		$db_users			= new Users( $this->_db );
 		$db_picks			= new Picks( $this->_db );
 		$db_weekly_records	= new Weekly_Records( $this->_db );
-
-		if ( !$db_weeks->Load( $week_id, $week ) )
-		{
-			return $this->setDBError();
-		}
 
 		if ( !$db_users->List_Load( $users ) )
 		{
 			return $this->setDBError();
 		}
 
-		if ( !$db_games->List_Load_Week( $week_id, $games ) )
+		if ( !$db_games->List_Load_Week( $week[ 'id' ], $games ) )
 		{
 			return $this->setDBError();
 		}
@@ -93,7 +94,7 @@ class Screen_WeeklyRecords extends Screen_Admin
 
 		foreach ( $users as &$user )
 		{
-			$missing_count = $db_picks->Missing( $user[ 'id' ], $week_id );
+			$missing_count = $db_picks->Missing( $user[ 'id' ], $week[ 'id' ] );
 
 			if ( $missing_count === false )
 			{
@@ -105,43 +106,41 @@ class Screen_WeeklyRecords extends Screen_Admin
 				continue;
 			}
 
-			if ( !$db_weekly_records->Load_User_Week( $user[ 'id' ], $week_id, $weekly_record ) )
+			if ( !$db_weekly_records->Load_User_Week( $user[ 'id' ], $week[ 'id' ], $weekly_record ) )
 			{
 				return $this->setDBError();
 			}
 
-			printf( '<p><a href="?view=admin&screen=weekly_records&week=%d&user=%d">%s</a>%s</p>', $week_id, $user[ 'id' ], htmlentities( $user[ 'name' ] ), ( $weekly_record[ 'manual' ] ? ' - <span style="color:red;">Manual</span>' : '' ) );
+			printf( '<p><a href="?view=admin&screen=weekly_records&week=%d&user=%d">%s</a>%s</p>', $week[ 'id' ], $user[ 'id' ], htmlentities( $user[ 'name' ] ), ( $weekly_record[ 'manual' ] ? ' - <span style="color:red;">Manual</span>' : '' ) );
 		}
 
 		return true;
 	}
 
-	private function _WeekUserPicks( $week_id, $user_id )
+	private function _WeekUserPicks( &$week, &$user )
 	{
 		$db_picks			= new Picks( $this->_db );
-		$db_weeks			= new Weeks( $this->_db );
-		$db_users			= new Users( $this->_db );
 		$db_weekly_records	= new Weekly_Records( $this->_db );
 
-		if ( !$db_weeks->Load( $week_id, $week ) || !$db_users->Load( $user_id, $user ) || !$db_weekly_records->Load_User_Week( $user_id, $week_id, $weekly_record ) )
+		if ( !$db_weekly_records->Load_User_Week( $user[ 'id' ], $week[ 'id' ], $weekly_record ) )
 		{
 			return $this->setDBError();
 		}
 
-		$missing_count = $db_picks->Missing( $user_id, $week_id );
+		$missing_count = $db_picks->Missing( $user[ 'id' ], $week[ 'id' ] );
 
 		if ( $missing_count === false )
 		{
 			return $this->setDBError();
 		}
 
-		printf( '<h1>%s - Week %d</h1>', htmlentities( $user[ 'name' ] ), $week_id );
+		printf( '<h1>%s - Week %d</h1>', htmlentities( $user[ 'name' ] ), $week[ 'id' ] );
 		printf( '<p>Missing %d picks', $missing_count );
 		print( '<table>' );
 		printf( '<tr><td><b>Wins:</b></td><td><input type="number" length="5" id="wins" value="%d" /></td></tr>', $weekly_record[ 'wins' ] );
 		printf( '<tr><td><b>Losses:</b></td><td><input type="number" length="5" id="losses" value="%d" /></td></tr>', $weekly_record[ 'losses' ] );
 		print( '</table>' );
-		printf( '<input type="submit" onclick="$.fn.update_weekly_records( \'%d\', \'%d\' );" value="Update" />', $user_id, $week_id );
+		printf( '<input type="submit" onclick="$.fn.update_weekly_records( \'%d\', \'%d\' );" value="Update" />', $user[ 'id' ], $week[ 'id' ] );
 
 		return true;
 	}
