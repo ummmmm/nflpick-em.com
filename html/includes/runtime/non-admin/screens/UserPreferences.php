@@ -25,7 +25,7 @@ class Screen_UserPreferences extends Screen_User
 			return $this->setDBError();
 		}
 
-		return true;
+		return $this->setUpdateMessage( "Preferences saved." );
 	}
 
 	public function content()
