@@ -5,33 +5,34 @@ class Screen_ViewPicks extends Screen_User
 	public function content()
 	{
 		$db_weeks	= new Weeks( $this->_db );
-		$weekid 	= Functions::Get( 'week' );
+		$week_id 	= Functions::Get( 'week' );
 
-		if ( $weekid === '' )
+		if ( $week_id === '' )
 		{
 			return $this->_WeekList( $db_weeks );
 		}
 
-		if ( !Validation::Week( $weekid ) )
+		if ( !$db_weeks->Load( $week_id, $week ) )
 		{
 			return Functions::Information( 'Error', 'Invalid week.' );
 		}
 
-		if ( !$db_weeks->IsLocked( $weekid ) )
+		if ( !$week[ 'locked' ] )
 		{
-			return Functions::Information( 'Error', 'Week ' . htmlentities( $weekid ) . ' is not locked yet.' );
+			return Functions::Information( 'Error', 'Week ' . htmlentities( $week_id ) . ' is not locked yet.' );
 		}
 
-		return $this->_PickLayout( $weekid );
+		return $this->_PickLayout( $week );
 	}
 
 	private function _WeekList( &$db_weeks )
 	{
-		print '<h1>Pick \'Em Weeks</h1>';
 		if ( !$db_weeks->List_Load( $weeks ) )
 		{
 			return false;
 		}
+
+		print( "<h1>Pick 'Em Weeks</h1>" );
 
 		foreach( $weeks as $week )
 		{
@@ -42,46 +43,47 @@ class Screen_ViewPicks extends Screen_User
 		return true;
 	}
 
-	private function _PickLayout( $weekid )
+	private function _PickLayout( &$week )
 	{
+		$week_id			= $week[ 'id' ];
 		$db_users			= new Users( $this->_db );
 		$db_games 			= new Games( $this->_db );
 		$db_picks 			= new Picks( $this->_db );
 		$db_weekly_records	= new Weekly_Records( $this->_db );
 
-		if ( $this->_Users_List_Load( $users ) === false )
+		if ( !$this->_Users_List_Load( $users ) )
 		{
 			return false;
 		}
 
-		$games_count = $db_games->List_Load_Week( $weekid, $games );
+		$games_count = $db_games->List_Load_Week( $week_id, $games );
 
 		if ( $games_count === false )
 		{
 			return false;
 		}
 
-		print "<h1>Week {$weekid} User Picks</h1>";
-		print '<table class="picks" style="font-size:8px;" width="100%">';
+		printf( '<h1>Week %d User Picks</h1>', $week_id );
+		print( '<table class="picks" style="font-size:8px;" width="100%">' );
 
 		foreach( $users as $loaded_user )
 		{
 			$initials 		= strtoupper( sprintf( "%s.%s.", substr( $loaded_user[ 'fname' ], 0, 1 ), substr( $loaded_user[ 'lname' ], 0, 1 ) ) );
-			$missing_count 	= $db_picks->Missing( $loaded_user[ 'id' ], $weekid );
+			$missing_count 	= $db_picks->Missing( $loaded_user[ 'id' ], $week_id );
 
 			if ( $missing_count === false )
 			{
 				return false;
 			}
 
-			if ( !$db_weekly_records->Load_User_Week( $loaded_user[ 'id' ], $weekid, $weekly_record ) )
+			if ( !$db_weekly_records->Load_User_Week( $loaded_user[ 'id' ], $week_id, $weekly_record ) )
 			{
 				return $this->setError( 'Unable to load weekly records' );
 			}
 
 			print '<tr>';
 			print '<td class="picks">';
-			printf( '<a href="javascript:;" title="%s" onclick="$.fn.highlightPicks( %d, %d );">%s</a>', htmlentities( $loaded_user[ 'name' ] ), $loaded_user[ 'id' ], $weekid, htmlentities( $initials ) );
+			printf( '<a href="javascript:;" title="%s" onclick="$.fn.highlightPicks( %d, %d );">%s</a>', htmlentities( $loaded_user[ 'name' ] ), $loaded_user[ 'id' ], $week_id, htmlentities( $initials ) );
 			print '</td>';
 
 			foreach( $games as $game )
@@ -151,7 +153,7 @@ class Screen_ViewPicks extends Screen_User
 		}
 
 		print '</table>';
-		printf( '<p><a href="javascript:;" id="highlightpicks" onclick="$.fn.highlightPicks( 0, %d );">Highlighting On</a></p>', $weekid );
+		printf( '<p><a href="javascript:;" id="highlightpicks" onclick="$.fn.highlightPicks( 0, %d );">Highlighting On</a></p>', $week_id );
 		print( <<<EOD
 			<table cellspacing="5">
 				<tr>
