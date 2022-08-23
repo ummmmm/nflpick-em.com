@@ -1,6 +1,6 @@
 <?php
 
-class Screen_UserPreferences extends Screen
+class Screen_UserPreferences extends Screen_User
 {
 	public function requirements()
 	{

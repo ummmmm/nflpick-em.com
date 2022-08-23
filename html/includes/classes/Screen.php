@@ -107,6 +107,14 @@ abstract class Screen
 	}
 }
 
+abstract class Screen_User extends Screen
+{
+	public function requirements()
+	{
+		return array( "user" => true );
+	}
+}
+
 abstract class Screen_Admin extends Screen
 {
 	public function requirements()

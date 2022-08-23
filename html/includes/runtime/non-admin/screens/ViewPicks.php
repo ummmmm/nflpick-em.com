@@ -1,12 +1,7 @@
 <?php
 
-class Screen_ViewPicks extends Screen
+class Screen_ViewPicks extends Screen_User
 {
-	public function requirements()
-	{
-		return array( "user" => true );
-	}
-
 	public function content()
 	{
 		$db_weeks	= new Weeks( $this->_db );

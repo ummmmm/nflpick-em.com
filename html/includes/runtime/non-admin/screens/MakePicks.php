@@ -1,12 +1,7 @@
 <?php
 
-class Screen_MakePicks extends Screen
+class Screen_MakePicks extends Screen_User
 {
-	public function requirements()
-	{
-		return array( "user" => true );
-	}
-
 	public function head()
 	{
 		$week_id	= Functions::Get( "week" );

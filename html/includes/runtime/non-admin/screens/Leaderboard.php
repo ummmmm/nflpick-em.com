@@ -1,12 +1,7 @@
 <?php
 
-class Screen_Leaderboard extends Screen
+class Screen_Leaderboard extends Screen_User
 {
-	public function requirements()
-	{
-		return array( "user" => true );
-	}
-
 	public function content()
 	{
 		print "<h1>Leaderboard</h1>\n";

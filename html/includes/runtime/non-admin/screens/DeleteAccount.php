@@ -1,6 +1,6 @@
 <?php
 
-class Screen_DeleteAccount extends Screen
+class Screen_DeleteAccount extends Screen_User
 {
 	public function requirements()
 	{

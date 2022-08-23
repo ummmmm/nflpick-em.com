@@ -1,12 +1,7 @@
 <?php
 
-class Screen_WeeklyRecords extends Screen
+class Screen_WeeklyRecords extends Screen_User
 {
-	public function requirements()
-	{
-		return array( "user" => true );
-	}
-
 	public function jquery()
 	{
 		print "$.fn.load_weeklyrecords();\n";

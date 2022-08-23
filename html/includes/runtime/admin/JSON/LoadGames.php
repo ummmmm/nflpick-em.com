@@ -1,6 +1,6 @@
 <?php
 
-class JSON_LoadGames extends JSON
+class JSON_LoadGames extends JSONAdmin
 {
 	public function requirements()
 	{

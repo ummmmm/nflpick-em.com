@@ -1,12 +1,7 @@
 <?php
 
-class Screen_ControlPanel extends Screen
+class Screen_ControlPanel extends Screen_User
 {
-	public function requirements()
-	{
-		return array( "user" => true );
-	}
-
 	public function validate()
 	{
 		$action = Functions::Get( "action" );
