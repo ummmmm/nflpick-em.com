@@ -94,10 +94,10 @@ class Teams
 								   $team[ 'id' ] );
 	}
 
-	public function Byes( $week_id, &$bye_teams )
+	public function List_Load_Byes( $week_id, &$bye_teams )
 	{
-		return $this->_db->single( 'SELECT
-										GROUP_CONCAT( \' \', team ORDER BY team ) AS bye_teams
+		return $this->_db->select( 'SELECT
+										t.*
 									FROM
 										teams t
 										LEFT OUTER JOIN games g ON g.week = ? AND ( g.away = t.id OR g.home = t.id )

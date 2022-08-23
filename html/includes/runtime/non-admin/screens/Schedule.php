@@ -38,7 +38,7 @@ class Screen_Schedule extends Screen
 			return $this->setDBError();
 		}
 
-		$count = $db_teams->Byes( $week_id, $teams );
+		$count = $db_teams->List_Load_Byes( $week_id, $teams );
 
 		if ( $count === false )
 		{
@@ -52,9 +52,9 @@ class Screen_Schedule extends Screen
 			printf( "<p>%s (%d - %d%s) <b>vs.</b> %s (%d - %d%s)</p>", htmlentities( $game[ 'awayTeam' ] ), $game[ 'awayWins' ], $game[ 'awayLosses' ], ( $game[ 'awayTies' ] ? sprintf( ' - %d', $game[ 'awayTies' ] ) : '' ), htmlentities( $game[ 'homeTeam' ] ), $game[ 'homeWins' ], $game[ 'homeLosses' ], ( $game[ 'homeTies' ] ? sprintf( ' - %d', $game[ 'homeTies' ] ) : '' ) );
 		}
 
-		if ( $teams[ 'bye_teams' ] != '' )
+		if ( count( $teams ) > 0 )
 		{
-			printf( '<p><b>Bye Teams:</b> %s</p>', htmlentities( $teams[ 'bye_teams' ] ) );
+			printf( '<p><b>Bye Teams:</b> %s</p>', htmlentities( join( ', ', array_map( function( $team ) { return $team[ 'team' ]; }, $teams ) ) ) );
 		}
 
 		return true;
