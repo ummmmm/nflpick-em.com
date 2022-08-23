@@ -115,9 +115,26 @@ class Picks
 		return $missing[ 'count' ];
 	}
 
-	public function UserWeekList_Load( $userid, $week, &$picks )
+	public function UserWeekList_Load( $user_id, $week_id, &$picks )
 	{
-		return $this->_db->select( 'SELECT p.*, ( SELECT t.team FROM teams t WHERE t.id = p.winner_pick ) AS winner, ( SELECT t.team FROM teams t WHERE t.id = p.loser_pick ) AS loser FROM picks p, games g WHERE p.user_id = ? AND p.week = ? AND p.game_id = g.id ORDER BY g.date, g.id', $picks, $userid, $week );
+		return $this->_db->select( 'SELECT
+										p.*,
+										wt.team AS winner,
+										lt.team AS loser
+									FROM
+										picks p,
+										games g,
+										teams wt,
+										teams lt
+									WHERE
+										p.user_id		= ?		AND
+										p.week			= ?		AND
+										p.game_id		= g.id	AND
+										p.winner_pick	= wt.id	AND
+										p.loser_pick	= lt.id
+									ORDER BY
+										g.date, g.id',
+									$picks, $user_id, $week_id );
 	}
 
 	public function Load_User_Game( $userid, $gameid, &$pick )
