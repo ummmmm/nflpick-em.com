@@ -16,7 +16,7 @@ class JSON_EmailPicks extends JSONUserAction
 			return $this->setError( array( 'NFL-EMAILPICKS-1', sprintf( 'Failed to load week %d', $week ) ) );
 		}
 
-		$count = $db_picks->UserWeekList_Load( $this->_auth->getUserID(), $week, $picks );
+		$count = $db_picks->List_Load_UserWeek( $this->_auth->getUserID(), $week, $picks );
 
 		if ( $count === false )
 		{

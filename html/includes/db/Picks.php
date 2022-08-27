@@ -115,7 +115,7 @@ class Picks
 		return $missing[ 'count' ];
 	}
 
-	public function UserWeekList_Load( $user_id, $week_id, &$picks )
+	public function List_Load_UserWeek( $user_id, $week_id, &$picks )
 	{
 		return $this->_db->select( 'SELECT
 										p.*,
