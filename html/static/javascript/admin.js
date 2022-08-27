@@ -371,7 +371,6 @@ $( document ).ready( function()
 
 						if ( ( game.key + 1 ) < games.length )
 						{
-							console.log( games[ game.key ] );
 							$.fn.edit_games( games[ game.key + 1 ] );
 
 							return false;
