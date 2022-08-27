@@ -104,23 +104,6 @@ class Games
 							$game[ 'id' ] );
 	}
 
-	public function Delete( $gameid )
-	{
-		$db_picks = new Picks( $db );
-
-		if ( !$db_picks->Delete_Game( $gameid ) )
-		{
-			return false;
-		}
-
-		return $this->Delete_LowLevel( $gameid );
-	}
-
-	public function Delete_LowLevel( $gameid )
-	{
-		return $this->_db->query( 'DELETE FROM games WHERE id = ?', $gameid );
-	}
-
 	public function Load( $gameid, &$game )
 	{
 		return $this->_db->single( 'SELECT
