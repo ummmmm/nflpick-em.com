@@ -249,6 +249,7 @@ $( document ).ready( function()
 					key++;
 
 					$( '<p/>', {
+						id: 'game_' + game.id,
 						style: ( game.final ? 'text-decoration: line-through;' : '' ),
 						html: $( '<a/>', {
 							href: 'javascript:;',
@@ -364,6 +365,11 @@ $( document ).ready( function()
 						if ( !response.success )
 						{
 							return $.fn.error( response.error_message );
+						}
+
+						if ( response.data.final )
+						{
+							$( '#game_' + response.data.id ).css( 'text-decoration', 'line-through' );
 						}
 
 						games[ game.key ] 		= response.data;
