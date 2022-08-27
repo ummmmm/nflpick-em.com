@@ -94,18 +94,6 @@ class Weeks
 		return $week[ 'id' ];
 	}
 
-	public function Total_Games( $week )
-	{
-		$count = $this->_db->single( 'SELECT COUNT( id ) AS total FROM games WHERE week = ?', $games, $week );
-
-		if ( $count === false )
-		{
-			return false;
-		}
-
-		return $games[ 'total' ];
-	}
-
 	public function Create_Weeks( $start_date )
 	{
 		$count = $this->List_Load( $null );
