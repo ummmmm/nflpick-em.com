@@ -10,36 +10,23 @@ class JSON_MakePicks extends JSONUserAction
 		$db_weeks	= new Weeks( $this->_db );
 		$date_now 	= time();
 
-		$week 		= Functions::Post( 'week' );
 		$gameid 	= Functions::Post( 'gameid' );
 		$winner		= Functions::Post( 'winner' );
 		$loser		= Functions::Post( 'loser' );
-
-		$count_week = $db_weeks->Load( $week, $loaded_week );
-
-		if ( $count_week === false )
-		{
-			return $this->setDBError();
-		}
-
-		if ( $count_week === 0 )
-		{
-			return $this->setError( array( '#Error#', sprintf( "Week '%d' could not be loaded", $week ) ) );
-		}
-
-		if ( $loaded_week[ 'locked' ] === 1 || $date_now > $loaded_week[ 'date' ] )
-		{
-			return $this->setError( array( "#Error#", "This week has already been locked.  You can no longer make picks." ) );
-		}
 
 		if ( !$db_games->Load( $gameid, $game ) )
 		{
 			return $this->setError( array( "#Error#", "Game not found" ) );
 		}
 
-		if ( !$db_games->Exists( $gameid, $week, $winner, $loser ) )
+		if ( !$db_weeks->Load( $game[ 'week' ], $week ) )
 		{
-			return $this->setError( array( "#Error#", "Invalid game data" ) );
+			return $this->setError( array( '#Error#', 'Week not found' ) );
+		}
+
+		if ( $week[ 'locked' ] === 1 || $date_now > $week[ 'date' ] )
+		{
+			return $this->setError( array( "#Error#", "This week has already been locked.  You can no longer make picks." ) );
 		}
 
 		if ( $date_now > $game[ 'date' ] )

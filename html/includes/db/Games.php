@@ -127,18 +127,6 @@ class Games
 		return $this->_db->single( 'SELECT * FROM games WHERE week = ? AND away = ? AND home = ?', $game, $week, $away, $home );
 	}
 
-	public function Exists( $gameid, $weekid, $home, $away )
-	{
-		$count = $this->_db->single( 'SELECT id FROM games WHERE id = ? AND week = ? AND ( ( away = ? AND home = ? ) OR ( away = ? AND home = ? ) )', $null, $gameid, $weekid, $home, $away, $away, $home );
-
-		if ( !$count )
-		{
-			return false;
-		}
-
-		return true;
-	}
-
 	public function Exists_Week_Teams( $weekid, $homeid, $awayid, &$game )
 	{
 		$count = $this->_db->single( 'SELECT id FROM games WHERE week = ? AND home = ? AND away = ?', $game, $weekid, $homeid, $awayid );
