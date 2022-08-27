@@ -12,6 +12,7 @@ class JSON_LoadGames extends JSONAdmin
 		$db_games	= new Games( $this->_db );
 		$db_weeks	= new Weeks( $this->_db );
 		$count 		= $db_weeks->List_Load( $weeks );
+		$current	= $db_weeks->Current();
 		
 		if ( $count === false )
 		{
@@ -36,6 +37,6 @@ class JSON_LoadGames extends JSONAdmin
 			}
 		}
 		
-		return $this->setData( $weeks );
+		return $this->setData( array( 'current_week' => $current, 'weeks' => $weeks ) );
 	}
 }

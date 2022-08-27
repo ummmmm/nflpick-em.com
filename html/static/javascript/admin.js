@@ -224,7 +224,7 @@ $( document ).ready( function()
 				return $.fn.error( response.error_message );
 			}
 
-			var weeks 	= response.data;
+			var weeks 	= response.data.weeks;
 			var div		= $( '#weeks_loading' ).text( '' );
 			var key		= 0;
 
@@ -259,6 +259,11 @@ $( document ).ready( function()
 				} );
 
 				div_games.insertAfter( $( '#week' + week.id ).show() );
+
+				if ( week.id == response.data.current_week )
+				{
+					$( '#games_week' + week.id ).show();
+				}
 			} );
 		} );
 	}
