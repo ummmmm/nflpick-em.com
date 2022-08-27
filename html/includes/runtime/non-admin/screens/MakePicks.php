@@ -153,6 +153,26 @@ EOT;
 			$time_left .= '<div id="jquery-picks_emailSent" style="display: none;">&nbsp;</div>';
 		}
 
+
+		$previous_week_result	= $db_weeks->Load( $loaded_week[ 'id' ] - 1, $previous_week );
+		$next_week_result		= $db_weeks->Load( $loaded_week[ 'id' ] + 1, $next_week );
+
+		print( '<h1><div style="text-align:center;">' );
+
+		if ( $previous_week_result )
+		{
+			printf( '<a href="?screen=make_picks&week=%d" title="Week %d">&#171; Week %d</a> | ', $previous_week[ 'id' ], $previous_week[ 'id' ], $previous_week[ 'id' ] );
+		}
+
+		printf( 'Week %d', $loaded_week[ 'id'] );
+
+		if ( $next_week_result )
+		{
+			printf( ' | <a href="?screen=make_picks&week=%d" title="Week %d">Week %d &#187; </a>', $next_week[ 'id' ], $next_week[ 'id' ], $next_week[ 'id' ] );
+		}
+
+		print( '</div></h1>' );
+
 		print <<<EOT
 			<h1>Notes</h1>
 			<p><b>Left</b> team is the visiting team. <b>Right</b> team is the home team. <br />

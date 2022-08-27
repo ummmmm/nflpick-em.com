@@ -49,6 +49,7 @@ class Screen_ViewPicks extends Screen_User
 		$db_users			= new Users( $this->_db );
 		$db_games 			= new Games( $this->_db );
 		$db_picks 			= new Picks( $this->_db );
+		$db_weeks			= new Weeks( $this->_db );
 		$db_weekly_records	= new Weekly_Records( $this->_db );
 
 		if ( !$this->_Users_List_Load( $users ) )
@@ -62,6 +63,25 @@ class Screen_ViewPicks extends Screen_User
 		{
 			return false;
 		}
+
+		$previous_week_result	= $db_weeks->Load( $week[ 'id' ] - 1, $previous_week );
+		$next_week_result		= $db_weeks->Load( $week[ 'id' ] + 1, $next_week );
+
+		print( '<h1><div style="text-align:center;">' );
+
+		if ( $previous_week_result )
+		{
+			printf( '<a href="?screen=view_picks&week=%d" title="Week %d">&#171; Week %d</a> | ', $previous_week[ 'id' ], $previous_week[ 'id' ], $previous_week[ 'id' ] );
+		}
+
+		printf( 'Week %d', $week[ 'id' ] );
+
+		if ( $next_week_result && $next_week[ 'locked' ] == 1 )
+		{
+			printf( ' | <a href="?screen=view_picks&week=%d" title="Week %d">Week %d &#187; </a>', $next_week[ 'id' ], $next_week[ 'id' ], $next_week[ 'id' ] );
+		}
+
+		print( '</div></h1>' );
 
 		printf( '<h1>Week %d User Picks</h1>', $week_id );
 		print( '<table class="picks" style="font-size:8px;" width="100%">' );
