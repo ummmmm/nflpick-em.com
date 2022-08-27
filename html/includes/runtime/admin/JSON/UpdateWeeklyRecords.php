@@ -74,6 +74,16 @@ class JSON_UpdateWeeklyRecords extends JSONAdminAction
 			return $this->setError( array( '#Error#', 'Weekly records cannot be updated until all games are final' ) );
 		}
 
+		if ( !$this->_load_min_wins_user_week( $user_id, $week_id, $min_wins ) )
+		{
+			return false;
+		}
+
+		if ( $wins < $min_wins )
+		{
+			return $this->setError( array( '#Error#', sprintf( 'User cannot have less than %d wins', $min_wins ) ) );
+		}
+
 		if ( $wins < 0 || $losses < 0 )
 		{
 			return $this->setError( array( '#Error#', 'Wins / Losses cannot be less than 0' ) );
@@ -98,6 +108,28 @@ class JSON_UpdateWeeklyRecords extends JSONAdminAction
 		{
 			return $this->setError( array( '#Error#', 'Failed to update user records' ) );
 		}
+
+		return true;
+	}
+
+	private function _load_min_wins_user_week( $user_id, $week_id, &$min_wins )
+	{
+		if ( !$this->_db->single( 'SELECT
+									COUNT( p.id ) AS wins
+								   FROM
+									games g,
+									picks p
+								   WHERE
+									g.final			= 1			AND
+									p.game_id		= g.id		AND
+									p.winner_pick	= g.winner	AND
+									p.user_id 		= ?			AND
+									p.week			= ?', $results, $user_id, $week_id ) )
+		{
+			return $this->setDBError();
+		}
+
+		$min_wins = $results[ 'wins' ];
 
 		return true;
 	}
