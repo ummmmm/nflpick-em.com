@@ -104,7 +104,7 @@ class Database
 
 		array_push( $args, sprintf( 'INSERT INTO %s ( %s ) VALUES ( %s )', $table, $columns, $prepared ) );
 
-		return call_user_func_array( array( $this, 'query' ), array_merge( $args, $values ) );
+		return call_user_func_array( array( $this, 'query' ), array_values( array_merge( $args, $values ) ) );
 	}
 
 	public function insertID()
@@ -215,7 +215,7 @@ class Database
 			$fields[ $colunm_name ] = &${$colunm_name}; // create a reference to the dynamic variable
 		}
 
-		if ( !call_user_func_array( array( $stmt, 'bind_result' ), $fields ) )
+		if ( !call_user_func_array( array( $stmt, 'bind_result' ), array_values( $fields ) ) )
 		{
 			$stmt->free_result();
 			$stmt->close();
