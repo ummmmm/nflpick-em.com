@@ -161,7 +161,7 @@ class Screen_Register extends Screen
 
   <fieldset>
   	<legend>Additional</legend>
-  	<label><input type="checkbox" name="agree" value="true" /> I have read and agree to the <a href="rules.pdf">Rules</a></label>
+  	<label><input type="checkbox" name="agree" value="true" /> I have read and agree to the <a href="rules.pdf" target="_blank">Rules</a></label>
   	<label><input type="checkbox" name="pw_opt_out" value="true" <?php print $pw_opt_out_checked; ?> /> Opt-out of the perfect week pool</label>
   </fieldset>
 
