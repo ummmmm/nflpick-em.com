@@ -35,6 +35,7 @@ class Users
 					force_password 		tinyint( 1 ),
 					active				tinyint( 1 ),
 					message				varchar( 255 ),
+					pw_opt_out			tinyint( 1 ),
 					PRIMARY KEY ( id )
 				)";
 
@@ -202,12 +203,13 @@ class Users
 										email_preference	= ?,
 										force_password		= ?,
 										active				= ?,
-										message				= ?
+										message				= ?,
+										pw_opt_out			= ?
 									WHERE
 										id					= ?',
 								$user[ 'fname' ], $user[ 'lname' ], $user[ 'email' ], $user[ 'password' ], $user[ 'last_on' ],
 								$user[ 'wins' ], $user[ 'losses' ],	$user[ 'paid' ], $user[ 'current_place' ], $user[ 'email_preference' ],
-								$user[ 'force_password' ], $user[ 'active' ], $user[ 'message' ],
+								$user[ 'force_password' ], $user[ 'active' ], $user[ 'message' ], $user[ 'pw_opt_out' ],
 								$user[ 'id' ] );
 	}
 

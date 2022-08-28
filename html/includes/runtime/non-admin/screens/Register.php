@@ -17,13 +17,20 @@ class Screen_Register extends Screen
 			return $this->setValidationErrors( array( "Registration is currently disabled." ) );
 		}
 
-		$register[ 'fname' ] 	= Functions::Post( 'fname' );
-		$register[ 'lname' ] 	= Functions::Post( 'lname' );
-		$register[ 'email' ] 	= Functions::Post( 'email' );
-		$register[ 'cemail' ] 	= Functions::Post( 'cemail' );
-		$register[ 'password' ] = Functions::Post( 'password' );
-		$register[ 'cpass' ] 	= Functions::Post( 'cpass' );
-		$errors 				= array();
+		$agree						= Functions::Post_Boolean( 'agree' );
+		$register[ 'fname' ] 		= Functions::Post( 'fname' );
+		$register[ 'lname' ] 		= Functions::Post( 'lname' );
+		$register[ 'email' ] 		= Functions::Post( 'email' );
+		$register[ 'cemail' ] 		= Functions::Post( 'cemail' );
+		$register[ 'password' ] 	= Functions::Post( 'password' );
+		$register[ 'cpass' ] 		= Functions::Post( 'cpass' );
+		$register[ 'pw_opt_out'	]	= Functions::Post_Boolean( 'pw_opt_out' );
+		$errors 					= array();
+
+		if ( !$agree )
+		{
+			array_push( $errors, 'You must agree to the rules.' );
+		}
 
 		if ( empty( $register[ 'fname' ] ) || ( strlen( $register[ 'fname' ] ) < 3 ) || ( strlen( $register[ 'fname' ] ) > 15 ) )
 		{
@@ -94,7 +101,8 @@ class Screen_Register extends Screen
 								 'email_preference' => 1,
 								 'force_password' 	=> 0,
 								 'active'			=> 1,
-								 'message'			=> "" );
+								 'message'			=> '',
+								 'pw_opt_out'		=> $data[ 'pw_opt_out' ] ? 1 : 0 );
 
 		if ( !$db_users->Insert( $user ) || !$db_sessions->Generate( $user[ 'id' ] ) )
 		{
@@ -121,6 +129,7 @@ class Screen_Register extends Screen
 			return Functions::Information( "Registration Disabled", "You currently cannot sign up for the NFL Pick-Em League." );
 		}
 
+		$pw_opt_out_checked = Functions::Post_Boolean( 'pw_opt_out' ) ? ' checked' : '';
 ?>
 <form action="?screen=register" method="post">
   <fieldset>
@@ -148,6 +157,12 @@ class Screen_Register extends Screen
 	  <br />
 	  <label for="confirmPassword">Confirm Password</label>
 	  <input type="password" name="cpass" id="confirmPassword" />
+  </fieldset>
+
+  <fieldset>
+  	<legend>Additional</legend>
+  	<label><input type="checkbox" name="agree" value="true" /> I have read and agree to the <a href="rules.pdf">Rules</a></label>
+  	<label><input type="checkbox" name="pw_opt_out" value="true" <?php print $pw_opt_out_checked; ?> /> Opt-out of the perfect week pool</label>
   </fieldset>
 
   <input type="hidden" name="update" value="1" />
