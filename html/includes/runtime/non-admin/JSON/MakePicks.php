@@ -67,7 +67,7 @@ class JSON_MakePicks extends JSONUserAction
 			}
 		}
 
-		$remaining = $db_picks->Remaining( $this->_auth->getUserID(), $week );
+		$remaining = $db_picks->Remaining( $this->_auth->getUserID(), $week[ 'id' ] );
 
 		return $this->setData( array( 'remaining' => $remaining, 'message' => 'You have picked the <b>' . $winning_team[ 'team' ] . '</b> to beat the <b>' . $losing_team[ 'team' ] . '</b>' ) );
 	}
