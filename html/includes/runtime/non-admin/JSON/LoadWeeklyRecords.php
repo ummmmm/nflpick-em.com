@@ -14,7 +14,7 @@ class JSON_LoadWeeklyRecords extends JSONUser
 			return $this->setDBError();
 		}
 
-		if ( !$db_weeks->List_Load_Locked( $weeks ) )
+		if ( $db_weeks->List_Load_Locked( $weeks ) === false )
 		{
 			return $this->setDBError();
 		}
