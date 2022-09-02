@@ -52,13 +52,13 @@ class JSON_LoadUsers extends JSONAdmin
 							CONCAT( u.fname, ' ', u.lname ) AS name,
 							( SELECT COUNT( * ) FROM failed_logins WHERE email = u.email ) AS failed_logins,
 							( SELECT COUNT( * ) FROM sessions WHERE userid = u.id ) AS active_sessions,
-							( ( SELECT COUNT( * ) FROM games g WHERE week = 1 ) - ( SELECT COUNT( * ) FROM picks p WHERE p.user_id = u.id AND p.week = ? ) ) AS remaining
+							( ( SELECT COUNT( * ) FROM games g WHERE g.week = ? ) - ( SELECT COUNT( * ) FROM picks p WHERE p.user_id = u.id AND p.week = ? ) ) AS remaining
 						FROM
 							users u
 						ORDER BY
-							{$sort} {$direction}";
+							{$sort} {$direction}, name";
 
-		if ( !$this->_db->select( $sql, $users, $current ) )
+		if ( !$this->_db->select( $sql, $users, $current, $current ) )
 		{
 			return $this->setDBError();
 		}
