@@ -3,7 +3,7 @@
 set_include_path( "/path/to/html" );
 
 require_once( "includes/classes/Database.php" );
-require_once( "includes/classes/Functions.php" );
+require_once( "includes/classes/functions.php" );
 
 try
 {
