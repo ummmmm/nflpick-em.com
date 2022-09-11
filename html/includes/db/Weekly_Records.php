@@ -85,4 +85,9 @@ class Weekly_Records
 	{
 		return $this->_error;
 	}
+
+	public function Delete_User( $user_id )
+	{
+		return $this->_db->query( 'DELETE FROM weekly_records WHERE user_id = ?', $user_id );
+	}
 }

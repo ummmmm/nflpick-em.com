@@ -64,12 +64,14 @@ class Users
 		$db_reset_password	= new Reset_Passwords( $this->_db );
 		$db_sent_picks		= new Sent_Picks( $this->_db );
 		$db_sessions		= new Sessions( $this->_db );
+		$db_weekly_records	= new Weekly_Records( $this->_db );
 
 		if ( !$db_picks->Delete_User( $user_id ) 			||
 			 !$db_poll_votes->Delete_User( $user_id )		||
 			 !$db_reset_password->Delete_User( $user_id )	||
 			 !$db_sent_picks->Delete_User( $user_id )		||
-			 !$db_sessions->Delete_User( $user_id ) )
+			 !$db_sessions->Delete_User( $user_id )			||
+			 !$db_weekly_records->Delete_User( $user_id ) )
 		{
 			return false;
 		}
