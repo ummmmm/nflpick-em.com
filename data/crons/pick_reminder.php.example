@@ -36,7 +36,7 @@ switch ( date( 'l' ) )
 	{
 		$start_time_t	= strtotime( 'today' );
 		$end_time_t		= $start_time_t + ( 60 * 60 * 24 * 1 ) - 1;
-		$subject		= sprintf( 'Week %d: Missing %s Picks', $current, date( 'N' ) );
+		$subject		= sprintf( 'Week %d: Missing %s Picks', $current, date( 'l' ) );
 
 		break;
 	}
@@ -115,7 +115,7 @@ function Generate_Email_Message( &$settings, &$user, &$games )
 	}
 	$output .= '</ol>';
 
-	$output .= sprintf( '<br /><br />You can disable these notifications in your <a href="%s?screen=userpreferences">User Preferences</a>.', $settings[ 'domain_url' ] );
+	$output .= sprintf( '<br /><br />You can disable these notifications in your <a href="%s?screen=user_preferences">User Preferences</a>.', $settings[ 'domain_url' ] );
 
 	return $output;
 }
