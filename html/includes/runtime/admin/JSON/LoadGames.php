@@ -37,6 +37,6 @@ class JSON_LoadGames extends JSONAdmin
 			}
 		}
 		
-		return $this->setData( $weeks );
+		return $this->setData( array( 'current_week' => $current, 'weeks' => $weeks ) );
 	}
 }

@@ -2,14 +2,6 @@
 
 class Screen_Games extends Screen_Admin
 {
-	public function head()
-	{
-		$db_weeks = new Weeks( $this->_db );
-
-		printf( '<script type="text/javascript">var current_week = %d;</script>', $db_weeks->Current() );
-		return true;
-	}
-
 	public function jquery()
 	{
 		print "$.fn.load_games();";
