@@ -133,7 +133,7 @@ class Screen_ViewPicks extends Screen_User
 						}
 						else
 						{
-							$output = sprintf( '<s>%s</s>', htmlentities( $game[ 'homeAbbr' ] ) );
+							$output = sprintf( '<i>%s</i>', htmlentities( $game[ 'homeAbbr' ] ) );
 						}
 					}
 					else
@@ -144,7 +144,7 @@ class Screen_ViewPicks extends Screen_User
 						}
 						else
 						{
-							$output = sprintf( '<s>%s</s>', htmlentities( $game[ 'awayAbbr' ] ) );
+							$output = sprintf( '<i>%s</i>', htmlentities( $game[ 'awayAbbr' ] ) );
 						}
 					}
 				}
@@ -185,7 +185,7 @@ class Screen_ViewPicks extends Screen_User
 					<td>Game won</td>
 				</tr>
 				<tr>
-					<td><s>LAC</s></td>
+					<td><i>LAC</i></td>
 					<td>Game lost</td>
 				</tr>
 				<tr>
