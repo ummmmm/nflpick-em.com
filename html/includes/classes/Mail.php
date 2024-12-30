@@ -2,6 +2,7 @@
 
 class Mail
 {
+	private $_error;
 	private $_to;
 	private $_subject;
 	private $_message;
