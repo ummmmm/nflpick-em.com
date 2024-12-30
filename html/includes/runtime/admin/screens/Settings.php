@@ -52,6 +52,14 @@ class Screen_Settings extends Screen_Admin
 		print '<td><input type="text" name="site_title" value="' . htmlentities( $settings[ 'site_title' ] ) . '" /></td>';
 		print '</tr>';
 		print '<tr>';
+		print '<td>Turnstile Site Key: </td>';
+		print '<td><input type="text" name="turnstile_sitekey" value="' . htmlentities( $settings[ 'turnstile_sitekey' ] ) . '" /></td>';
+		print '</tr>';
+		print '<tr>';
+		print '<td>Turnstile Secret Key: </td>';
+		print '<td><input type="text" name="turnstile_secretkey" value="' . htmlentities( $settings[ 'turnstile_secretkey' ] ) . '" /></td>';
+		print '</tr>';
+		print '<tr>';
 		print '<td>&nbsp;</td>';
 		print '<td>';
 		print '<input type="submit" name="update" value="Update" onclick="$.fn.update_settings();" />';
