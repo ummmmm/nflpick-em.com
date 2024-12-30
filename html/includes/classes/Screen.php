@@ -147,6 +147,8 @@ class ScreenRenderer
 	private $_jquery_data;
 	private $_content_data;
 
+	private $_run_update;
+
 	public function __construct()
 	{
 		$this->_db 					= new Database();
