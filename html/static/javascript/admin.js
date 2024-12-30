@@ -86,6 +86,10 @@ $( document ).ready( function()
 															'id':	'paid' + user.id,
 															'href': 'javascript:;',
 															'text': ( user.paid ? 'Yes' : 'No' ) } ).bind( 'click', function() { $.fn.update_users( user ); } ) ).appendTo( fieldset );
+			$( '<div/>', { 'text': 'Perfect Week: '	} ).append( $( '<a/>', {
+															'id':	'pw_opt_out' + user.id,
+															'href': 'javascript:;',
+															'text': ( user.pw_opt_out ? 'No' : 'Yes' ) } ).bind( 'click', function() { $.fn.update_pw_opt_out_users( user ); } ) ).appendTo( fieldset );
 
 			$( '<div/>', { 'text': '# of Failed Logins: ' + user.failed_logins } ).appendTo( fieldset );
 			$( '<div/>', { 'text': '# of Active Sessions: ' + user.active_sessions + ' - ' } ).
@@ -210,6 +214,19 @@ $( document ).ready( function()
 			}
 
 			$( '#paid' + user.id ).text( ( user.paid ? 'No' : 'Yes' ) );
+		} );
+	}
+
+	$.fn.update_pw_opt_out_users = function( user )
+	{
+		$.fn.json_admin( 'UpdatePerfectWeekUser', 'user_id=' + encodeURIComponent( user.id ), function( response )
+		{
+			if ( !response.success )
+			{
+				return $.fn.error( response.error_message );
+			}
+
+			$( '#pw_opt_out' + user.id ).text( ( user.pw_opt_out ? 'Yes' : 'No' ) );
 		} );
 	}
 
