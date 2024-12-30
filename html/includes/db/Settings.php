@@ -9,6 +9,8 @@ class Settings
 	public $domain_email;
 	public $online;
 	public $site_title;
+	public $turnstile_sitekey;
+	public $turnstile_secretkey;
 	
 	private $_db;
 	
@@ -18,13 +20,15 @@ class Settings
 		
 		if ( $this->Load( $settings ) )
 		{
-			$this->max_news 		= $settings[ 'max_news' ];
-			$this->email_validation = $settings[ 'email_validation' ];
-			$this->registration 	= $settings[ 'registration' ];
-			$this->domain_url 		= $settings[ 'domain_url' ];
-			$this->domain_email 	= $settings[ 'domain_email' ];
-			$this->online 			= $settings[ 'online' ];
-			$this->site_title 		= $settings[ 'site_title' ];
+			$this->max_news 				= $settings[ 'max_news' ];
+			$this->email_validation 		= $settings[ 'email_validation' ];
+			$this->registration 			= $settings[ 'registration' ];
+			$this->domain_url 				= $settings[ 'domain_url' ];
+			$this->domain_email 			= $settings[ 'domain_email' ];
+			$this->online 					= $settings[ 'online' ];
+			$this->site_title 				= $settings[ 'site_title' ];
+			$this->turnstile_sitekey 		= $settings[ 'turnstile_sitekey' ];
+			$this->turnstile_secretkey 		= $settings[ 'turnstile_secretkey' ];
 		}
 	}
 
@@ -39,7 +43,9 @@ class Settings
 					domain_email 		char( 255 ),
 					online 				int( 11 ),
 					site_title 			char( 255 ),
-					login_sleep 		int( 11 )
+					login_sleep 		int( 11 ),
+					turnstile_sitekey	char( 100 ),
+					turnstile_secretkey	char( 100 )
 				)";
 
 		if ( $this->_db->query( $sql ) === false )
@@ -61,7 +67,9 @@ class Settings
 					  'domain_email' 		=> '',
 					  'online' 				=> 30,
 					  'site_title' 			=> '',
-					  'login_sleep' 		=> 3000 );
+					  'login_sleep' 		=> 3000,
+					  'turnstile_sitekey'	=> '',
+					  'turnstile_secretkey'	=> '' );
 	}
 
 	public function Load( &$settings )
@@ -81,9 +89,12 @@ class Settings
 									domain_email		= ?,
 									online				= ?,
 									site_title			= ?,
-									login_sleep			= ?',
+									login_sleep			= ?,
+									turnstile_sitekey	= ?,
+									turnstile_secretkey	= ?',
 									$settings[ 'email_validation' ], $settings[ 'registration' ], $settings[ 'max_news' ], $settings[ 'domain_url' ],
-									$settings[ 'domain_email' ], $settings[ 'online' ], $settings[ 'site_title' ], $settings[ 'login_sleep' ] );
+									$settings[ 'domain_email' ], $settings[ 'online' ], $settings[ 'site_title' ], $settings[ 'login_sleep' ],
+									$settings[ 'turnstile_sitekey' ], $settings[ 'turnstile_secretkey' ] );
 
 	}
 }

@@ -7,23 +7,25 @@ class Screen_Contact extends Screen
 	public function head()
 	{
 		print( <<<EOF
-			<style type="text/css">
-				#hidden
-				{
-					display: none;
-				}
-			</style>
+			<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 EOF );
 		return true;
 	}
 
 	public function validate()
 	{
+		$db_settings = new Settings( $this->_db );
+
+		if ( !$db_settings->Load( $settings ) )
+		{
+			return $this->setDBError();
+		}
+
 		$name 		= Functions::Post( "name" );
 		$email		= Functions::Post( "email" );
 		$subject	= Functions::Post( "subject" );
 		$message	= Functions::Post( "message" );
-		$hidden		= Functions::Post( "hidden" );
+		$turnstile	= Functions::Post( "cf-turnstile-response" );
 		$errors		= array();
 
 		if ( $name == "" )
@@ -46,9 +48,26 @@ EOF );
 			$subject = "No Subject";
 		}
 
-		if ( $hidden != "" )
+		if ( $turnstile == "" )
 		{
-			array_push( $errors, "Go away bot" );
+			array_push( $errors, "Invalid turnstile token" );
+		}
+		else
+		{
+			$ch = curl_init();
+			curl_setopt( $ch, CURLOPT_URL, "https://challenges.cloudflare.com/turnstile/v0/siteverify" );
+			curl_setopt( $ch, CURLOPT_POST, true );
+			curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( array( "secret" => $settings[ 'turnstile_secretkey' ], "response" => $turnstile, "ip" => $_SERVER[ "REMOTE_ADDR" ] ) ) );
+			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+
+			$response = json_decode( curl_exec( $ch ), true );
+
+			curl_close( $ch );
+
+			if ( !$response[ 'success' ] )
+			{
+				array_push( $errors, "Invalid turnstile response" );
+			}
 		}
 
 		if ( !empty( $errors ) )
@@ -83,10 +102,16 @@ EOF );
 
 	public function content()
 	{
-		$name 		= Functions::Post( 'name' );
-		$email		= Functions::Post( 'email' );
-		$subject	= Functions::Post( 'subject' );
-		$message	= Functions::Post( 'message' );
+		$db_settings	= new Settings( $this->_db );
+		$name 			= Functions::Post( 'name' );
+		$email			= Functions::Post( 'email' );
+		$subject		= Functions::Post( 'subject' );
+		$message		= Functions::Post( 'message' );
+
+		if ( !$db_settings->Load( $settings ) )
+		{
+			return $this->setDBError();
+		}
 
 		if ( $this->_auth->getUserID() )
 		{
@@ -109,7 +134,7 @@ EOF );
 			<label for="message">Message</label>
 			<textarea name="message" cols="50" rows="10" id="message"><?php print htmlentities( $message ); ?></textarea>
 			<br />
-			<input type="text" name="hidden" id="hidden" value="" />
+			<div class="cf-turnstile" data-sitekey="<?php print htmlentities( $settings[ 'turnstile_sitekey' ] ); ?>" data-appearance="interaction-only"></div>
 			<input type="hidden" name="update" value="1" />
 			<input type="submit" name="contact" id="contact" value="Send" />
 		</fieldset>
