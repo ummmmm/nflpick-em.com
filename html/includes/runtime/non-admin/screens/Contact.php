@@ -132,7 +132,7 @@ EOF );
 			<input type="text" name="subject" id="subject" value="<?php print htmlentities( $subject ); ?>" />
 			<br />
 			<label for="message">Message</label>
-			<textarea name="message" cols="50" rows="10" id="message"><?php print htmlentities( $message ); ?></textarea>
+			<textarea name="message" cols="45" rows="10" id="message"><?php print htmlentities( $message ); ?></textarea>
 			<br />
 			<div class="cf-turnstile" data-sitekey="<?php print htmlentities( $settings[ 'turnstile_sitekey' ] ); ?>" data-appearance="interaction-only"></div>
 			<input type="hidden" name="update" value="1" />
