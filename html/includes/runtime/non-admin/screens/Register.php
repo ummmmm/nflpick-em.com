@@ -2,6 +2,14 @@
 
 class Screen_Register extends Screen
 {
+	public function head()
+	{
+		print( <<<EOF
+			<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+EOF );
+		return true;
+	}
+
 	public function validate()
 	{
 		$db_users		= new Users( $this->_db );
@@ -18,6 +26,8 @@ class Screen_Register extends Screen
 		}
 
 		$agree						= Functions::Post_Boolean( 'agree' );
+		$turnstile					= Functions::Post( "cf-turnstile-response" );
+
 		$register[ 'fname' ] 		= Functions::Post( 'fname' );
 		$register[ 'lname' ] 		= Functions::Post( 'lname' );
 		$register[ 'email' ] 		= Functions::Post( 'email' );
@@ -30,6 +40,28 @@ class Screen_Register extends Screen
 		if ( !$agree )
 		{
 			array_push( $errors, 'You must agree to the rules.' );
+		}
+
+		if ( $turnstile == "" )
+		{
+			array_push( $errors, "Invalid turnstile token" );
+		}
+		else
+		{
+			$ch = curl_init();
+			curl_setopt( $ch, CURLOPT_URL, "https://challenges.cloudflare.com/turnstile/v0/siteverify" );
+			curl_setopt( $ch, CURLOPT_POST, true );
+			curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( array( "secret" => $settings[ 'turnstile_secretkey' ], "response" => $turnstile, "ip" => $_SERVER[ "REMOTE_ADDR" ] ) ) );
+			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+
+			$response = json_decode( curl_exec( $ch ), true );
+
+			curl_close( $ch );
+
+			if ( !$response[ 'success' ] )
+			{
+				array_push( $errors, "Invalid turnstile response" );
+			}
 		}
 
 		if ( empty( $register[ 'fname' ] ) || ( strlen( $register[ 'fname' ] ) < 3 ) || ( strlen( $register[ 'fname' ] ) > 15 ) )
@@ -165,6 +197,7 @@ class Screen_Register extends Screen
   	<label><input type="checkbox" name="pw_opt_out" value="true" <?php print $pw_opt_out_checked; ?> /> Opt-out of the perfect week pool</label>
   </fieldset>
 
+  <div class="cf-turnstile" data-sitekey="<?php print htmlentities( $settings[ 'turnstile_sitekey' ] ); ?>" data-appearance="interaction-only"></div>
   <input type="hidden" name="update" value="1" />
   <input type="submit" name="register" id="register" value="Register" />
 </form>
