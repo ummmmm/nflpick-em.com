@@ -570,11 +570,34 @@ $( document ).ready( function()
 				} ).appendTo( fieldset );
 				$( '<div/>', { 'text': 'Status: ' + ( poll.active ? 'Active' : 'Inactive' ) } ).appendTo( fieldset );
 				$( '<div/>', { 'text': 'Added: ' + poll.date } ).appendTo( fieldset );
-				$( '<div/>', { 'text': 'Total Votes: ' + poll.total_votes } ).appendTo( fieldset );
+				$( '<div/>', { 'html': $( '<a />', {
+					'href': 'javascript:;',
+					'text': 'Total Votes: ' + poll.total_votes
+				} ).bind( 'click', function() { $.fn.show_poll_answers( poll ); } ) } ).appendTo( fieldset );
+				$( '<div/>', { 'id': 'poll_answers_' + poll.id, 'style': 'display:none' } ).appendTo( fieldset );
 
 				fieldset.appendTo( div );
 			} );
 		} );
+	}
+
+	$.fn.show_poll_answers = function( poll )
+	{
+		const div = $( '#poll_answers_' + poll.id );
+
+		if ( !div.is( ':hidden' ) )
+		{
+			div.hide();
+		}
+		else
+		{
+			div.empty();
+			poll.votes.forEach( vote =>
+			{
+				$( '<div/>', { 'text': `${vote.answer}: ${vote.name}` } ).appendTo( div );
+			} );
+			div.show();
+		}
 	}
 
 	$.fn.add_poll = function()
