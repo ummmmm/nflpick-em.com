@@ -52,7 +52,6 @@ class Screen_PerfectWeeks extends Screen_Admin
 		printf( '<h1>Week %d</h1>', $week[ 'id' ] );
 
 		$count = $this->_PerfectWeekUserList_Load( $week[ 'id' ], $users );
-		printf( '<h3>Winners (%d)</h3>', $count );
 
 		if ( $count == 0 )
 		{
@@ -60,12 +59,32 @@ class Screen_PerfectWeeks extends Screen_Admin
 			return true;
 		}
 
+		printf( '<h3>Winners (%d)</h3>', $count );
 		print( '<ol>' );
 		foreach ( $users as $user )
 		{
 			printf( '<li>%s %s</li>', htmlentities( $user[ 'fname' ] ), htmlentities( $user[ 'lname' ] ) );
 		}
 		print( '</ol><br /><br />' );
+
+		$count = $this->_PerfectWeekUserOptOutList_Load( $week[ 'id' ], $users );
+		printf( '<h3>Winners Opt-Out(%d)</h3>', $count );
+
+		if ( $count == 0 )
+		{
+			print( '&lt;None&gt;' );
+		}
+		else
+		{
+			print( '<ol>' );
+			foreach ( $users as $user )
+			{
+				printf( '<li>%s %s</li>', htmlentities( $user[ 'fname' ] ), htmlentities( $user[ 'lname' ] ) );
+			}
+			print( '</ol>' );
+		}
+
+		print( '<br /><br />' );
 
 		$count = $this->_PerfectWeekUserPaidList_Load( $week[ 'id' ], $users );
 		printf( '<h3>Paid (%d)</h3>', $count );
@@ -135,6 +154,11 @@ class Screen_PerfectWeeks extends Screen_Admin
 	private function _PerfectWeekUserList_Load( $week_id, &$users )
 	{
 		return $this->_db->select( 'SELECT u.* FROM users u, weekly_records wr WHERE u.pw_opt_out = 0 AND u.id = wr.user_id AND wr.week_id = ? AND wr.wins = ( SELECT COUNT( * ) FROM games g WHERE g.week = wr.week_id ) AND wr.losses = 0 ORDER BY u.fname, u.lname', $users, $week_id );
+	}
+
+	private function _PerfectWeekUserOptOutList_Load( $week_id, &$users )
+	{
+		return $this->_db->select( 'SELECT u.* FROM users u, weekly_records wr WHERE u.pw_opt_out = 1 AND u.id = wr.user_id AND wr.week_id = ? AND wr.wins = ( SELECT COUNT( * ) FROM games g WHERE g.week = wr.week_id ) AND wr.losses = 0 ORDER BY u.fname, u.lname', $users, $week_id );
 	}
 
 	private function _PerfectWeekUserPaidList_Load( $week_id, &$users )
