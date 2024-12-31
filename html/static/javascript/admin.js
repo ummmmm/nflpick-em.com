@@ -787,4 +787,17 @@ $( document ).ready( function()
 			alert( 'Updated' );
 		} );
 	}
+
+	$.fn.update_perfect_week_paid = function( week_id, user_id )
+	{
+		$.fn.json_admin( 'UpdatePerfectWeekPaidUser', 'week_id=' + encodeURIComponent( week_id ) +  '&user_id=' + encodeURIComponent( user_id ), function( response )
+		{
+			if ( !response.success )
+			{
+				return $.fn.error( response.error_message );
+			}
+
+			window.location.reload();
+		} );
+	}
 } );
