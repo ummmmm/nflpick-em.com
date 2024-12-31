@@ -3,6 +3,7 @@
 require_once( 'Failed_Logins.php' );
 require_once( 'Games.php' );
 require_once( 'News.php' );
+require_once( 'Perfect_Week_Paid.php' );
 require_once( 'Picks.php' );
 require_once( 'Poll_Answers.php' );
 require_once( 'Poll_Votes.php' );

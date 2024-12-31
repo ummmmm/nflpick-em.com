@@ -97,21 +97,22 @@ class Setup
 
 	private function _Create_Tables()
 	{
-		$db_failed_logins	= new Failed_Logins( $this->_db );
-		$db_games			= new Games( $this->_db );
-		$db_news			= new News( $this->_db );
-		$db_picks			= new Picks( $this->_db );
-		$db_poll_answers	= new Poll_Answers( $this->_db );
-		$db_poll_votes		= new Poll_Votes( $this->_db );
-		$db_polls			= new Polls( $this->_db );
-		$db_reset_passwords	= new Reset_Passwords( $this->_db );
-		$db_sent_picks		= new Sent_Picks( $this->_db );
-		$db_sessions		= new Sessions( $this->_db );
-		$db_settings		= new Settings( $this->_db );
-		$db_teams			= new Teams( $this->_db );
-		$db_users			= new Users( $this->_db );
-		$db_weeks			= new Weeks( $this->_db );
-		$db_weekly_records	= new Weekly_Records( $this->_db );
+		$db_failed_logins		= new Failed_Logins( $this->_db );
+		$db_games				= new Games( $this->_db );
+		$db_news				= new News( $this->_db );
+		$db_perfect_week_paid	= new Perfect_Week_Paid( $this->_db );
+		$db_picks				= new Picks( $this->_db );
+		$db_poll_answers		= new Poll_Answers( $this->_db );
+		$db_poll_votes			= new Poll_Votes( $this->_db );
+		$db_polls				= new Polls( $this->_db );
+		$db_reset_passwords		= new Reset_Passwords( $this->_db );
+		$db_sent_picks			= new Sent_Picks( $this->_db );
+		$db_sessions			= new Sessions( $this->_db );
+		$db_settings			= new Settings( $this->_db );
+		$db_teams				= new Teams( $this->_db );
+		$db_users				= new Users( $this->_db );
+		$db_weeks				= new Weeks( $this->_db );
+		$db_weekly_records		= new Weekly_Records( $this->_db );
 
 		if ( !$db_failed_logins->Create() )
 		{
@@ -126,6 +127,11 @@ class Setup
 		if ( !$db_news->Create() )
 		{
 			return $this->_Set_Error( 'Failed to create the News database table' );
+		}
+
+		if ( !$db_perfect_week_paid->Create() )
+		{
+			return $this->_Set_Error( 'Failed to create the Perfect_Week_Paid database table' );
 		}
 
 		if ( !$db_picks->Create() )
