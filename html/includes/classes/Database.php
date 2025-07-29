@@ -118,7 +118,11 @@ class Database
 		$bind_count 	= count( $params );
 		$stmt 			= $this->_mysqli->stmt_init();
 
-		if ( !$stmt->prepare( $query ) )
+		try
+		{
+			$stmt->prepare( $query );
+		}
+		catch ( Exception $e )
 		{
 			return $this->_setError( array( 'NFL-DATABASE-0', $this->_mysqli->error ) );
 		}
@@ -259,7 +263,7 @@ class Database
 
 		if ( !$stmt->close() )
 		{
-			return $this->_setError( array( 'NFL-DATABASE-8', $this->_mysqli->error ) );
+			return $this->_setError( array( 'NFL-DATABASE-9', $this->_mysqli->error ) );
 		}
 
 		return true;
