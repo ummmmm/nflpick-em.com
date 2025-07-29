@@ -420,4 +420,24 @@ class Functions
 
 		return true;
 	}
+
+	public static function Turnstile_Active( &$settings )
+	{
+		return $settings[ 'turnstile_sitekey' ] != '' && $settings[ 'turnstile_secretkey' ] != '';
+	}
+
+	public static function Turnstile_Validate( &$settings, $turnstile )
+	{
+		$ch = curl_init();
+		curl_setopt( $ch, CURLOPT_URL, "https://challenges.cloudflare.com/turnstile/v0/siteverify" );
+		curl_setopt( $ch, CURLOPT_POST, true );
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( array( "secret" => $settings[ 'turnstile_secretkey' ], "response" => $turnstile, "ip" => $_SERVER[ "REMOTE_ADDR" ] ) ) );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+
+		$response = json_decode( curl_exec( $ch ), true );
+
+		curl_close( $ch );
+
+		return $response[ 'success' ];
+	}
 }

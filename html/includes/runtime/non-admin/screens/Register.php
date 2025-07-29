@@ -42,26 +42,9 @@ EOF );
 			array_push( $errors, 'You must agree to the rules.' );
 		}
 
-		if ( $turnstile == "" )
+		if ( Functions::Turnstile_Active( $settings ) && !Functions::Turnstile_Validate( $settings, $turnstile ) )
 		{
-			array_push( $errors, "Invalid turnstile token" );
-		}
-		else
-		{
-			$ch = curl_init();
-			curl_setopt( $ch, CURLOPT_URL, "https://challenges.cloudflare.com/turnstile/v0/siteverify" );
-			curl_setopt( $ch, CURLOPT_POST, true );
-			curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( array( "secret" => $settings[ 'turnstile_secretkey' ], "response" => $turnstile, "ip" => $_SERVER[ "REMOTE_ADDR" ] ) ) );
-			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-
-			$response = json_decode( curl_exec( $ch ), true );
-
-			curl_close( $ch );
-
-			if ( !$response[ 'success' ] )
-			{
-				array_push( $errors, "Invalid turnstile response" );
-			}
+			array_push( $errors, "Invalid validation token" );
 		}
 
 		if ( empty( $register[ 'fname' ] ) || ( strlen( $register[ 'fname' ] ) < 3 ) || ( strlen( $register[ 'fname' ] ) > 15 ) )
