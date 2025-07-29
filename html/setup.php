@@ -101,7 +101,7 @@ function install()
 	print '</tr>';
 	print '<tr>';
 	print '<td><b>Domain URL:</b></td>';
-	print '<td><input type="text" name="domain_url" value="" /></td>';
+	print '<td><input type="text" name="domain_url" value="' . url() . '" /></td>';
 	print '</tr>';
 	print '<tr>';
 	print '<td><b>Domain Email:</b></td>';
@@ -153,6 +153,11 @@ function uninstall()
 	print '</tr>';
 	print '</table>';
 	print '</form>';
+}
+
+function url()
+{
+	return sprintf( 'https://%s/', $_SERVER[ 'HTTP_HOST' ] );
 }
 
 function first_sunday()
