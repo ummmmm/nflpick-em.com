@@ -11,7 +11,7 @@ class Perfect_Week_Paid
 
 	public function Create()
 	{
-		$sql = "CREATE TABLE polls
+		$sql = "CREATE TABLE perfect_week_paid
 				(
 					week_id int( 11 ),
 					user_id int( 11 )
