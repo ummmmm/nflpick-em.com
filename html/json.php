@@ -9,4 +9,4 @@ $action			= Functions::Post( 'action' );
 $token			= Functions::Post( 'token' );
 $jsonmanager	= new JSONManager();
 
-die( $jsonmanager->execute( $admin, $action, $token ) );
+$jsonmanager->execute( $admin, $action, $token );

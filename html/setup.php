@@ -9,11 +9,13 @@ $action	= Functions::Get( 'Action' );
 
 if ( $action === 'INSTALL' )
 {
-	die( install() );
+	install();
+	exit();
 }
 else if ( $action === 'UNINSTALL' )
 {
-	die( uninstall() );
+	uninstall();
+	exit();
 }
 
 die( 'Nothing to see here' );
@@ -25,7 +27,8 @@ function install()
 
 	if ( $setup->Configured() )
 	{
-		die( $setup->Get_Error() );
+		$setup->Get_Error();
+		exit();
 	}
 
 	if ( $install != '' )
@@ -56,7 +59,8 @@ function install()
 
 		if ( !$setup->Install() )
 		{
-			die( $setup->Get_Error() );
+			print( $setup->Get_Error() );
+			exit();
 		}
 
 		if ( !$db_settings->Load( $settings ) )
@@ -77,7 +81,8 @@ function install()
 
 		if ( !$db_weeks->Create_Weeks( $timestamp ) )
 		{
-			die( $db_weeks->Get_Error() );
+			print( $db_weeks->Get_Error() );
+			exit();
 		}
 
 		if ( !$db_games->Create_Games() )
