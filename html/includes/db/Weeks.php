@@ -1,15 +1,7 @@
 <?php
 
-class Weeks
+class DatabaseTableWeeks extends DatabaseTable
 {
-	private $_db;
-	private $_error;
-
-	public function __construct( Database &$db )
-	{
-		$this->_db = $db;
-	}
-
 	public function Create()
 	{
 		$sql = "CREATE TABLE weeks
@@ -20,27 +12,27 @@ class Weeks
 					PRIMARY KEY ( id )
 				)";
 
-		return $this->_db->query( $sql );
+		return $this->query( $sql );
 	}
 
 	public function Load( $week_id, &$week )
 	{
-		return $this->_db->single( 'SELECT w.*, ( SELECT COUNT( id ) FROM games g WHERE g.week = w.id ) AS total_games FROM weeks w WHERE id = ?', $week, $week_id );
+		return $this->single( 'SELECT w.*, ( SELECT COUNT( id ) FROM games g WHERE g.week = w.id ) AS total_games FROM weeks w WHERE id = ?', $week, $week_id );
 	}
 
 	public function List_Load( &$weeks )
 	{
-		return $this->_db->select( 'SELECT w.*, ( SELECT COUNT( id ) FROM games g WHERE g.week = w.id ) AS total_games FROM weeks w ORDER BY id', $weeks );
+		return $this->select( 'SELECT w.*, ( SELECT COUNT( id ) FROM games g WHERE g.week = w.id ) AS total_games FROM weeks w ORDER BY id', $weeks );
 	}
 
 	public function List_Load_Locked( &$weeks )
 	{
-		return $this->_db->select( 'SELECT w.*, ( SELECT COUNT( id ) FROM games g WHERE g.week = w.id ) AS total_games FROM weeks w WHERE w.locked = 1 ORDER BY id', $weeks );
+		return $this->select( 'SELECT w.*, ( SELECT COUNT( id ) FROM games g WHERE g.week = w.id ) AS total_games FROM weeks w WHERE w.locked = 1 ORDER BY id', $weeks );
 	}
 
 	public function Insert( &$week )
 	{
-		return $this->_db->insert( 'weeks', $week );
+		return $this->query( 'INSERT INTO weeks ( id, date, locked ) VALUES ( ?, ?, ? )', $week[ 'id' ], $week[ 'date' ], $week[ 'locked' ] );
 	}
 
 	public function IsLocked( $week_id )
@@ -57,12 +49,12 @@ class Weeks
 
 	public function Update( $week )
 	{
-		return $this->_db->query( 'UPDATE weeks SET date = ?, locked = ? WHERE id = ?', $week[ 'date' ], $week[ 'locked' ], $week[ 'id' ] );
+		return $this->query( 'UPDATE weeks SET date = ?, locked = ? WHERE id = ?', $week[ 'date' ], $week[ 'locked' ], $week[ 'id' ] );
 	}
 
 	public function Current()
 	{
-		$count = $this->_db->single( 'SELECT id FROM weeks WHERE locked = 0 ORDER BY id', $week );
+		$count = $this->single( 'SELECT id FROM weeks WHERE locked = 0 ORDER BY id', $week );
 
 		if ( $count === false )
 		{
@@ -79,7 +71,7 @@ class Weeks
 
 	public function Previous()
 	{
-		$count = $this->_db->single( 'SELECT id FROM weeks WHERE locked = 1 ORDER BY id DESC', $week );
+		$count = $this->single( 'SELECT id FROM weeks WHERE locked = 1 ORDER BY id DESC', $week );
 
 		if ( $count === false )
 		{
@@ -126,16 +118,5 @@ class Weeks
 		}
 
 		return $this->_Set_Error( 'Failed to get the regular season weeks' );
-	}
-
-	private function _Set_Error( $error )
-	{
-		$this->_error = $error;
-		return false;
-	}
-
-	public function Get_Error()
-	{
-		return $this->_error;
 	}
 }

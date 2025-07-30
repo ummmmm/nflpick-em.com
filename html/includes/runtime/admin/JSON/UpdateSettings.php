@@ -4,13 +4,9 @@ class JSON_UpdateSettings extends JSONAdminAction
 {
 	public function execute()
 	{
-		$db_settings = new Settings( $this->_db );
-		$db_sessions = new Sessions( $this->_db );
-
-		if ( !$db_settings->Load( $settings ) )
-		{
-			return $this->setDBError();
-		}
+		$settings		= $this->settings();
+		$db_settings	= $this->db()->settings();
+		$db_sessions	= $this->db()->sessions();
 
 		$settings[ 'email_validation' ]		= Functions::Post_Active( 'email_validation' );
 		$settings[ 'registration' ]			= Functions::Post_Active( 'registration' );
@@ -28,8 +24,6 @@ class JSON_UpdateSettings extends JSONAdminAction
 		elseif ( $settings[ 'login_sleep' ] <= 0 )				return $this->setError( array( '#Error#', 'Login Sleep must be greater than 0' ) );
 		elseif ( $settings[ 'domain_url' ] === '' )				return $this->setError( array( '#Error#', 'Domain URL cannot be blank' ) );
 		elseif ( $settings[ 'site_title' ] === '' )				return $this->setError( array( '#Error#', 'Site Title cannot be blank' ) );
-		elseif ( $settings[ 'turnstile_sitekey' ] === '' )		return $this->setError( array( '#Error#', 'Turnstile site key cannot be blank' ) );
-		elseif ( $settings[ 'turnstile_secretkey' ] === '' )	return $this->setError( array( '#Error#', 'Turnstile secret key cannot be blank' ) );
 		
 		if ( !$db_settings->Update( $settings ) )
 		{

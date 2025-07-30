@@ -8,10 +8,10 @@ class Screen_UpdateScores extends Screen_Admin
 
 		try
 		{
-			$db_games	= new Games( $this->_db );
-			$db_teams	= new Teams( $this->_db );
-			$db_users	= new Users( $this->_db );
-			$db_weeks	= new Weeks( $this->_db );
+			$db_games	= $this->db()->games();
+			$db_teams	= $this->db()->teams();
+			$db_users	= $this->db()->users();
+			$db_weeks	= $this->db()->weeks();
 			$data		= json_decode( file_get_contents( sprintf( 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?week=%d', $db_weeks->Previous() ) ) );
 			$week_id	= $data->week->number;
 

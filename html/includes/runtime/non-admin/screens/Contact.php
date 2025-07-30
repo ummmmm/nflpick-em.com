@@ -14,12 +14,7 @@ EOF );
 
 	public function validate()
 	{
-		$db_settings = new Settings( $this->_db );
-
-		if ( !$db_settings->Load( $settings ) )
-		{
-			return $this->setDBError();
-		}
+		$settings	= $this->settings();
 
 		$name 		= Functions::Post( "name" );
 		$email		= Functions::Post( "email" );
@@ -63,13 +58,7 @@ EOF );
 
 	public function update( $data )
 	{
-		$db_settings = new Settings( $this->_db );
-
-		if ( !$db_settings->Load( $settings ) )
-		{
-			return $this->setDBError();
-		}
-
+		$settings	= $this->settings();
 		$message	= sprintf( "Name: %s<br />Email: %s<br /><br />Message: %s", $data[ 'name' ], $data[ 'email' ], $data[ 'message' ] );
 		$mail 		= new Mail( $settings[ 'domain_email' ], $data[ 'subject' ], $message );
 
@@ -85,16 +74,11 @@ EOF );
 
 	public function content()
 	{
-		$db_settings	= new Settings( $this->_db );
-		$name 			= Functions::Post( 'name' );
-		$email			= Functions::Post( 'email' );
-		$subject		= Functions::Post( 'subject' );
-		$message		= Functions::Post( 'message' );
-
-		if ( !$db_settings->Load( $settings ) )
-		{
-			return $this->setDBError();
-		}
+		$settings	= $this->settings();
+		$name 		= Functions::Post( 'name' );
+		$email		= Functions::Post( 'email' );
+		$subject	= Functions::Post( 'subject' );
+		$message	= Functions::Post( 'message' );
 
 		if ( $this->_auth->getUserID() )
 		{

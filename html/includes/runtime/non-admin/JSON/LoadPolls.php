@@ -4,9 +4,9 @@ class JSON_LoadPolls extends JSON
 {
 	public function execute()
 	{
-		$db_polls			= new Polls( $this->_db );
-		$db_poll_votes		= new Poll_Votes( $this->_db );
-		$db_poll_answers	= new Poll_Answers( $this->_db );
+		$db_polls			= $this->db()->polls();
+		$db_poll_votes		= $this->db()->pollvotes();
+		$db_poll_answers	= $this->db()->pollanswers();
 		$nav_poll 			= Functions::Post( 'nav' );
 		
 		if ( $nav_poll === '1' )

@@ -4,12 +4,7 @@ class Screen_Settings extends Screen_Admin
 {
 	public function content()
 	{
-		$db_settings = new Settings( $this->_db );
-
-		if ( !$db_settings->Load( $settings ) )
-		{
-			return $this->setDBError();
-		}
+		$settings = $this->settings();
 
 		print '<div id="settings_addedit">';
 		print '<table>';

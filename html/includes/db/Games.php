@@ -1,15 +1,7 @@
 <?php
 
-class Games
+class DatabaseTableGames extends DatabaseTable
 {
-	private $_db;
-	private $_error;
-
-	public function __construct( Database &$db )
-	{
-		$this->_db = $db;
-	}
-
 	public function Create()
 	{
 		$sql = "CREATE TABLE games
@@ -29,12 +21,12 @@ class Games
 					PRIMARY KEY ( id )
 				)";
 
-		return $this->_db->query( $sql );
+		return $this->query( $sql );
 	}
 
 	public function List_Load( &$games )
 	{
-		return $this->_db->select( 'SELECT
+		return $this->select( 'SELECT
 										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, s.stadium, s.tied, s.final,
 										awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.ties AS awayTies, awayTeam.abbr AS awayAbbr,
 										homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.ties AS homeTies, homeTeam.abbr AS homeAbbr
@@ -52,7 +44,7 @@ class Games
 
 	public function List_Load_Week( $week, &$games )
 	{
-		return $this->_db->select( 'SELECT
+		return $this->select( 'SELECT
 										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, s.stadium, s.tied, s.final,
 										awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.ties AS awayTies, awayTeam.abbr AS awayAbbr,
 										homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.ties AS homeTies, homeTeam.abbr AS homeAbbr
@@ -79,12 +71,16 @@ class Games
 		$game[ 'tied' ]			= 0;
 		$game[ 'final' ]		= 0;
 
-		return $this->_db->insert( 'games', $game );
+		return $this->query( 'INSERT INTO games
+							  ( away, home, stadium, date, week, winner, loser, homeScore, awayScore, tied, final )
+							  VALUES
+							  ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )',
+							  $game[ 'away' ], $game[ 'home' ], $game[ 'stadium' ], $game[ 'date' ], $game[ 'week' ], $game[ 'winner' ], $game[ 'loser' ], $game[ 'homeScore' ], $game[ 'awayScore' ], $game[ 'tied' ], $game[ 'final' ] );
 	}
 
 	public function Update( $game )
 	{
-		return $this->_db->query( 'UPDATE
+		return $this->query( 'UPDATE
 									games
 								   SET
 									away 		= ?,
@@ -106,7 +102,7 @@ class Games
 
 	public function Load( $gameid, &$game )
 	{
-		return $this->_db->single( 'SELECT
+		return $this->single( 'SELECT
 										s.id, s.away, s.home, s.date, s.week, s.winner, s.loser, s.homeScore, s.awayScore, s.stadium, s.tied, s.final,
 										awayTeam.team AS awayTeam, awayTeam.wins AS awayWins, awayTeam.losses AS awayLosses, awayTeam.abbr AS awayAbbr,
 										homeTeam.team AS homeTeam, homeTeam.wins AS homeWins, homeTeam.losses AS homeLosses, homeTeam.abbr AS homeAbbr
@@ -124,12 +120,12 @@ class Games
 
 	public function Load_Week_Teams( $week, $away, $home, &$game )
 	{
-		return $this->_db->single( 'SELECT * FROM games WHERE week = ? AND away = ? AND home = ?', $game, $week, $away, $home );
+		return $this->single( 'SELECT * FROM games WHERE week = ? AND away = ? AND home = ?', $game, $week, $away, $home );
 	}
 
 	public function Exists_Week_Teams( $weekid, $homeid, $awayid, &$game )
 	{
-		$count = $this->_db->single( 'SELECT id FROM games WHERE week = ? AND home = ? AND away = ?', $game, $weekid, $homeid, $awayid );
+		$count = $this->single( 'SELECT id FROM games WHERE week = ? AND home = ? AND away = ?', $game, $weekid, $homeid, $awayid );
 
 		return ( $count ) ? true : false;
 	}
@@ -137,8 +133,8 @@ class Games
 	public function Create_Games()
 	{
 		$games		= array();
-		$db_teams	= new Teams( $this->_db );
-		$db_weeks	= new Weeks( $this->_db );
+		$db_teams	= $this->db_manager->teams();
+		$db_weeks	= $this->db_manager->weeks();
 
 		$null		= $db_weeks->List_Load( $weeks );
 		$url		= 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?week=%d';

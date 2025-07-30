@@ -4,8 +4,8 @@ require_once( 'includes/classes/functions.php' );
 require_once( 'includes/classes/Database.php' );
 require_once( 'includes/classes/Setup.php' );
 
-$db		= new Database();
-$action	= Functions::Get( 'Action' );
+
+$action = Functions::Get( 'Action' );
 
 if ( $action === 'INSTALL' )
 {
@@ -22,8 +22,16 @@ die( 'Nothing to see here' );
 
 function install()
 {
-	$setup		= new Setup();
 	$install 	= Functions::Post( 'install' );
+	$db_manager	= new DatabaseManager();
+
+	if ( !$db_manager->initialize() )
+	{
+		print( $db_manager->Get_Error() );
+		exit();
+	}
+
+	$setup = new Setup( $db_manager );
 
 	if ( $setup->Configured() )
 	{
@@ -33,10 +41,9 @@ function install()
 
 	if ( $install != '' )
 	{
-		$db				= new Database();
-		$db_games		= new Games( $db );
-		$db_settings	= new Settings( $db );
-		$db_weeks		= new Weeks( $db );
+		$db_games		= $db_manager->games();
+		$db_settings	= $db_manager->settings();
+		$db_weeks		= $db_manager->weeks();
 		$site_title		= Functions::Post( 'site_title' );
 		$domain_url 	= Functions::Post( 'domain_url' );
 		$domain_email	= Functions::Post( 'domain_email' );
@@ -62,7 +69,6 @@ function install()
 			print( $setup->Get_Error() );
 			exit();
 		}
-
 		if ( !$db_settings->Load( $settings ) )
 		{
 			printf( 'Failed to load settings<br />' );
@@ -121,11 +127,18 @@ function install()
 
 function uninstall()
 {
-	$uninstall = Functions::Post( 'uninstall' );
+	$uninstall	= Functions::Post( 'uninstall' );
+	$db_manager	= new DatabaseManager();
+
+	if ( !$db_manager->initialize() )
+	{
+		print( $db_manager->Get_Error() );
+		exit();
+	}
 
 	if ( $uninstall != '' )
 	{
-		$setup		= new Setup();
+		$setup		= new Setup( $db_manager );
 		$email 		= Functions::Post( 'email' );
 		$password 	= Functions::Post( 'password' );
 

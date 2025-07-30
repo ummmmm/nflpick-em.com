@@ -4,7 +4,7 @@ class JSON_DeleteUser extends JSONAdminAction
 {
 	public function execute()
 	{
-		$db_users	= new Users( $this->_db );
+		$db_users	= $this->db()->users();
 		$password	= Functions::Post( 'password' );
 		$user_id 	= Functions::Post( 'user_id' );
 

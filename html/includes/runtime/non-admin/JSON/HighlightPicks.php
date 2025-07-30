@@ -4,7 +4,7 @@ class JSON_HighlightPicks extends JSONUser
 {
 	public function execute()
 	{
-		$db_weeks	= new Weeks( $this->_db );
+		$db_weeks	= $this->db()->weeks();
 		$userid 	= Functions::Post( 'userid' );
 		$week		= Functions::Post( 'week' );
 		

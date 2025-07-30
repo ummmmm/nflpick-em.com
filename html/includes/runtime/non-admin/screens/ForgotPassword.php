@@ -38,7 +38,7 @@ class Screen_ForgotPassword extends Screen
 
 		if ( $action == '' )
 		{
-			$db_users	= new Users( $this->_db );
+			$db_users	= $this->db()->users();
 			$email 		= Functions::Post( "email" );
 			$count		= $db_users->Load_Email( $email, $user );
 
@@ -59,8 +59,8 @@ class Screen_ForgotPassword extends Screen
 
 	public function update( $data )
 	{
-		$db_users			= new Users( $this->_db );
-		$db_reset_passwords = new Reset_Passwords( $this->_db );
+		$db_users			= $this->db()->users();
+		$db_reset_passwords = $this->db()->resetpasswords();
 		$action				= Functions::Get( "action" );
 
 		if ( $action == "changepassword" )

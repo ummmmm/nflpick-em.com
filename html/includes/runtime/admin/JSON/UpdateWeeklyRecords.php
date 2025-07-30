@@ -4,11 +4,11 @@ class JSON_UpdateWeeklyRecords extends JSONAdminAction
 {
 	public function execute()
 	{
-		$db_users			= new Users( $this->_db );
-		$db_weeks			= new Weeks( $this->_db );
-		$db_games			= new Games( $this->_db );
-		$db_picks			= new Picks( $this->_db );
-		$db_weekly_records	= new Weekly_Records( $this->_db );
+		$db_users			= $this->db()->users();
+		$db_weeks			= $this->db()->weeks();
+		$db_games			= $this->db()->games();
+		$db_picks			= $this->db()->picks();
+		$db_weekly_records	= $this->db()->weeklyrecords();
 
 		$user_id	= Functions::Post_Int( 'user_id' );
 		$week_id	= Functions::Post_Int( 'week_id' );

@@ -1,49 +1,157 @@
 <?php
 
 require_once( "includes/config.php" );
-include_once( 'includes/db/db.php' );
 include_once( "includes/classes/functions.php" );
 
-class Database
+class DatabaseManager
 {
-	private $_connected;
-	private $_mysqli;
-	private	$_host;
-	private	$_user;
-	private	$_password;
-	private $_schema;
 	private $_error;
+	private $_connection;
+	private $_methods;
 
 	public function __construct()
+	{
+		$this->_error		= array();
+		$this->_methods		= array();
+		$this->_connection	= new DatabaseConnection();
+	}
+
+	public function __destruct()
+	{
+		$this->_connection->disconnect();
+	}
+
+	public function initialize()
 	{
 		$db_settings = array();
 
 		if ( !defined( "CONFIG_INI" ) || !Functions::Get_Config_Section( CONFIG_INI, "database", $db_settings ) )
 		{
-			die( "Failed to load configuration settings" );
+			return $this->_setError( array( '#Error#', 'Failed to load configuration settings' ) );
 		}
 
+		if ( !$this->_connection->connect( $db_settings[ 'host' ], $db_settings[ 'username' ], $db_settings[ 'password' ], $db_settings[ 'schema' ] ) )
+		{
+			return $this->_setError( $this->_connection->Get_Error() );
+		}
+
+		if ( !$this->_load_tables() )
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	public function connection()
+	{
+		return $this->_connection;
+	}
+
+	private function _setError( $error )
+	{
+		$this->_error = $error;
+
+		return false;
+	}
+
+	public function Get_Error()
+	{
+		return $this->_error;
+	}
+
+	public function dynamic_tables()
+	{
+		return $this->_methods;
+	}
+
+	private function _load_tables()
+	{
+		try
+		{
+			$loaded_classes = array();
+
+			foreach ( glob( 'includes/db/*.php' ) as $file )
+			{
+				$before_classes = get_declared_classes();
+				require_once( $file );
+				$after_classes	= get_declared_classes();
+				$new_classes	= array_diff( $after_classes, $before_classes );
+
+				foreach ( $new_classes as $new_class )
+				{
+					$reflection = new ReflectionClass( $new_class );
+
+					if ( $reflection->isInstantiable() && $reflection->isSubclassOf( DatabaseTable::class ) )
+					{						
+						$name		= strtolower( str_replace( 'DatabaseTable', '', $reflection->getShortName() ) );
+						$instance	= new $new_class( $this );
+
+						$this->_methods[ $name ] = function () use ( $instance )
+						{
+							return $instance;
+						};
+					}
+				}
+			}
+		}
+		catch ( Exception $e )
+		{
+			return $this->_setError( $e );
+		}
+
+		return true;
+	}
+
+	public function __call( $name, $arguments )
+	{
+		if ( isset( $this->_methods[ $name ] ) )
+		{
+			return call_user_func_array( $this->_methods[ $name ], $arguments );
+		}
+
+		throw new BadMethodCallException( "Method \"{$name}\" does not exist" );
+	}
+}
+
+class DatabaseConnection
+{
+	private $_connected;
+	private $_mysqli;
+	private $_error;
+
+	public function __construct()
+	{
 		$this->_error		= array();
 		$this->_connected	= false;
-		$this->_mysqli		= null;
-		$this->_host		= $db_settings[ 'host' ];
-		$this->_user		= $db_settings[ 'username' ];
-		$this->_password	= $db_settings[ 'password' ];
-		$this->_schema		= $db_settings[ 'schema' ];
-		$this->_mysqli 		= @new mysqli( $this->_host, $this->_user, $this->_password, $this->_schema );
-
-		if ( $this->_mysqli->connect_error )
-		{
-			die( sprintf( "Database error: %s", htmlentities( $this->_mysqli->connect_error ) ) );
-		}
-
-		$this->_connected 	= true;
 	}
 
 	public function __destruct()
 	{
+		$this->disconnect();
+	}
+
+	public function connect( $host, $user, $password, $schema )
+	{
+		try
+		{
+			$this->_mysqli = new mysqli( $host, $user, $password, $schema );
+		}
+		catch ( Exception $e )
+		{
+			return $this->_setError( 'Failed to connect to the database' );
+		}
+
+		$this->_connected = true;
+
+		return true;
+	}
+
+	public function disconnect()
+	{
 		if ( $this->_connected )
 		{
+			$this->_connected = false;
 			$this->_mysqli->close();
 		}
 	}
@@ -279,5 +387,45 @@ class Database
 	public function Get_Error()
 	{
 		return $this->_error;
+	}
+}
+
+abstract class DatabaseTable
+{
+	protected $db_manager;
+
+	public function __construct( DatabaseManager $db_manager )
+	{
+		$this->db_manager = $db_manager;
+	}
+
+	abstract public function Create();
+
+	public function getError()
+	{
+		return $this->db_manager->connection()->Get_Error();
+	}
+
+	public function query( $query )
+	{
+		$bind_parmas = array_slice( func_get_args(), 1 );
+		return $this->db_manager->connection()->query( $query, ...$bind_parmas );
+	}
+
+	public function select( $query, &$results )
+	{
+		$bind_parmas = array_slice( func_get_args(), 2 );
+		return $this->db_manager->connection()->select( $query, $results, ...$bind_parmas );
+	}
+
+	public function single( $query, &$result )
+	{
+		$bind_parmas = array_slice( func_get_args(), 2 );
+		return $this->db_manager->connection()->single( $query, $result, ...$bind_parmas );
+	}
+
+	public function insertID()
+	{
+		return $this->db_manager->connection()->insertID();
 	}
 }

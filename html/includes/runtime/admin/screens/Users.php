@@ -11,7 +11,7 @@ class Screen_Users extends Screen_Admin
 
 	public function content()
 	{
-		$db_users 	= new Users( $this->_db );
+		$db_users 	= $this->db()->users();
 		$count		= $db_users->List_Load( $users );
 
 		if ( $count === false )	return $this->setDBError();

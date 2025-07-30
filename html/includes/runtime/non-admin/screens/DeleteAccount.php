@@ -9,7 +9,7 @@ class Screen_DeleteAccount extends Screen_User
 
 	public function validate()
 	{
-		$db_users = new Users( $this->_db );
+		$db_users = $this->db()->users();
 		$password = Functions::Post( 'password' );
 
 		if ( !$db_users->validateLogin( $this->_auth->getUser()[ 'email' ], $password, $null ) )
@@ -22,7 +22,7 @@ class Screen_DeleteAccount extends Screen_User
 
 	public function update( $data )
 	{
-		$db_users = new Users( $this->_db );
+		$db_users = $this->db()->users();
 
 		if ( !$db_users->Delete( $this->_auth->getUserID() ) )
 		{

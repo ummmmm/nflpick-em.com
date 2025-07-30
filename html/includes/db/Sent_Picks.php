@@ -1,14 +1,7 @@
 <?php
 
-class Sent_Picks
+class DatabaseTableSentPicks extends DatabaseTable
 {
-	private $_db;
-
-	public function __construct( Database &$db )
-	{
-		$this->_db = $db;
-	}
-
 	public function Create()
 	{
 		$sql = "CREATE TABLE sent_picks
@@ -23,7 +16,7 @@ class Sent_Picks
 					PRIMARY KEY ( id )
 				)";
 
-		return $this->_db->query( $sql );
+		return $this->query( $sql );
 	}
 
 	public function Insert( &$insert )
@@ -41,16 +34,16 @@ class Sent_Picks
 		$picks[ 'ip' ]		= $_SERVER[ 'REMOTE_ADDR' ];
 		$picks[ 'date' ]	= time();
 
-		return $this->_db->insert( 'sent_picks', $picks );
+		return $this->query( 'INSERT INTO sent_picks ( user_id, picks, date, ip, week, active ) VALUES ( ?, ?, ?, ?, ?, ? )', $picks[ 'user_id' ], $picks[ 'picks' ], $picks[ 'date' ], $picks[ 'ip' ], $picks[ 'week' ], $picks[ 'active' ] );
 	}
 
 	public function Delete_User( $user_id )
 	{
-		return $this->_db->query( 'DELETE FROM sent_picks WHERE user_id = ?', $user_id );
+		return $this->query( 'DELETE FROM sent_picks WHERE user_id = ?', $user_id );
 	}
 
 	public function Reset_Active_User_Week( $user_id, $week )
 	{
-		return $this->_db->query( 'UPDATE sent_picks SET active = 0 WHERE user_id = ? AND week = ?', $user_id, $week );
+		return $this->query( 'UPDATE sent_picks SET active = 0 WHERE user_id = ? AND week = ?', $user_id, $week );
 	}
 }

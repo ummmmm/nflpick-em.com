@@ -11,7 +11,7 @@ class Screen_MakePicks extends Screen_User
 			return true;
 		}
 
-		$db_weeks	= new Weeks( $this->_db );
+		$db_weeks	= $this->db()->weeks();
 		$now 		= new DateTime();
 		$then		= new DateTime();
 		$count		= $db_weeks->Load( $week_id, $loaded_week );
@@ -64,7 +64,7 @@ EOT;
 			return true;
 		}
 
-		$db_weeks	= new Weeks( $this->_db );
+		$db_weeks	= $this->db()->weeks();
 		$count		= $db_weeks->Load( $week_id, $loaded_week );
 
 		if ( $count === false )	return $this->setDBError();
@@ -77,9 +77,9 @@ EOT;
 
 	public function content()
 	{
-		$db_games	= new Games( $this->_db );
-		$db_picks	= new Picks( $this->_db );
-		$db_weeks	= new Weeks( $this->_db );
+		$db_games	= $this->db()->games();
+		$db_picks	= $this->db()->picks();
+		$db_weeks	= $this->db()->weeks();
 		$weekid 	= Functions::Get( 'week' );
 
 		if ( empty( $weekid ) )
@@ -117,8 +117,8 @@ EOT;
 
 	private function _GameLayout( $week, $db_weeks )
 	{
-		$db_games		= new Games( $this->_db );
-		$db_picks		= new Picks( $this->_db );
+		$db_games		= $this->db()->games();
+		$db_picks		= $this->db()->picks();
 		$games_count 	= $db_games->List_Load_Week( $week, $games );
 
 		if ( $games_count === false )

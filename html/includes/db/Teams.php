@@ -1,14 +1,7 @@
 <?php
 
-class Teams
+class DatabaseTableTeams extends DatabaseTable
 {
-	private $_db;
-
-	public function __construct( Database &$db )
-	{
-		$this->_db = $db;
-	}
-
 	public function Create()
 	{
 		$sql = "CREATE TABLE teams
@@ -22,7 +15,7 @@ class Teams
 					PRIMARY KEY ( id )
 				)";
 
-		if ( !$this->_db->query( $sql ) )
+		if ( !$this->query( $sql ) )
 		{
 			return false;
 		}
@@ -46,42 +39,42 @@ class Teams
 		$team[ 'losses' ]	= 0;
 		$team[ 'ties' ]		= 0;
 
-		return $this->_db->insert( 'teams', $team );
+		return $this->query( 'INSERT INTO teams ( team, wins, losses, ties, abbr ) VALUES ( ?, ?, ?, ?, ? )', $team[ 'team' ], $team[ 'wins' ], $team[ 'losses' ], $team[ 'ties' ], $team[ 'abbr' ] );
 	}
 
 	public function Update_Wins( $teamid )
 	{
-		return $this->_db->query( 'UPDATE teams SET wins = wins + 1 WHERE id = ?', $teamid );
+		return $this->query( 'UPDATE teams SET wins = wins + 1 WHERE id = ?', $teamid );
 	}
 
 	public function Update_Losses( $teamid )
 	{
-		return $this->_db->query( 'UPDATE teams SET losses = losses + 1 WHERE id = ?', $teamid );
+		return $this->query( 'UPDATE teams SET losses = losses + 1 WHERE id = ?', $teamid );
 	}
 
 	public function Load( $teamid, &$team )
 	{
-		return $this->_db->single( 'SELECT * FROM teams WHERE id = ?', $team, $teamid );
+		return $this->single( 'SELECT * FROM teams WHERE id = ?', $team, $teamid );
 	}
 
 	public function Load_Name( $name, &$team )
 	{
-		return $this->_db->single( 'SELECT * FROM teams WHERE team LIKE CONCAT( \'%\', ?, \'%\' )', $team, $name );
+		return $this->single( 'SELECT * FROM teams WHERE team LIKE CONCAT( \'%\', ?, \'%\' )', $team, $name );
 	}
 
 	public function List_Load( &$teams )
 	{
-		return $this->_db->select( 'SELECT * FROM teams ORDER BY id ASC', $teams );
+		return $this->select( 'SELECT * FROM teams ORDER BY id ASC', $teams );
 	}
 
 	public function Delete( $teamid )
 	{
-		return $this->_db->query( 'DELETE FROM teams WHERE id = ?', $teamid );
+		return $this->query( 'DELETE FROM teams WHERE id = ?', $teamid );
 	}
 
 	public function Update( $team )
 	{
-		return $this->_db->query( 'UPDATE
+		return $this->query( 'UPDATE
 									teams
 								   SET
 									team 	= ?,
@@ -96,7 +89,7 @@ class Teams
 
 	public function List_Load_Byes( $week_id, &$bye_teams )
 	{
-		return $this->_db->select( 'SELECT
+		return $this->select( 'SELECT
 										t.*
 									FROM
 										teams t
@@ -108,12 +101,12 @@ class Teams
 
 	public function Load_Abbr( $abbr, &$team )
 	{
-		return $this->_db->single( 'SELECT * FROM teams WHERE abbr = ?', $team, $abbr );
+		return $this->single( 'SELECT * FROM teams WHERE abbr = ?', $team, $abbr );
 	}
 
 	public function Recalculate_Records()
 	{
-		return $this->_db->query( 'UPDATE
+		return $this->query( 'UPDATE
 									teams t
 								   SET
 									t.wins 		= ( SELECT COUNT( g.id ) FROM games g WHERE g.winner 	= t.id AND g.final = 1 AND g.tied = 0 ),

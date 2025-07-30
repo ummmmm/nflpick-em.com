@@ -1,6 +1,6 @@
 <?php
 
-class Settings
+class DatabaseTableSettings extends DatabaseTable
 {
 	public $max_news;
 	public $email_validation;
@@ -11,13 +11,11 @@ class Settings
 	public $site_title;
 	public $turnstile_sitekey;
 	public $turnstile_secretkey;
-	
-	private $_db;
-	
-	public function __construct( Database &$db )
+
+	public function __construct( DatabaseManager &$db_manager )
 	{
-		$this->_db = $db;
-		
+		parent::__construct( $db_manager );
+
 		if ( !$this->Load( $settings ) )
 		{
 			$settings = $this->Defaults();
@@ -50,14 +48,16 @@ class Settings
 					turnstile_secretkey	char( 100 )
 				)";
 
-		if ( $this->_db->query( $sql ) === false )
+		if ( $this->query( $sql ) === false )
 		{
 			return false;
 		}
 
 		$default_settings = $this->Defaults();
 
-		return $this->_db->insert( 'settings', $default_settings );
+		return $this->query( 'INSERT INTO settings ( email_validation, registration, max_news, domain_url, domain_email, online, site_title, login_sleep, turnstile_sitekey, turnstile_secretkey ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )',
+							  $default_settings[ 'email_validation' ], $default_settings[ 'registration' ], $default_settings[ 'max_news' ], $default_settings[ 'domain_url' ], $default_settings[ 'domain_email' ], $default_settings[ 'online' ],
+							  $default_settings[ 'site_title' ], $default_settings[ 'login_sleep' ], $default_settings[ 'turnstile_sitekey' ], $default_settings[ 'turnstile_secretkey' ] );
 	}
 
 	private function Defaults()
@@ -76,27 +76,27 @@ class Settings
 
 	public function Load( &$settings )
 	{
-		return $this->_db->single( 'SELECT * FROM settings', $settings );
+		return $this->single( 'SELECT * FROM settings', $settings );
 	}
 
 	public function Update( &$settings )
 	{
-		return $this->_db->query( 'UPDATE
-									settings
-								   SET
-									email_validation	= ?,
-									registration		= ?,
-									max_news			= ?,
-									domain_url			= ?,
-									domain_email		= ?,
-									online				= ?,
-									site_title			= ?,
-									login_sleep			= ?,
-									turnstile_sitekey	= ?,
-									turnstile_secretkey	= ?',
-									$settings[ 'email_validation' ], $settings[ 'registration' ], $settings[ 'max_news' ], $settings[ 'domain_url' ],
-									$settings[ 'domain_email' ], $settings[ 'online' ], $settings[ 'site_title' ], $settings[ 'login_sleep' ],
-									$settings[ 'turnstile_sitekey' ], $settings[ 'turnstile_secretkey' ] );
+		return $this->query( 'UPDATE
+								settings
+							  SET
+								email_validation	= ?,
+								registration		= ?,
+								max_news			= ?,
+								domain_url			= ?,
+								domain_email		= ?,
+								online				= ?,
+								site_title			= ?,
+								login_sleep			= ?,
+								turnstile_sitekey	= ?,
+								turnstile_secretkey	= ?',
+							  $settings[ 'email_validation' ], $settings[ 'registration' ], $settings[ 'max_news' ], $settings[ 'domain_url' ],
+							  $settings[ 'domain_email' ], $settings[ 'online' ], $settings[ 'site_title' ], $settings[ 'login_sleep' ],
+							  $settings[ 'turnstile_sitekey' ], $settings[ 'turnstile_secretkey' ] );
 
 	}
 }

@@ -1,14 +1,7 @@
 <?php
 
-class Failed_Logins
+class DatabaseTableFailedLogins extends DatabaseTable
 {
-	private $_db;
-
-	public function __construct( Database &$db )
-	{
-		$this->_db = $db;
-	}
-
 	public function Create()
 	{
 		$sql = "CREATE TABLE failed_logins
@@ -20,13 +13,13 @@ class Failed_Logins
 			  		PRIMARY KEY ( id )
 			  	)";
 
-		return $this->_db->query( $sql );
+		return $this->query( $sql );
 	}
 
 	public function Insert( $email )
 	{
 		$values = array( 'email' => $email, 'date' => time(), 'ip' => $_SERVER[ 'REMOTE_ADDR' ] );
 
-		return $this->_db->insert( 'failed_logins', $values );
+		return $this->query( 'INSERT INTO failed_logins ( email, date, ip ) VALUES ( ?, ?, ? )', $values[ 'email' ], $values[ 'date' ], $values[ 'ip' ] );
 	}
 }

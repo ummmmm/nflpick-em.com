@@ -8,7 +8,7 @@ class Screen_ControlPanel extends Screen_User
 
 		if ( $action == 'changeemail' )
 		{
-			$db_users	= new Users( $this->_db );
+			$db_users	= $this->db()->users();
 			$email 		= Functions::Post( "email" );
 			$cemail 	= Functions::Post( "cemail" );
 			$pass 		= Functions::Post( "pass" );
@@ -74,7 +74,7 @@ class Screen_ControlPanel extends Screen_User
 
 	public function update( $data )
 	{
-		$db_users	= new Users( $this->_db );
+		$db_users	= $this->db()->users();
 		$action 	= Functions::Get( "action" );
 
 		if ( $action == 'changeemail' )

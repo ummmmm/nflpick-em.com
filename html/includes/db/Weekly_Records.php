@@ -1,15 +1,7 @@
 <?php
 
-class Weekly_Records
+class DatabaseTableWeeklyRecords extends DatabaseTable
 {
-	private $_db;
-	private $_error;
-
-	public function __construct( Database &$db )
-	{
-		$this->_db = $db;
-	}
-
 	public function Create()
 	{
 		$sql = "CREATE TABLE weekly_records
@@ -25,12 +17,12 @@ class Weekly_Records
 					UNIQUE INDEX ( user_id, week_id )
 				)";
 
-		return $this->_db->query( $sql );
+		return $this->query( $sql );
 	}
 
 	public function Insert_User( $user_id )
 	{
-		$db_weeks = new Weeks( $this->_db );
+		$db_weeks = $this->db_manager->weeks();
 
 		if ( !$db_weeks->List_Load( $weeks ) )
 		{
@@ -42,7 +34,7 @@ class Weekly_Records
 			$weekly_record[ 'user_id' ] = $user_id;
 			$weekly_record[ 'week_id' ] = $week[ 'id' ];
 
-			if ( !$this->_db->query( 'INSERT INTO weekly_records
+			if ( !$this->query( 'INSERT INTO weekly_records
 								   ( user_id, week_id, wins, losses, ties, manual )
 								   VALUES
 								   ( ?, ?, 0, 0, 0, 0 )',
@@ -57,7 +49,7 @@ class Weekly_Records
 
 	public function Update( &$weekly_record )
 	{
-		return $this->_db->query( 'UPDATE
+		return $this->query( 'UPDATE
 									weekly_records
 								   SET
 									wins = ?,
@@ -72,22 +64,11 @@ class Weekly_Records
 
 	public function Load_User_Week( $user_id, $week_id, &$weekly_record )
 	{
-		return $this->_db->single( 'SELECT * FROM weekly_records WHERE user_id = ? AND week_id = ?', $weekly_record, $user_id, $week_id );
-	}
-
-	private function _Set_Error( $error )
-	{
-		$this->_error = $error;
-		return false;
-	}
-
-	public function Get_Error()
-	{
-		return $this->_error;
+		return $this->single( 'SELECT * FROM weekly_records WHERE user_id = ? AND week_id = ?', $weekly_record, $user_id, $week_id );
 	}
 
 	public function Delete_User( $user_id )
 	{
-		return $this->_db->query( 'DELETE FROM weekly_records WHERE user_id = ?', $user_id );
+		return $this->query( 'DELETE FROM weekly_records WHERE user_id = ?', $user_id );
 	}
 }

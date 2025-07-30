@@ -4,14 +4,14 @@ class Screen_Login extends Screen
 {
 	public function validate()
 	{
-		$db_users	= new Users( $this->_db );
+		$db_users	= $this->db()->users();
 		$email 		= Functions::Post( "email" );
 		$password	= Functions::Post( "password" );
 
 		if ( !$db_users->validateLogin( $email, $password, $user ) )
 		{
-			$db_settings		= new Settings( $this->_db );
-			$db_failed_logins 	= new Failed_Logins( $this->_db );
+			$db_settings		= $this->db()->settings();
+			$db_failed_logins 	= $this->db()->failedlogins();
 			$db_failed_logins->Insert( $email );
 
 			if ( $db_settings->Load( $settings ) && $settings[ 'login_sleep' ] > 0 )
@@ -33,7 +33,7 @@ class Screen_Login extends Screen
 	public function update( $data )
 	{
 		$user 			= &$data;
-		$db_sessions 	= new Sessions( $this->_db );
+		$db_sessions 	= $this->db()->sessions();
 
 		if ( !$db_sessions->Generate( $user[ 'id' ] ) )
 		{

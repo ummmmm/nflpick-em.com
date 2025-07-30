@@ -16,7 +16,7 @@ class Screen_UserPreferences extends Screen_User
 
 	public function update( $data )
 	{
-		$db_users					= new Users( $this->_db );
+		$db_users					= $this->db()->users();
 		$user						= $this->_auth->getUser();
 		$user[ 'email_preference' ]	= $data[ 'email_preference' ] ? 1 : 0;
 
@@ -25,13 +25,14 @@ class Screen_UserPreferences extends Screen_User
 			return $this->setDBError();
 		}
 
+		$this->_auth->forceUserReload();
+
 		return $this->setUpdateMessage( "Preferences saved." );
 	}
 
 	public function content()
 	{
-		if ( isset( $_POST[ 'update' ] ) )	$checked = $_POST[ 'email_preference' ] ? 'checked' : '';
-		else								$checked = $this->_auth->getUser()[ 'email_preference' ] ? 'checked' : '';
+		$checked = $this->_auth->getUser()[ 'email_preference' ] ? 'checked' : '';
 
 		$token = htmlentities( $this->_auth->getToken() );
 

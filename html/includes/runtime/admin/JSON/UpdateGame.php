@@ -4,7 +4,7 @@ class JSON_UpdateGame extends JSONAdminAction
 {
 	public function execute()
 	{
-		$db_games	= new Games( $this->_db );
+		$db_games	= $this->db()->games();
 		$game_id	= Functions::Post_Int( 'game_id' );
 		$scored 	= Functions::Post_Boolean( 'scored' );
 
@@ -23,8 +23,8 @@ class JSON_UpdateGame extends JSONAdminAction
 
 	private function _Update_Scores( &$db, &$user, &$game )
 	{
-		$db_games	= new Games( $db );
-		$db_teams	= new Teams( $db );
+		$db_games	= $this->db()->games();
+		$db_teams	= $this->db()->teams();
 		$awayScore	= Functions::Post_Int( 'awayScore' );
 		$homeScore	= Functions::Post_Int( 'homeScore' );
 
@@ -75,9 +75,9 @@ class JSON_UpdateGame extends JSONAdminAction
 
 	private function _Update_Games( &$db, &$user, &$game )
 	{
-		$db_games	= new Games( $db );
-		$db_teams	= new Teams( $db );
-		$db_weeks	= new Weeks( $db );
+		$db_games	= $this->db()->games();
+		$db_teams	= $this->db()->teams();
+		$db_weeks	= $this->db()->weeks();
 		$week_id	= Functions::Post_Int( 'week' );
 		$away_id	= Functions::Post_Int( 'away' );
 		$home_id	= Functions::Post_Int( 'home' );
