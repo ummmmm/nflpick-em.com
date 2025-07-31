@@ -35,8 +35,8 @@ class DatabaseTablePolls extends DatabaseTable
 
 	public function Delete( $poll_id )
 	{
-		$poll_votes 	= $this->db_manager->pollvotes();
-		$poll_answers	= $this->db_manager->pollanswers();
+		$poll_votes 	= $this->db()->pollvotes();
+		$poll_answers	= $this->db()->pollanswers();
 
 		if ( !$poll_votes->Delete_Poll( $poll_id ) || !$poll_answers->Answers_Delete_Poll( $poll_id ) || !$this->Delete_LowLevel( $poll_id ) )
 		{

@@ -133,8 +133,8 @@ class DatabaseTableGames extends DatabaseTable
 	public function Create_Games()
 	{
 		$games		= array();
-		$db_teams	= $this->db_manager->teams();
-		$db_weeks	= $this->db_manager->weeks();
+		$db_teams	= $this->db()->teams();
+		$db_weeks	= $this->db()->weeks();
 
 		$null		= $db_weeks->List_Load( $weeks );
 		$url		= 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?week=%d';

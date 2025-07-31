@@ -522,7 +522,7 @@ class ScreenRenderer
 
 	public function topNavigation()
 	{
-		$db_weeks 	= $this->db_manager->weeks();
+		$db_weeks 	= $this->db()->weeks();
 		$user		= $this->_auth->getUser();
 
 		if ( !$this->_auth->getUserID() )
@@ -537,7 +537,7 @@ class ScreenRenderer
 
 	public function sideNavigation()
 	{
-		$db_weeks 	= $this->db_manager->weeks();
+		$db_weeks 	= $this->db()->weeks();
 		$weekid 	= $db_weeks->Previous();
 		$admin 		= ( $this->_auth->isAdmin() ) ? '<li><a href="?view=admin" title="Admin Control Panel">Admin Control Panel</a></li>' : '';
 

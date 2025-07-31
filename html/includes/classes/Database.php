@@ -48,6 +48,29 @@ class DatabaseManager
 		return $this->_connection;
 	}
 
+	public function query( $query )
+	{
+		$bind_parmas = array_slice( func_get_args(), 1 );
+		return $this->connection()->query( $query, ...$bind_parmas );
+	}
+
+	public function select( $query, &$results )
+	{
+		$bind_parmas = array_slice( func_get_args(), 2 );
+		return $this->connection()->select( $query, $results, ...$bind_parmas );
+	}
+
+	public function single( $query, &$result )
+	{
+		$bind_parmas = array_slice( func_get_args(), 2 );
+		return $this->connection()->single( $query, $result, ...$bind_parmas );
+	}
+
+	public function insertID()
+	{
+		return $this->connection()->insertID();
+	}
+
 	private function _setError( $error )
 	{
 		$this->_error = $error;
@@ -392,40 +415,45 @@ class DatabaseConnection
 
 abstract class DatabaseTable
 {
-	protected $db_manager;
+	protected $_db_manager;
 
-	public function __construct( DatabaseManager $db_manager )
+	public function __construct( DatabaseManager &$db_manager )
 	{
-		$this->db_manager = $db_manager;
+		$this->_db_manager = $db_manager;
 	}
 
 	abstract public function Create();
 
 	public function getError()
 	{
-		return $this->db_manager->connection()->Get_Error();
+		return $this->db()->connection()->Get_Error();
+	}
+
+	public function db()
+	{
+		return $this->_db_manager;
 	}
 
 	public function query( $query )
 	{
 		$bind_parmas = array_slice( func_get_args(), 1 );
-		return $this->db_manager->connection()->query( $query, ...$bind_parmas );
+		return $this->db()->query( $query, ...$bind_parmas );
 	}
 
 	public function select( $query, &$results )
 	{
 		$bind_parmas = array_slice( func_get_args(), 2 );
-		return $this->db_manager->connection()->select( $query, $results, ...$bind_parmas );
+		return $this->db()->select( $query, $results, ...$bind_parmas );
 	}
 
 	public function single( $query, &$result )
 	{
 		$bind_parmas = array_slice( func_get_args(), 2 );
-		return $this->db_manager->connection()->single( $query, $result, ...$bind_parmas );
+		return $this->db()->single( $query, $result, ...$bind_parmas );
 	}
 
 	public function insertID()
 	{
-		return $this->db_manager->connection()->insertID();
+		return $this->db()->insertID();
 	}
 }

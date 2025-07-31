@@ -22,7 +22,7 @@ class DatabaseTableWeeklyRecords extends DatabaseTable
 
 	public function Insert_User( $user_id )
 	{
-		$db_weeks = $this->db_manager->weeks();
+		$db_weeks = $this->db()->weeks();
 
 		if ( !$db_weeks->List_Load( $weeks ) )
 		{

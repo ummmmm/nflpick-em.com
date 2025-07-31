@@ -51,13 +51,13 @@ class DatabaseTableUsers extends DatabaseTable
 
 	public function Delete( $user_id )
 	{
-		$db_perfect_week_paid	= $this->db_manager->perfectweekpaid();
-		$db_picks 				= $this->db_manager->picks();
-		$db_poll_votes			= $this->db_manager->pollvotes();
-		$db_reset_password		= $this->db_manager->resetpasswords();
-		$db_sent_picks			= $this->db_manager->sentpicks();
-		$db_sessions			= $this->db_manager->sessions();
-		$db_weekly_records		= $this->db_manager->weeklyrecords();
+		$db_perfect_week_paid	= $this->db()->perfectweekpaid();
+		$db_picks 				= $this->db()->picks();
+		$db_poll_votes			= $this->db()->pollvotes();
+		$db_reset_password		= $this->db()->resetpasswords();
+		$db_sent_picks			= $this->db()->sentpicks();
+		$db_sessions			= $this->db()->sessions();
+		$db_weekly_records		= $this->db()->weeklyrecords();
 
 		if ( !$db_perfect_week_paid->Delete_User( $user_id )	||
 			 !$db_picks->Delete_User( $user_id ) 				||
@@ -108,7 +108,7 @@ class DatabaseTableUsers extends DatabaseTable
 
 	public function Insert( &$user )
 	{
-		$db_weekly_records		= $this->db_manager->weeklyrecords();
+		$db_weekly_records		= $this->db()->weeklyrecords();
 		$user[ 'password' ]		= Functions::HashPassword( $user[ 'password' ] );
 
 		if ( !$this->_Insert_LowLevel( $user ) )
@@ -217,7 +217,7 @@ class DatabaseTableUsers extends DatabaseTable
 
 	public function Recalculate_Records()
 	{
-		return Functions::Update_User_Records( $this->db_manager );
+		return Functions::Update_User_Records( $this->db() );
 	}
 
 	public function Update_Record( $userid, $wins, $losses )

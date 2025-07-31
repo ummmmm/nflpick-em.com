@@ -47,6 +47,6 @@ class Screen_Default extends Screen
 
 	private function _NewsLoad_List( &$news, &$total )
 	{
-		return $this->db()->connection()->select( 'SELECT n.*, CONCAT( u.fname, \' \', u.lname ) AS name FROM news n, users u WHERE n.active = 1 AND n.user_id = u.id ORDER BY date DESC LIMIT ?', $news, $total );
+		return $this->db()->select( 'SELECT n.*, CONCAT( u.fname, \' \', u.lname ) AS name FROM news n, users u WHERE n.active = 1 AND n.user_id = u.id ORDER BY date DESC LIMIT ?', $news, $total );
 	}
 }
