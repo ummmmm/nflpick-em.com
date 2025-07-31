@@ -8,17 +8,8 @@ class Screen_Login extends Screen
 		$email 		= Functions::Post( "email" );
 		$password	= Functions::Post( "password" );
 
-		if ( !$db_users->validateLogin( $email, $password, $user ) )
+		if ( !$this->auth()->validate_login( $email, $password, $user ) )
 		{
-			$db_settings		= $this->db()->settings();
-			$db_failed_logins 	= $this->db()->failedlogins();
-			$db_failed_logins->Insert( $email );
-
-			if ( $db_settings->Load( $settings ) && $settings[ 'login_sleep' ] > 0 )
-			{
-				usleep( $settings[ 'login_sleep' ] * 1000 );
-			}
-
 			return $this->setValidationErrors( array( "Invalid email or password" ) );
 		}
 
@@ -32,27 +23,13 @@ class Screen_Login extends Screen
 
 	public function update( $data )
 	{
-		$user 			= &$data;
-		$db_sessions 	= $this->db()->sessions();
+		$settings	= $this->settings();
+		$user		= &$data;
 
-		$cookieid	= sha1( session_id() );
-		$token		= sha1( uniqid( rand(), TRUE ) );
-		$session	= array( 'token' => $token, 'cookieid' => $cookieid, 'userid' => $user[ 'id' ] );
+		$this->auth()->login( $user[ 'id' ] );
 
-		setcookie( 'session', $cookieid, time() + 60 * 60 * 24 * 30, INDEX, '', true, true );
-
-		if ( !$db_sessions->Insert( $session ) )
-		{
-			return $this->setDBError();
-		}
-
-		if ( $user[ 'force_password' ] )
-		{
-			header( "Location: ?screen=forgot_password&action=changepassword" );
-			die();
-		}
-
-		header( sprintf( 'Location: %s', INDEX ) );
+		if ( !$user[ 'force_password' ] )	header( sprintf( 'Location: %s', $settings[ 'domain_url' ] ) );
+		else								header( sprintf( 'Location: %s?screen=forgot_password&action=changepassword', $settings[ 'domain_url' ] ) );
 
 		return true;
 	}
@@ -68,8 +45,10 @@ class Screen_Login extends Screen
 	{
 		if ( $this->_auth->getUserID() )
 		{
-			header( sprintf( "Location: %s", INDEX ) );
-			die();
+			$settings = $this->settings();
+
+			header( sprintf( 'Location: %s', $settings[ 'domain_url' ] ) );
+			return true;
 		}
 
 		$email = Functions::Post( "email" );

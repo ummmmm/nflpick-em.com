@@ -12,7 +12,7 @@ class Screen_DeleteAccount extends Screen_User
 		$db_users = $this->db()->users();
 		$password = Functions::Post( 'password' );
 
-		if ( !$db_users->validateLogin( $this->_auth->getUser()[ 'email' ], $password, $null ) )
+		if ( !$this->auth()->validate_login( $this->_auth->getUser()[ 'email' ], $password, $null ) )
 		{
 			return $this->setValidationErrors( 'Invalid password' );
 		}
@@ -22,15 +22,17 @@ class Screen_DeleteAccount extends Screen_User
 
 	public function update( $data )
 	{
-		$db_users = $this->db()->users();
+		$settings	= $this->settings();
+		$db_users	= $this->db()->users();
+
+		$this->auth()->logout();
 
 		if ( !$db_users->Delete( $this->_auth->getUserID() ) )
 		{
 			return $this->setDBError();
 		}
 
-		header( sprintf( "Location: %s", INDEX ) );
-		die();
+		header( sprintf( 'Location: %s', $settings[ 'domain_url' ] ) );
 
 		return true;
 	}

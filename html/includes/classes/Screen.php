@@ -55,6 +55,11 @@ abstract class Screen
 		return true;
 	}
 
+	protected function auth()
+	{
+		return $this->_screen_renderer->auth();
+	}
+
 	protected function db()
 	{
 		return $this->_screen_renderer->db();

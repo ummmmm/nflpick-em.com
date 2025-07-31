@@ -2,6 +2,7 @@
 
 require_once( 'includes/classes/functions.php' );
 require_once( 'includes/classes/Database.php' );
+require_once( 'includes/classes/Authentication.php' );
 require_once( 'includes/classes/Setup.php' );
 
 
@@ -24,6 +25,7 @@ function install()
 {
 	$install 	= Functions::Post( 'install' );
 	$db_manager	= new DatabaseManager();
+	$auth		= new Authentication( $db_manager );
 
 	if ( !$db_manager->initialize() )
 	{
@@ -31,7 +33,7 @@ function install()
 		exit();
 	}
 
-	$setup = new Setup( $db_manager );
+	$setup = new Setup( $db_manager, $auth );
 
 	if ( $setup->Configured() )
 	{
@@ -129,6 +131,7 @@ function uninstall()
 {
 	$uninstall	= Functions::Post( 'uninstall' );
 	$db_manager	= new DatabaseManager();
+	$auth		= new Authentication( $db_manager );
 
 	if ( !$db_manager->initialize() )
 	{
@@ -138,7 +141,7 @@ function uninstall()
 
 	if ( $uninstall != '' )
 	{
-		$setup		= new Setup( $db_manager );
+		$setup		= new Setup( $db_manager, $auth );
 		$email 		= Functions::Post( 'email' );
 		$password 	= Functions::Post( 'password' );
 

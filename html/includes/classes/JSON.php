@@ -26,6 +26,11 @@ abstract class JSON
 		return array();
 	}
 
+	protected function auth()
+	{
+		return $this->_json_manager->auth();
+	}
+
 	protected function db()
 	{
 		return $this->_json_manager->db();
@@ -119,6 +124,11 @@ class JSONManager
 		$this->_action		= null;
 		$this->_error		= array();
 		$this->_settings	= null;
+	}
+
+	public function auth()
+	{
+		return $this->_auth;
 	}
 
 	public function db()

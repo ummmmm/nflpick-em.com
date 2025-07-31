@@ -95,31 +95,33 @@ EOF );
 
 	public function update( $data )
 	{
-		$db_sessions	= $this->db()->sessions();
-		$db_users		= $this->db()->users();
-		$user 			= array( 'fname' 			=> $data[ 'fname' ],
-								 'lname' 			=> $data[ 'lname' ],
-								 'email' 			=> $data[ 'email' ],
-								 'password' 		=> $data[ 'password' ],
-								 'admin' 			=> 0,
-								 'sign_up' 			=> time(),
-								 'last_on' 			=> time(),
-								 'wins' 			=> 0,
-								 'losses' 			=> 0,
-								 'paid' 			=> 0,
-								 'current_place' 	=> 1,
-								 'email_preference' => 1,
-								 'force_password' 	=> 0,
-								 'active'			=> 1,
-								 'message'			=> '',
-								 'pw_opt_out'		=> $data[ 'pw_opt_out' ] ? 1 : 0 );
+		$settings	= $this->settings();
+		$db_users	= $this->db()->users();
+		$user 		= array( 'fname' 			=> $data[ 'fname' ],
+							 'lname' 			=> $data[ 'lname' ],
+							 'email' 			=> $data[ 'email' ],
+							 'password' 		=> $data[ 'password' ],
+							 'admin' 			=> 0,
+							 'sign_up' 			=> time(),
+							 'last_on' 			=> time(),
+							 'wins' 			=> 0,
+							 'losses' 			=> 0,
+							 'paid' 			=> 0,
+							 'current_place' 	=> 1,
+							 'email_preference' => 1,
+							 'force_password' 	=> 0,
+							 'active'			=> 1,
+							 'message'			=> '',
+							 'pw_opt_out'		=> $data[ 'pw_opt_out' ] ? 1 : 0 );
 
-		if ( !$db_users->Insert( $user ) || !$db_sessions->Generate( $user[ 'id' ] ) )
+		if ( !$db_users->Insert( $user ) )
 		{
 			return false;
 		}
 
-		header( sprintf( 'Location: %s', INDEX ) );
+		$this->auth()->login( $user[ 'id' ] );
+
+		header( sprintf( 'Location: %s', $settings[ 'domain_url' ] ) );
 
 		return true;
 	}
@@ -128,8 +130,10 @@ EOF );
 	{
 		if ( $this->_auth->getUserID() )
 		{
-			header( sprintf( "Location: %s", INDEX ) );
-			die();
+			$settings = $this->settings();
+
+			header( sprintf( 'Location: %s', $settings[ 'domain_url' ] ) );
+			return true;
 		}
 
 		$settings = $this->settings();

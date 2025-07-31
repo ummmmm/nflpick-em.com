@@ -1,15 +1,18 @@
 <?php
 require_once( 'Database.php' );
+require_once( 'Authentication.php' );
 require_once( 'functions.php' );
 
 class Setup
 {
 	private $_db_manager;
+	private $_auth;
 	private $_error;
 
-	public function __construct( DatabaseManager $db_manager )
+	public function __construct( DatabaseManager &$db_manager, Authentication &$auth )
 	{
-		$this->_db_manager = $db_manager;
+		$this->_db_manager	= $db_manager;
+		$this->_auth		= $auth;
 	}
 
 	public function Install()
@@ -29,9 +32,7 @@ class Setup
 
 	public function Uninstall( $email, $password )
 	{
-		$db_users = $this->_db_manager->users();
-
-		if ( !$db_users->validateLogin( $email, $password, $user ) )
+		if ( !$this->_auth->validate_login( $email, $password, $user ) )
 		{
 			return $this->_Set_Error( 'Invalid email / password' );
 		}
