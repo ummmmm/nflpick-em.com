@@ -13,14 +13,12 @@ abstract class Screen
 	private $_update_message;
 	private $_settings;
 
-	protected $_db_manager;
 	protected $_screen_renderer;
 	protected $_auth;
 
 	public function __construct( ScreenRenderer &$screen_renderer, Authentication &$auth )
 	{
 		$this->_screen_renderer		= $screen_renderer;
-		$this->_db_manager			= $screen_renderer->db_manager;
 		$this->_auth				= $auth;
 
 		$this->_error				= array();
@@ -76,7 +74,7 @@ abstract class Screen
 
 	protected function setDBError()
 	{
-		return $this->setError( $this->_db_manager->Get_Error() );
+		return $this->setError( $this->db()->Get_Error() );
 	}
 
 	protected function setValidationErrors( $errors )
@@ -152,7 +150,7 @@ class ScreenRenderer
 	const FLAG_ERROR_CONTENT		= 0x6;
 
 	private $_db;
-	public $db_manager;
+	private $_db_manager;
 	private $_auth;
 	private $_screen;
 	private $_error;
@@ -167,8 +165,8 @@ class ScreenRenderer
 
 	public function __construct()
 	{
-		$this->db_manager 			= new DatabaseManager();
-		$this->_auth				= new Authentication( $this->db_manager );
+		$this->_db_manager 			= new DatabaseManager();
+		$this->_auth				= new Authentication( $this->_db_manager );
 
 		$this->_screen				= null;
 		$this->_error				= array();
@@ -183,6 +181,11 @@ class ScreenRenderer
 		$this->_run_update			= false;
 	}
 
+	public function db()
+	{
+		return $this->_db_manager;
+	}
+
 	public function auth()
 	{
 		return $this->_auth;
@@ -190,9 +193,9 @@ class ScreenRenderer
 
 	public function initialize()
 	{
-		if ( !$this->db_manager->initialize() )
+		if ( !$this->db()->initialize() )
 		{
-			return $this->_setError( $this->db_manager->Get_Error() );
+			return $this->_setError( $this->db()->Get_Error() );
 		}
 
 		$this->_auth->initialize();
@@ -260,18 +263,13 @@ class ScreenRenderer
 		return true;
 	}
 
-	public function db()
-	{
-		return $this->db_manager;
-	}
-
 	public function settings()
 	{
 		if ( $this->_settings == null )
 		{
-			if ( !$this->db_manager->settings()->Load( $this->_settings ) )
+			if ( !$this->db()->settings()->Load( $this->_settings ) )
 			{
-				throw new Exception( sprintf( 'Failed to load settings: %s', $this->db_manager->Get_Error() ) );
+				throw new Exception( sprintf( 'Failed to load settings: %s', $this->db()->Get_Error() ) );
 			}
 		}
 

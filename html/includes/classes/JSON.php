@@ -6,9 +6,8 @@ require_once( "functions.php" );
 
 abstract class JSON
 {
-	protected $_db;
 	private $_json_manager;
-	private $_db_manager;
+
 	protected $_auth;
 
 	protected $_data;
@@ -17,8 +16,7 @@ abstract class JSON
 	public function __construct( JSONManager &$json_manager, Authentication &$auth )
 	{
 		$this->_json_manager	= $json_manager;
-		$this->_db_manager		= $json_manager->db_manager;
-		$this->_auth	= $auth;
+		$this->_auth			= $auth;
 	}
 
 	abstract protected function execute();
@@ -30,7 +28,7 @@ abstract class JSON
 
 	protected function db()
 	{
-		return $this->_db_manager;
+		return $this->_json_manager->db();
 	}
 
 	protected function settings()
@@ -54,7 +52,7 @@ abstract class JSON
 
 	protected function setDBError()
 	{
-		return $this->setError( $this->_db->Get_Error() );
+		return $this->setError( $this->db()->Get_Error() );
 	}
 
 	public function getError()
@@ -106,8 +104,7 @@ class JSONManager
 	const FLAG_REQ_ADMIN	= 0x2;
 	const FLAG_REQ_TOKEN	= 0x4;
 
-	private $_db;
-	public $db_manager;
+	private $_db_manager;
 	private $_auth;
 
 	private $_error;
@@ -117,11 +114,16 @@ class JSONManager
 
 	public function __construct()
 	{
-		$this->db_manager 	= new DatabaseManager();
-		$this->_auth		= new Authentication( $this->db_manager );
+		$this->_db_manager 	= new DatabaseManager();
+		$this->_auth		= new Authentication( $this->_db_manager );
 		$this->_action		= null;
 		$this->_error		= array();
 		$this->_settings	= null;
+	}
+
+	public function db()
+	{
+		return $this->_db_manager;
 	}
 
 	public function execute( $admin, $action, $token )
@@ -148,9 +150,9 @@ class JSONManager
 
 	private function _initialize()
 	{
-		if ( !$this->db_manager->initialize() )
+		if ( !$this->db()->initialize() )
 		{
-			return $this->_setError( $this->db_manager->Get_Error() );
+			return $this->_setError( $this->db()->Get_Error() );
 		}
 
 		$this->_auth->initialize();
@@ -234,9 +236,9 @@ class JSONManager
 	{
 		if ( $this->_settings == null )
 		{
-			if ( !$this->db_manager->settings()->Load( $this->_settings ) )
+			if ( !$this->db()->settings()->Load( $this->_settings ) )
 			{
-				throw new Exception( sprintf( 'Failed to load settings: %s', $this->db_manager->Get_Error() ) );
+				throw new Exception( sprintf( 'Failed to load settings: %s', $this->db()->Get_Error() ) );
 			}
 		}
 
