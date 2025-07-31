@@ -90,9 +90,6 @@ class DatabaseTableUsers extends DatabaseTable
 			return false;
 		}
 
-		$this->id 		= $this->insertID();
-		$user[ 'id' ] 	= $this->insertID();
-
 		if ( !$db_weekly_records->Insert_User( $user[ 'id' ] ) )
 		{
 			return false;
@@ -103,40 +100,20 @@ class DatabaseTableUsers extends DatabaseTable
 
 	private function _Insert_LowLevel( &$user )
 	{
-		return $this->query( 'INSERT INTO users
-							  ( fname, lname, email, password, admin, sign_up, last_on, wins, losses, paid, current_place, email_preference, force_password, active, message, pw_opt_out )
-							  VALUES
-							  ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )',
-							  $user[ 'fname' ], $user[ 'lname' ], $user[ 'email' ], $user[ 'password' ], $user[ 'admin' ], $user[ 'sign_up' ], $user[ 'last_on' ],
-							  $user[ 'wins' ], $user[ 'losses' ], $user[ 'paid' ], $user[ 'current_place' ], $user[ 'email_preference' ], $user[ 'force_password' ],
-							  $user[ 'active' ], $user[ 'message' ], $user[ 'pw_opt_out' ] );
-	}
+		$result = $this->query( 'INSERT INTO users
+								 ( fname, lname, email, password, admin, sign_up, last_on, wins, losses, paid, current_place, email_preference, force_password, active, message, pw_opt_out )
+								 VALUES
+								 ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )',
+								 $user[ 'fname' ], $user[ 'lname' ], $user[ 'email' ], $user[ 'password' ], $user[ 'admin' ], $user[ 'sign_up' ], $user[ 'last_on' ],
+								 $user[ 'wins' ], $user[ 'losses' ], $user[ 'paid' ], $user[ 'current_place' ], $user[ 'email_preference' ], $user[ 'force_password' ],
+								 $user[ 'active' ], $user[ 'message' ], $user[ 'pw_opt_out' ] );
 
-	public function validateLogin( $email, $password, &$user )
-	{
-		if ( !$this->Load_Email( $email, $loaded_user ) )
+		if ( !$result )
 		{
 			return false;
 		}
 
-		if ( $loaded_user[ 'force_password' ] == 0 )
-		{
-			if ( !Functions::VerifyPassword( $password, $loaded_user[ 'password' ] ) )
-			{
-				return false;
-			}
-		}
-		else
-		{
-			$db_reset_password = new Reset_Passwords( $this->db );
-
-			if ( !$db_reset_password->Load_User( $loaded_user[ 'id' ], $reset_password ) || !Functions::VerifyPassword( $password, $reset_password[ 'password'] ) )
-			{
-				return false;
-			}
-		}
-
-		$user = $loaded_user;
+		$user[ 'id' ] = $this->insertID();
 
 		return true;
 	}

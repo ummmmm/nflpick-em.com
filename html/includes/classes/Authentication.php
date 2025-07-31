@@ -15,11 +15,22 @@ class Authentication
 	public function __construct( DatabaseManager &$db_manager )
 	{
 		$this->_db_manager	= $db_manager;
+		
+		$this->_setDefaults();
+	}
+
+	private function _setDefaults()
+	{
 		$this->_user		= null;
 		$this->_session		= null;
 		$this->_userID		= 0;
 		$this->_token		= 0;
 		$this->_reload		= false;
+	}
+
+	public function db()
+	{
+		return $this->_db_manager;
 	}
 
 	public function initialize()
@@ -30,8 +41,8 @@ class Authentication
 		{
 			if ( $this->_load_session( $session_cookie ) )
 			{
-				$this->_db_manager->users()->Update_Last_Active( $this->_userID );
-				$this->_db_manager->sessions()->Update_Cookie_Last_Active( $this->_session[ 'cookieid' ] );
+				$this->db()->users()->Update_Last_Active( $this->_userID );
+				$this->db()->sessions()->Update_Cookie_Last_Active( $this->_session[ 'cookieid' ] );
 			}
 		}
 
@@ -40,7 +51,7 @@ class Authentication
 
 	private function _load_session( $session_cookie )
 	{
-		if ( !$this->_db_manager->sessions()->Load( $session_cookie, $session ) || !$this->_db_manager->users()->Load( $session[ 'userid' ], $user ) )
+		if ( !$this->db()->sessions()->Load( $session_cookie, $session ) || !$this->db()->users()->Load( $session[ 'userid' ], $user ) )
 		{
 			return false;
 		}
@@ -51,6 +62,83 @@ class Authentication
 		$this->_token	= $session[ 'token' ];
 
 		return true;
+	}
+
+	public function validate_login( $email, $password, &$user )
+	{
+		$validate = function() use ( $email, $password, &$user )
+		{
+			if ( !$this->db()->users()->Load_Email( $email, $loaded_user ) )
+			{
+				return false;
+			}
+
+			if ( $loaded_user[ 'force_password' ] == 0 )
+			{
+				if ( !Functions::VerifyPassword( $password, $loaded_user[ 'password' ] ) )
+				{
+					return false;
+				}
+			}
+			else
+			{
+				$db_reset_password = $this->db()->resetpasswords();
+
+				if ( !$db_reset_password->Load_User( $loaded_user[ 'id' ], $reset_password ) || !Functions::VerifyPassword( $password, $reset_password[ 'password'] ) )
+				{
+					return false;
+				}
+			}
+
+			$user = $loaded_user;
+
+			return true;
+		};
+		
+
+		if ( !$validate( $email, $password, $user ) )
+		{
+			$db_settings		= $this->db()->settings();
+			$db_failed_logins 	= $this->db()->failedlogins();
+			$db_failed_logins->Insert( $email );
+
+			if ( $db_settings->Load( $settings ) && $settings[ 'login_sleep' ] > 0 )
+			{
+				usleep( $settings[ 'login_sleep' ] * 1000 );
+			}
+
+			return false;
+		}
+
+		return true;
+	}
+
+	public function login( $user_id )
+	{
+		$db_sessions	= $this->db()->sessions();
+
+		$cookieid		= sha1( session_id() );
+		$token			= sha1( uniqid( rand(), TRUE ) );
+		$session		= array( 'token' => $token, 'cookieid' => $cookieid, 'userid' => $user_id );
+
+		setcookie( 'session', $cookieid, time() + 60 * 60 * 24 * 30, INDEX, '', true, true );
+
+		if ( !$db_sessions->Insert( $session ) )
+		{
+			return $this->setDBError();
+		}
+
+		return true;
+	}
+
+	public function logout()
+	{
+		$db_sessions = $this->db()->sessions();
+		$db_sessions->Delete_Cookie( $this->_session[ 'cookieid' ] );
+
+		$this->_setDefaults();
+
+		setcookie( 'session', '', -1, INDEX );
 	}
 
 	public function forceUserReload()
