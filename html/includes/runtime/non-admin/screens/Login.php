@@ -35,7 +35,13 @@ class Screen_Login extends Screen
 		$user 			= &$data;
 		$db_sessions 	= $this->db()->sessions();
 
-		if ( !$db_sessions->Generate( $user[ 'id' ] ) )
+		$cookieid	= sha1( session_id() );
+		$token		= sha1( uniqid( rand(), TRUE ) );
+		$session	= array( 'token' => $token, 'cookieid' => $cookieid, 'userid' => $user[ 'id' ] );
+
+		setcookie( 'session', $cookieid, time() + 60 * 60 * 24 * 30, INDEX, '', true, true );
+
+		if ( !$db_sessions->Insert( $session ) )
 		{
 			return $this->setDBError();
 		}

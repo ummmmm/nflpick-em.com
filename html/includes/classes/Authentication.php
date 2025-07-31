@@ -7,14 +7,16 @@ class Authentication
 {
 	private $_db_manager;
 	private $_user;
+	private $_session;
 	private $_userID;
 	private $_token;
 	private $_reload;
 
-	public function __construct( $db_manager )
+	public function __construct( DatabaseManager &$db_manager )
 	{
 		$this->_db_manager	= $db_manager;
-		$this->_user		= array();
+		$this->_user		= null;
+		$this->_session		= null;
 		$this->_userID		= 0;
 		$this->_token		= 0;
 		$this->_reload		= false;
@@ -22,14 +24,31 @@ class Authentication
 
 	public function initialize()
 	{
-		$cookie_id = Functions::Cookie( 'session' );
+		$session_cookie = Functions::Cookie( 'session' );
 
-		if ( $this->_db_manager->sessions()->Load( $cookie_id, $session ) && $this->_db_manager->users()->Load( $session[ 'userid' ], $user ) )
+		if ( $session_cookie != '' )
 		{
-			$this->_user 	= $user;
-			$this->_userID	= $user[ 'id' ];
-			$this->_token	= $session[ 'token' ];
+			if ( $this->_load_session( $session_cookie ) )
+			{
+				$this->_db_manager->users()->Update_Last_Active( $this->_userID );
+				$this->_db_manager->sessions()->Update_Cookie_Last_Active( $this->_session[ 'cookieid' ] );
+			}
 		}
+
+		return true;
+	}
+
+	private function _load_session( $session_cookie )
+	{
+		if ( !$this->_db_manager->sessions()->Load( $session_cookie, $session ) || !$this->_db_manager->users()->Load( $session[ 'userid' ], $user ) )
+		{
+			return false;
+		}
+
+		$this->_user 	= $user;
+		$this->_session	= $session;
+		$this->_userID	= $user[ 'id' ];
+		$this->_token	= $session[ 'token' ];
 
 		return true;
 	}
@@ -51,6 +70,7 @@ class Authentication
 			$this->_reload = false;
 			$this->_db_manager->users()->Load( $this->_userID, $this->_user );
 		}
+
 		return $this->_user;
 	}
 

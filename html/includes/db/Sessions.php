@@ -17,20 +17,9 @@ class DatabaseTableSessions extends DatabaseTable
 		return $this->query( $sql );
 	}
 
-	public function Generate( $user_id )
+	public function Load( $cookieid, &$session )
 	{
-		$cookie_id	= sha1( session_id() );
-		$token		= sha1( uniqid( rand(), TRUE ) );
-		$session	= array( 'token' => $token, 'cookieid' => $cookie_id, 'userid' => $user_id );
-
-		setcookie( 'session', $cookie_id, time() + 60 * 60 * 24 * 30, INDEX, '', true, true );
-
-		return $this->Insert( $session );
-	}
-
-	public function Load( $cookie_id, &$session )
-	{
-		return $this->single( 'SELECT * FROM sessions WHERE cookieid = ?', $session, $cookie_id );
+		return $this->single( 'SELECT * FROM sessions WHERE cookieid = ?', $session, $cookieid );
 	}
 
 	public function Delete_User( $user_id )
@@ -68,12 +57,12 @@ class DatabaseTableSessions extends DatabaseTable
 		return $this->query( 'DELETE FROM sessions WHERE token = ?', $token );
 	}
 
-	public function Delete_Cookie( $cookie_id )
+	public function Delete_Cookie( $cookieid )
 	{
-		return $this->query( 'DELETE FROM sessions WHERE cookieid = ?', $cookie_id );
+		return $this->query( 'DELETE FROM sessions WHERE cookieid = ?', $cookieid );
 	}
 
-	public function Update_Cookie_LastActive( $cookieid )
+	public function Update_Cookie_Last_Active( $cookieid )
 	{
 		$date = time();
 

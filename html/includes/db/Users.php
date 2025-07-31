@@ -2,11 +2,6 @@
 
 class DatabaseTableUsers extends DatabaseTable
 {
-	public $id 			= 0;
-	public $account 	= array();
-	public $logged_in 	= false;
-	public $token 		= null;
-
 	public function Create()
 	{
 		$sql = "CREATE TABLE users
@@ -78,32 +73,11 @@ class DatabaseTableUsers extends DatabaseTable
 		return $this->query( 'DELETE FROM users WHERE id = ?', $userid );
 	}
 
-	private function UserActive_Update()
+	public function Update_Last_Active( $id )
 	{
 		$date = time();
 
-		return $this->query( 'UPDATE users SET last_on = ? WHERE id = ?', $date, $this->id );
-	}
-
-	public function CreateSession()
-	{
-		if ( !$this->id )
-		{
-			return false;
-		}
-
-		$db_sessions	= new Sessions( $this->db );
-		$cookieid		= sha1( session_id() );
-		$token			= sha1( uniqid( rand(), TRUE ) );
-
-		setcookie( 'session', $cookieid, time() + 60 * 60 * 24 * 30, INDEX, '', true, true );
-
-		if ( !$db_sessions->Insert( array( 'token' => $token, 'cookieid' => $cookieid, 'userid' => $this->id ) ) )
-		{
-			return false;
-		}
-
-		return true;
+		return $this->query( 'UPDATE users SET last_on = ? WHERE id = ?', $date, $id );
 	}
 
 	public function Insert( &$user )
@@ -136,27 +110,6 @@ class DatabaseTableUsers extends DatabaseTable
 							  $user[ 'fname' ], $user[ 'lname' ], $user[ 'email' ], $user[ 'password' ], $user[ 'admin' ], $user[ 'sign_up' ], $user[ 'last_on' ],
 							  $user[ 'wins' ], $user[ 'losses' ], $user[ 'paid' ], $user[ 'current_place' ], $user[ 'email_preference' ], $user[ 'force_password' ],
 							  $user[ 'active' ], $user[ 'message' ], $user[ 'pw_opt_out' ] );
-	}
-
-	private function ValidateSession()
-	{
-		$db_sessions	= new Sessions( $this->db );
-		$cookieid 		= Functions::Cookie( 'session' );
-		$count 			= $this->single( 'SELECT s.userid, s.token FROM users u, sessions s WHERE s.cookieid = ? AND u.id = s.userid', $session, $cookieid );
-
-		if ( !$count )
-		{
-			return false;
-		}
-
-		$this->id 			= $session[ 'userid' ];
-		$this->token		= $session[ 'token' ];
-		$this->logged_in 	= true;
-		$this->Load( $this->id, $this->account );
-		$this->UserActive_Update();
-		$db_sessions->Update_Cookie_LastActive( $cookieid );
-
-		return true;
 	}
 
 	public function validateLogin( $email, $password, &$user )
