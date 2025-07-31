@@ -6,9 +6,9 @@ class JSON_UpdatePerfectWeekPaidUser extends JSONAdminAction
 	{
 		$week_id				= Functions::Post( 'user_id' );
 		$user_id				= Functions::Post( 'week_id' );
-		$db_users				= new Users( $this->_db );
-		$db_weeks				= new Weeks( $this->_db );
-		$db_perfect_week_paid	= new Perfect_Week_Paid( $this->_db );
+		$db_users				= $this->db()->users();
+		$db_weeks				= $this->db()->weeks();
+		$db_perfect_week_paid	= $this->db()->perfectweekpaid();
 
 		if ( !$db_users->Load( $user_id, $loaded_user ) )
 		{

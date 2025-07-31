@@ -11,19 +11,21 @@ abstract class Screen
 	private $_validation_errors;
 	private $_validation_data;
 	private $_update_message;
+	private $_settings;
 
-	protected $_db;
+	protected $_screen_renderer;
 	protected $_auth;
 
-	public function __construct( Database &$db, Authentication &$auth )
+	public function __construct( ScreenRenderer &$screen_renderer, Authentication &$auth )
 	{
-		$this->_db					= $db;
+		$this->_screen_renderer		= $screen_renderer;
 		$this->_auth				= $auth;
 
 		$this->_error				= array();
 		$this->_validation_errors	= null;
 		$this->_validation_data		= null;
 		$this->_update_message		= null;
+		$this->_settings			= null;
 	}
 
 	abstract public function content();
@@ -53,6 +55,16 @@ abstract class Screen
 		return true;
 	}
 
+	protected function db()
+	{
+		return $this->_screen_renderer->db();
+	}
+
+	protected function settings()
+	{
+		return $this->_screen_renderer->settings();
+	}
+
 	protected function setError( $error )
 	{
 		$this->_error = $error;
@@ -62,7 +74,7 @@ abstract class Screen
 
 	protected function setDBError()
 	{
-		return $this->setError( $this->_db->Get_Error() );
+		return $this->setError( $this->db()->Get_Error() );
 	}
 
 	protected function setValidationErrors( $errors )
@@ -138,10 +150,12 @@ class ScreenRenderer
 	const FLAG_ERROR_CONTENT		= 0x6;
 
 	private $_db;
+	private $_db_manager;
 	private $_auth;
 	private $_screen;
 	private $_error;
 	private $_error_level;
+	private $_settings;
 
 	private $_head_data;
 	private $_jquery_data;
@@ -151,18 +165,42 @@ class ScreenRenderer
 
 	public function __construct()
 	{
-		$this->_db 					= new Database();
-		$this->_auth				= new Authentication();
+		$this->_db_manager 			= new DatabaseManager();
+		$this->_auth				= new Authentication( $this->_db_manager );
 
 		$this->_screen				= null;
 		$this->_error				= array();
 		$this->_error_level			= 0x0;
+
+		$this->_settings			= null;
 
 		$this->_jquery_data			= null;
 		$this->_head_data			= null;
 		$this->_content_data		= null;
 
 		$this->_run_update			= false;
+	}
+
+	public function db()
+	{
+		return $this->_db_manager;
+	}
+
+	public function auth()
+	{
+		return $this->_auth;
+	}
+
+	public function initialize()
+	{
+		if ( !$this->db()->initialize() )
+		{
+			return $this->_setError( $this->db()->Get_Error() );
+		}
+
+		$this->_auth->initialize();
+
+		return true;
 	}
 
 	private function _build_head()
@@ -223,6 +261,19 @@ class ScreenRenderer
 		}
 
 		return true;
+	}
+
+	public function settings()
+	{
+		if ( $this->_settings == null )
+		{
+			if ( !$this->db()->settings()->Load( $this->_settings ) )
+			{
+				throw new Exception( sprintf( 'Failed to load settings: %s', $this->db()->Get_Error() ) );
+			}
+		}
+
+		return $this->_settings;
 	}
 
 	public function build( $admin, $screen, $update )
@@ -327,7 +378,7 @@ class ScreenRenderer
 			return $this->_setError( array( "#Error#", "Screen is miscongifured" ) );
 		}
 
-		$this->_screen = new $class( $this->_db, $this->_auth );
+		$this->_screen = new $class( $this, $this->_auth );
 
 		if ( !$this->_screen instanceof Screen )
 		{
@@ -366,6 +417,11 @@ class ScreenRenderer
 		$this->_error = $error;
 
 		return false;
+	}
+
+	public function getError()
+	{
+		return $this->_error;
 	}
 
 	private function _setErrorLevel( $level )
@@ -464,7 +520,7 @@ class ScreenRenderer
 
 	public function topNavigation()
 	{
-		$db_weeks 	= new Weeks( $this->_db );
+		$db_weeks 	= $this->db()->weeks();
 		$user		= $this->_auth->getUser();
 
 		if ( !$this->_auth->getUserID() )
@@ -479,7 +535,7 @@ class ScreenRenderer
 
 	public function sideNavigation()
 	{
-		$db_weeks	= new Weeks( $this->_db );
+		$db_weeks 	= $this->db()->weeks();
 		$weekid 	= $db_weeks->Previous();
 		$admin 		= ( $this->_auth->isAdmin() ) ? '<li><a href="?view=admin" title="Admin Control Panel">Admin Control Panel</a></li>' : '';
 

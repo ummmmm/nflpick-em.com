@@ -25,7 +25,7 @@ class JSON_LoadUsers extends JSONAdmin
 
 	private function _Load_Users( $sort, $direction, &$users )
 	{
-		$db_weeks	= new Weeks( $this->_db );
+		$db_weeks	= $this->db()->weeks();
 		$current	= $db_weeks->Current();
 		$direction 	= ( $direction === 'asc' ) ? 'ASC' : 'DESC';
 
@@ -59,7 +59,7 @@ class JSON_LoadUsers extends JSONAdmin
 						ORDER BY
 							{$sort} {$direction}, name";
 
-		if ( !$this->_db->select( $sql, $users, $current, $current ) )
+		if ( !$this->db()->select( $sql, $users, $current, $current ) )
 		{
 			return $this->setDBError();
 		}

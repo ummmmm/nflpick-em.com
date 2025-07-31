@@ -370,32 +370,32 @@ class Functions
 		return true;
 	}
 
-	public static function Update_Records( &$db )
+	public static function Update_Records( DatabaseManager &$db_manager )
 	{
-		return Functions::Update_Weekly_Records( $db ) && Functions::Update_User_Records( $db );
+		return Functions::Update_Weekly_Records( $db_manager ) && Functions::Update_User_Records( $db_manager );
 	}
 
-	public static function Update_Weekly_Records( &$db )
+	public static function Update_Weekly_Records( DatabaseManager &$db_manager )
 	{
-		return $db->query( 'UPDATE
-						weekly_records wr
-					 SET
-						wr.wins		= ( SELECT COUNT( g.id ) FROM games g, picks p WHERE g.id = p.game_id AND p.user_id = wr.user_id AND p.week = wr.week_id AND g.final = 1 AND g.winner = p.winner_pick ),
-						wr.losses	= ( SELECT COUNT( g.id ) FROM games g, picks p WHERE g.id = p.game_id AND p.user_id = wr.user_id AND p.week = wr.week_id AND g.final = 1 AND g.winner = p.loser_pick ),
-						wr.ties		= ( SELECT COUNT( g.id ) FROM games g, picks p WHERE g.id = p.game_id AND p.user_id = wr.user_id AND p.week = wr.week_id AND g.final = 1 AND g.tied = 1 )
-					 WHERE
-						wr.manual	= 0' );
+		return $db_manager->connection()->query( 'UPDATE
+													weekly_records wr
+												  SET
+													wr.wins		= ( SELECT COUNT( g.id ) FROM games g, picks p WHERE g.id = p.game_id AND p.user_id = wr.user_id AND p.week = wr.week_id AND g.final = 1 AND g.winner = p.winner_pick ),
+													wr.losses	= ( SELECT COUNT( g.id ) FROM games g, picks p WHERE g.id = p.game_id AND p.user_id = wr.user_id AND p.week = wr.week_id AND g.final = 1 AND g.winner = p.loser_pick ),
+													wr.ties		= ( SELECT COUNT( g.id ) FROM games g, picks p WHERE g.id = p.game_id AND p.user_id = wr.user_id AND p.week = wr.week_id AND g.final = 1 AND g.tied = 1 )
+												  WHERE
+													wr.manual	= 0' );
 	}
 
-	public static function Update_User_Records( &$db )
+	public static function Update_User_Records( DatabaseManager &$db_manager )
 	{
-		$db_users = new Users( $db );
+		$db_users = $db_manager->users();
 
-		if ( !$db->query( 'UPDATE
-							users u
-						   SET
-							u.wins		= ( SELECT SUM( wr.wins ) FROM weekly_records wr WHERE wr.user_id = u.id ),
-							u.losses	= ( SELECT SUM( wr.losses ) FROM weekly_records wr WHERE wr.user_id = u.id )' ) )
+		if ( !$db_manager->connection()->query( 'UPDATE
+													users u
+												 SET
+													u.wins		= ( SELECT SUM( wr.wins ) FROM weekly_records wr WHERE wr.user_id = u.id ),
+													u.losses	= ( SELECT SUM( wr.losses ) FROM weekly_records wr WHERE wr.user_id = u.id )' ) )
 		{
 			return false;
 		}
@@ -407,12 +407,12 @@ class Functions
 
 		foreach ( $users as &$user )
 		{
-			if ( !$db->single( 'SELECT COUNT( id ) + 1 AS place FROM users WHERE wins > ?', $current, $user[ 'wins' ] ) )
+			if ( !$db_manager->connection()->single( 'SELECT COUNT( id ) + 1 AS place FROM users WHERE wins > ?', $current, $user[ 'wins' ] ) )
 			{
 				return false;
 			}
 
-			if ( !$db->query( 'UPDATE users SET current_place = ? WHERE id = ?', $current[ 'place' ], $user[ 'id' ] ) )
+			if ( !$db_manager->connection()->query( 'UPDATE users SET current_place = ? WHERE id = ?', $current[ 'place' ], $user[ 'id' ] ) )
 			{
 				return false;
 			}

@@ -4,8 +4,8 @@ class JSON_InsertPoll extends JSONAdminAction
 {
 	public function execute()
 	{
-		$db_poll_answers	= new Poll_Answers( $this->_db );
-		$db_polls			= new Polls( $this->_db );
+		$db_poll_answers	= $this->db()->pollanswers();
+		$db_polls			= $this->db()->polls();
 		$question			= Functions::Post( 'question' );
 		$answers			= array_filter( Functions::Post_Array( 'answers' ) );
 		$active				= Functions::Post_Active( 'active' );
@@ -29,7 +29,7 @@ class JSON_InsertPoll extends JSONAdminAction
 			return $this->setDBError();
 		}
 		
-		$poll_id = $this->_db->insertID();
+		$poll_id = $db_polls->insertID();
 		
 		foreach( $answers as $answer )
 		{

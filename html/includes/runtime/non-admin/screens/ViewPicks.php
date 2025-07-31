@@ -4,7 +4,7 @@ class Screen_ViewPicks extends Screen_User
 {
 	public function content()
 	{
-		$db_weeks	= new Weeks( $this->_db );
+		$db_weeks	= $this->db()->weeks();
 		$week_id 	= Functions::Get( 'week' );
 
 		if ( $week_id === '' )
@@ -46,11 +46,11 @@ class Screen_ViewPicks extends Screen_User
 	private function _PickLayout( &$week )
 	{
 		$week_id			= $week[ 'id' ];
-		$db_users			= new Users( $this->_db );
-		$db_games 			= new Games( $this->_db );
-		$db_picks 			= new Picks( $this->_db );
-		$db_weeks			= new Weeks( $this->_db );
-		$db_weekly_records	= new Weekly_Records( $this->_db );
+		$db_users			= $this->db()->users();
+		$db_games 			= $this->db()->games();
+		$db_picks 			= $this->db()->picks();
+		$db_weeks			= $this->db()->weeks();
+		$db_weekly_records	= $this->db()->weeklyrecords();
 
 		if ( !$this->_Users_List_Load( $users ) )
 		{
@@ -222,6 +222,6 @@ EOD );
 
 	private function _Users_List_Load( &$users )
 	{
-		return $this->_db->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name, CONCAT( SUBSTRING( fname, 1, 1 ), \'.\', SUBSTRING( lname, 1, 1 ), \'.\' ) AS abbr FROM users ORDER BY abbr, fname, lname, id', $users );
+		return $this->db()->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name, CONCAT( SUBSTRING( fname, 1, 1 ), \'.\', SUBSTRING( lname, 1, 1 ), \'.\' ) AS abbr FROM users ORDER BY abbr, fname, lname, id', $users );
 	}
 }

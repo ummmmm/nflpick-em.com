@@ -4,9 +4,9 @@ class JSON_LoadPicks extends JSONUser
 {
 	public function execute()
 	{
-		$db_games	= new Games( $this->_db );
-		$db_picks	= new Picks( $this->_db );
-		$db_weeks	= new Weeks( $this->_db );
+		$db_games	= $this->db()->games();
+		$db_picks	= $this->db()->picks();
+		$db_weeks	= $this->db()->weeks();
 		$week_id	= Functions::Post( 'week_id' );
 
 		$count = $db_weeks->Load( $week_id, $week );

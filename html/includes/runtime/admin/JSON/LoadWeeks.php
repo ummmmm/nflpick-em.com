@@ -4,7 +4,7 @@ class JSON_LoadWeeks extends JSONAdmin
 {
 	public function execute()
 	{
-		$db_weeks 	= new Weeks( $this->_db );
+		$db_weeks 	= $this->db()->weeks();
 		$count 		= $db_weeks->List_Load( $weeks );
 		
 		if ( $count === false )

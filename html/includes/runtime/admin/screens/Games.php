@@ -11,7 +11,7 @@ class Screen_Games extends Screen_Admin
 
 	public function content()
 	{
-		$db_teams	= new Teams( $this->_db );
+		$db_teams	= $this->db()->games();
 		$count		= $db_teams->List_Load( $teams );
 		
 		if ( $count === false )

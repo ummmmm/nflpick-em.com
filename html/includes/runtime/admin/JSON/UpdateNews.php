@@ -4,7 +4,7 @@ class JSON_UpdateNews extends JSONAdminAction
 {
 	public function execute()
 	{
-		$db_news	= new News( $this->_db );
+		$db_news	= $this->db()->news();
 		$news_id	= Functions::Post( 'news_id' );
 		$title		= Functions::Post( 'title' );
 		$message	= Functions::Post( 'message' );

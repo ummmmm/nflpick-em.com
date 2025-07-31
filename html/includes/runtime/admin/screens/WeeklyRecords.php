@@ -6,8 +6,8 @@ class Screen_WeeklyRecords extends Screen_Admin
 	{
 		$week_id	= Functions::Get( 'week' );
 		$user_id	= Functions::Get( 'user' );
-		$db_weeks	= new Weeks( $this->_db );
-		$db_users	= new Users( $this->_db );
+		$db_weeks	= $this->db()->weeks();
+		$db_users	= $this->db()->users();
 
 		if ( $week_id == '' )
 		{
@@ -34,7 +34,7 @@ class Screen_WeeklyRecords extends Screen_Admin
 
 	private function _WeekList()
 	{
-		$db_weeks = new Weeks( $this->_db );
+		$db_weeks = $this->db()->weeks();
 
 		if ( $db_weeks->List_Load_Locked( $weeks ) === false )
 		{
@@ -58,10 +58,10 @@ class Screen_WeeklyRecords extends Screen_Admin
 
 	private function _WeekPicks( &$week )
 	{
-		$db_games			= new Games( $this->_db );
-		$db_users			= new Users( $this->_db );
-		$db_picks			= new Picks( $this->_db );
-		$db_weekly_records	= new Weekly_Records( $this->_db );
+		$db_games			= $this->db()->games();
+		$db_users			= $this->db()->users();
+		$db_picks			= $this->db()->picks();
+		$db_weekly_records	= $this->db()->weeklyrecords();
 
 		if ( !$db_users->List_Load( $users ) )
 		{
@@ -119,8 +119,8 @@ class Screen_WeeklyRecords extends Screen_Admin
 
 	private function _WeekUserPicks( &$week, &$user )
 	{
-		$db_picks			= new Picks( $this->_db );
-		$db_weekly_records	= new Weekly_Records( $this->_db );
+		$db_picks			= $this->db()->picks();
+		$db_weekly_records	= $this->db()->weeklyrecords();
 
 		if ( !$db_weekly_records->Load_User_Week( $user[ 'id' ], $week[ 'id' ], $weekly_record ) )
 		{

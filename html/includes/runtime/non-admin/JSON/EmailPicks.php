@@ -6,9 +6,9 @@ class JSON_EmailPicks extends JSONUserAction
 {
 	public function execute()
 	{
-		$db_picks		= new Picks( $this->_db );
-		$db_sent_picks	= new Sent_Picks( $this->_db );
-		$db_weeks		= new Weeks( $this->_db );
+		$db_picks		= $this->db()->picks();
+		$db_sent_picks	= $this->db()->sentpicks();
+		$db_weeks		= $this->db()->weeks();
 		$week			= Functions::Post( 'week' );
 
 		if ( !$db_weeks->Load( $week, $null ) )

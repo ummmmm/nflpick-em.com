@@ -5,9 +5,9 @@ class JSON_LoadWeeklyRecords extends JSONUser
 	public function execute()
 	{
 		$output				= array();
-		$db_users			= new Users( $this->_db );
-		$db_weeks			= new Weeks( $this->_db );
-		$db_weekly_records	= new Weekly_Records( $this->_db );
+		$db_users			= $this->db()->users();
+		$db_weeks			= $this->db()->weeks();
+		$db_weekly_records	= $this->db()->weeklyrecords();
 
 		if ( !$db_users->List_Load( $users ) )
 		{

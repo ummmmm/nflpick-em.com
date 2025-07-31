@@ -4,14 +4,8 @@ class Screen_Default extends Screen
 {
 	public function content()
 	{
-		$db_settings = new Settings( $this->_db );
-
-		if ( !$db_settings->Load( $settings ) )
-		{
-			return $this->setDBError();
-		}
-
-		$action = Functions::Get( 'action' );
+		$settings	= $this->settings();
+		$action		= Functions::Get( 'action' );
 
 		$total = ( $action === 'viewall' ) ? 1000 : $settings[ 'max_news' ];
 
@@ -53,6 +47,6 @@ class Screen_Default extends Screen
 
 	private function _NewsLoad_List( &$news, &$total )
 	{
-		return $this->_db->select( 'SELECT n.*, CONCAT( u.fname, \' \', u.lname ) AS name FROM news n, users u WHERE n.active = 1 AND n.user_id = u.id ORDER BY date DESC LIMIT ?', $news, $total );
+		return $this->db()->select( 'SELECT n.*, CONCAT( u.fname, \' \', u.lname ) AS name FROM news n, users u WHERE n.active = 1 AND n.user_id = u.id ORDER BY date DESC LIMIT ?', $news, $total );
 	}
 }

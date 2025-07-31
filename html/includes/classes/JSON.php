@@ -6,16 +6,17 @@ require_once( "functions.php" );
 
 abstract class JSON
 {
-	protected $_db;
+	private $_json_manager;
+
 	protected $_auth;
 
 	protected $_data;
 	protected $_error;
 
-	public function __construct( Database &$db, Authentication &$auth )
+	public function __construct( JSONManager &$json_manager, Authentication &$auth )
 	{
-		$this->_db		= $db;
-		$this->_auth	= $auth;
+		$this->_json_manager	= $json_manager;
+		$this->_auth			= $auth;
 	}
 
 	abstract protected function execute();
@@ -23,6 +24,16 @@ abstract class JSON
 	public function requirements()
 	{
 		return array();
+	}
+
+	protected function db()
+	{
+		return $this->_json_manager->db();
+	}
+
+	protected function settings()
+	{
+		return $this->_json_manager->settings();
 	}
 
 	protected function setError( $error )
@@ -41,7 +52,7 @@ abstract class JSON
 
 	protected function setDBError()
 	{
-		return $this->setError( $this->_db->Get_Error() );
+		return $this->setError( $this->db()->Get_Error() );
 	}
 
 	public function getError()
@@ -93,23 +104,35 @@ class JSONManager
 	const FLAG_REQ_ADMIN	= 0x2;
 	const FLAG_REQ_TOKEN	= 0x4;
 
-	private $_db;
+	private $_db_manager;
 	private $_auth;
 
 	private $_error;
 	private $_action;
 	private $_data;
+	private $_settings;
 
 	public function __construct()
 	{
-		$this->_db 		= new Database();
-		$this->_auth	= new Authentication();
-		$this->_action	= null;
-		$this->_error	= array();
+		$this->_db_manager 	= new DatabaseManager();
+		$this->_auth		= new Authentication( $this->_db_manager );
+		$this->_action		= null;
+		$this->_error		= array();
+		$this->_settings	= null;
+	}
+
+	public function db()
+	{
+		return $this->_db_manager;
 	}
 
 	public function execute( $admin, $action, $token )
 	{
+		if ( !$this->_initialize() )
+		{
+			return $this->_responseError();
+		}
+
 		if ( !$this->_configure( $admin, $action, $token ) )
 		{
 			return $this->_responseError();
@@ -123,6 +146,18 @@ class JSONManager
 		}
 
 		return $this->_responseSuccess();
+	}
+
+	private function _initialize()
+	{
+		if ( !$this->db()->initialize() )
+		{
+			return $this->_setError( $this->db()->Get_Error() );
+		}
+
+		$this->_auth->initialize();
+
+		return true;
 	}
 
 	private function _configure( $admin, $action, $token )
@@ -144,7 +179,7 @@ class JSONManager
 			return $this->_setError( array( '#Error#', 'Action is misconfigured' ) );
 		}
 
-		$this->_action = new $class( $this->_db, $this->_auth );
+		$this->_action = new $class( $this, $this->_auth );
 
 		if ( !$this->_action instanceof JSON )
 		{
@@ -195,6 +230,19 @@ class JSONManager
 		}
 
 		return json_encode( array( 'success' => false, 'error_code' => $code, 'error_message' => $message ) );
+	}
+
+	public function settings()
+	{
+		if ( $this->_settings == null )
+		{
+			if ( !$this->db()->settings()->Load( $this->_settings ) )
+			{
+				throw new Exception( sprintf( 'Failed to load settings: %s', $this->db()->Get_Error() ) );
+			}
+		}
+
+		return $this->_settings;
 	}
 
 	private function _responseSuccess()

@@ -12,13 +12,8 @@ EOF );
 
 	public function validate()
 	{
-		$db_users		= new Users( $this->_db );
-		$db_settings 	= new Settings( $this->_db );
-
-		if ( !$db_settings->Load( $settings ) )
-		{
-			return $this->setDBError();
-		}
+		$settings	= $this->settings();
+		$db_users	= $this->db()->users();
 
 		if ( $settings[ 'registration' ] != 1 )
 		{
@@ -100,8 +95,8 @@ EOF );
 
 	public function update( $data )
 	{
-		$db_sessions	= new Sessions( $this->_db );
-		$db_users		= new Users( $this->_db );
+		$db_sessions	= $this->db()->sessions();
+		$db_users		= $this->db()->users();
 		$user 			= array( 'fname' 			=> $data[ 'fname' ],
 								 'lname' 			=> $data[ 'lname' ],
 								 'email' 			=> $data[ 'email' ],
@@ -137,9 +132,9 @@ EOF );
 			die();
 		}
 
-		$db_settings = new Settings( $this->_db );
+		$settings = $this->settings();
 
-		if ( !$db_settings->Load( $settings ) || $settings[ 'registration' ] != 1 )
+		if ( $settings[ 'registration' ] != 1 )
 		{
 			return Functions::Information( "Registration Disabled", "You currently cannot sign up for the NFL Pick-Em League." );
 		}

@@ -8,28 +8,33 @@ require_once( "includes/classes/functions.php" );
 require_once( "includes/classes/Database.php" );
 require_once( "includes/classes/Screen.php" );
 
-$db					= new Database();
-$users				= new Users( $db );
-$settings			= new Settings( $db );
 $screen_renderer 	= new ScreenRenderer();
 $admin 				= Functions::Get( "view" ) == "admin" ? true : false;
 $screen				= Functions::Get( "screen" ) === "" ? "default" : Functions::Get( "screen" );
 $update				= Functions::Post_Int( "update" ) ? true : false;
 
+if ( !$screen_renderer->initialize() )
+{
+	print_r( $screen_renderer->getError() );
+	die();
+}
+
 $screen_renderer->build( $admin, $screen, $update );
+
+$settings = $screen_renderer->settings();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title><?php printf( '%s', htmlentities( $settings->site_title ) ); ?></title>
-	<base href="<?php print $settings->domain_url; ?>" />
+	<title><?php printf( '%s', htmlentities( $settings[ 'site_title' ] ) ); ?></title>
+	<base href="<?php print $settings[ 'domain_url' ]; ?>" />
 	<link rel="icon" type="image/x-icon" href="static/favicon.ico" />
 	<link rel="stylesheet" type="text/css" href="static/css/styles.css" media="screen" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
 	<script src="static/javascript/jqueryui.js" type="text/javascript"></script>
 	<script src="static/javascript/javascript.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		var token = <?php print json_encode( $users->token ); ?>;
+		var token = <?php print json_encode( $screen_renderer->auth()->getToken() ); ?>;
 	</script>
 	<?php
 		if ( $admin )
@@ -46,7 +51,7 @@ $screen_renderer->build( $admin, $screen, $update );
 	<div class="container">
 		<div class="header">
 			<div class="title">
-				<h1><a href="" title="<?php printf( "%s", htmlentities( $settings->site_title ) ); ?>"><?php printf( "%s", htmlentities( $settings->site_title ) ); ?></a></h1>
+				<h1><a href="" title="<?php printf( "%s", htmlentities( $settings[ 'site_title' ] ) ); ?>"><?php printf( "%s", htmlentities( $settings[ 'site_title' ] ) ); ?></a></h1>
 			</div>
 		</div>
 		<div class="navigation">

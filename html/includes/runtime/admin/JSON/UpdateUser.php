@@ -4,7 +4,7 @@ class JSON_UpdateUser extends JSONAdminAction
 {
 	public function execute()
 	{
-		$db_users	= new Users( $this->_db );
+		$db_users	= $this->db()->users();
 		$user_id	= Functions::Post_Int( 'user_id' );
 		$first_name	= Functions::Post( 'first_name' );
 		$last_name	= Functions::Post( 'last_name' );

@@ -1,14 +1,7 @@
 <?php
 
-class Picks
+class DatabaseTablePicks extends DatabaseTable
 {
-	private $_db;
-
-	public function __construct( Database &$db )
-	{
-		$this->_db = $db;
-	}
-
 	public function Create()
 	{
 		$sql = "CREATE TABLE `picks`
@@ -26,7 +19,7 @@ class Picks
 					KEY picks_2 ( user_id, week )
 				)";
 
-		return $this->_db->query( $sql );
+		return $this->query( $sql );
 	}
 
 	public function Insert( $pick )
@@ -34,7 +27,7 @@ class Picks
 		$ip 		= $_SERVER[ 'REMOTE_ADDR' ];
 		$updated	= time();
 
-		return $this->_db->query( 'INSERT INTO picks
+		return $this->query( 'INSERT INTO picks
 								   ( user_id, game_id, winner_pick, loser_pick, ip, updated, week )
 								   VALUES
 								   ( ?, ?, ?, ?, ?, ?, ? )',
@@ -46,7 +39,7 @@ class Picks
 		$ip 	= $_SERVER[ 'REMOTE_ADDR' ];
 		$time 	= time();
 
-		return $this->_db->query( 'UPDATE
+		return $this->query( 'UPDATE
 									picks
 							       SET
 									winner_pick	= ?,
@@ -61,22 +54,22 @@ class Picks
 
 	public function Delete( $pick_id )
 	{
-		return $this->_db->query( 'DELETE FROM picks WHERE id = ?', $pick_id );
+		return $this->query( 'DELETE FROM picks WHERE id = ?', $pick_id );
 	}
 
 	public function Delete_User( $userid )
 	{
-		return $this->_db->query( 'DELETE FROM picks WHERE user_id = ?', $userid );
+		return $this->query( 'DELETE FROM picks WHERE user_id = ?', $userid );
 	}
 
 	public function Delete_Game( $gameid )
 	{
-		return $this->_db->query( 'DELETE FROM picks WHERE game_id = ?', $gameid );
+		return $this->query( 'DELETE FROM picks WHERE game_id = ?', $gameid );
 	}
 
 	public function Remaining( $userid, $weekid )
 	{
-		$count = $this->_db->single( 'SELECT
+		$count = $this->single( 'SELECT
 										COUNT( g.id ) AS remaining
 								      FROM
 										games g
@@ -97,7 +90,7 @@ class Picks
 
 	public function Missing( $userid, $weekid )
 	{
-		$count = $this->_db->single( 'SELECT
+		$count = $this->single( 'SELECT
 										COUNT( * ) AS count
 									  FROM
 									  	games g
@@ -117,7 +110,7 @@ class Picks
 
 	public function List_Load_UserWeek( $user_id, $week_id, &$picks )
 	{
-		return $this->_db->select( 'SELECT
+		return $this->select( 'SELECT
 										p.*,
 										wt.team AS winner,
 										lt.team AS loser
@@ -139,11 +132,11 @@ class Picks
 
 	public function Load_User_Game( $userid, $gameid, &$pick )
 	{
-		return $this->_db->single( 'SELECT * FROM picks WHERE user_id = ? AND game_id = ?', $pick, $userid, $gameid );
+		return $this->single( 'SELECT * FROM picks WHERE user_id = ? AND game_id = ?', $pick, $userid, $gameid );
 	}
 
 	public function List_Load( &$picks )
 	{
-		return $this->_db->select( 'SELECT * FROM picks ORDER BY id ASC', $picks );
+		return $this->select( 'SELECT * FROM picks ORDER BY id ASC', $picks );
 	}
 }

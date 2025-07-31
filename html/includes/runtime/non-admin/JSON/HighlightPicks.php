@@ -4,7 +4,7 @@ class JSON_HighlightPicks extends JSONUser
 {
 	public function execute()
 	{
-		$db_weeks	= new Weeks( $this->_db );
+		$db_weeks	= $this->db()->weeks();
 		$userid 	= Functions::Post( 'userid' );
 		$week		= Functions::Post( 'week' );
 		
@@ -81,8 +81,8 @@ class JSON_HighlightPicks extends JSONUser
 				  GROUP BY
 					p2.user_id";
 
-		if ( $single )	$result = $this->_db->single( $query, $picks, $userid1, $userid2, $weekid );
-		else			$result = $this->_db->select( $query, $picks, $userid1, $userid2, $weekid );
+		if ( $single )	$result = $this->db()->single( $query, $picks, $userid1, $userid2, $weekid );
+		else			$result = $this->db()->select( $query, $picks, $userid1, $userid2, $weekid );
 
 		return $result;
 	}

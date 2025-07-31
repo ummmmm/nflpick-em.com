@@ -4,7 +4,7 @@ class JSON_InsertNews extends JSONAdminAction
 {
 	public function execute()
 	{
-		$db_news	= new News( $this->_db );
+		$db_news	= $this->db()->news();
 		$title		= Functions::Post( 'title' );
 		$message	= Functions::Post( 'message' );
 		$active		= Functions::Post_Active( 'active' );	

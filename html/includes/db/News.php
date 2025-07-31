@@ -1,14 +1,7 @@
 <?php
 
-class News
+class DatabaseTableNews extends DatabaseTable
 {
-	private $_db;
-
-	public function __construct( Database &$db )
-	{
-		$this->_db = $db;
-	}
-
 	public function Create()
 	{
 		$sql = "CREATE TABLE news
@@ -23,7 +16,7 @@ class News
 					PRIMARY KEY (id)
 				)";
 
-		return $this->_db->query( $sql );
+		return $this->query( $sql );
 	}
 
 	public function Insert( &$news )
@@ -31,26 +24,26 @@ class News
 		$news[ 'ip' ]	= $_SERVER[ 'REMOTE_ADDR' ];
 		$news[ 'date' ]	= time();
 
-		return $this->_db->insert( 'news', $news );
+		return $this->query( 'INSERT INTO news ( user_id, title, news, date, ip, active ) VALUES ( ?, ?, ?, ?, ?, ? )', $news[ 'user_id' ], $news[ 'title' ], $news[ 'news' ], $news[ 'date' ], $news[ 'ip' ], $news[ 'active' ] );
 	}
 
 	public function Update( $news )
 	{
-		return $this->_db->query( 'UPDATE news SET title = ?, news = ?, active = ? WHERE id = ?', $news[ 'title' ], $news[ 'news' ], $news[ 'active' ], $news[ 'id' ] );
+		return $this->query( 'UPDATE news SET title = ?, news = ?, active = ? WHERE id = ?', $news[ 'title' ], $news[ 'news' ], $news[ 'active' ], $news[ 'id' ] );
 	}
 
 	public function Load( $newsid, &$news )
 	{
-		return $this->_db->single( 'SELECT * FROM news WHERE id = ?', $news, $newsid );
+		return $this->single( 'SELECT * FROM news WHERE id = ?', $news, $newsid );
 	}
 
 	public function List_Load( &$news )
 	{
-		return $this->_db->select( 'SELECT * FROM news ORDER BY id DESC', $news );
+		return $this->select( 'SELECT * FROM news ORDER BY id DESC', $news );
 	}
 
 	public function Delete( $news_id )
 	{
-		return $this->_db->query( 'DELETE FROM news WHERE id = ?', $news_id );
+		return $this->query( 'DELETE FROM news WHERE id = ?', $news_id );
 	}
 }

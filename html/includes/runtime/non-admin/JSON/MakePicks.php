@@ -4,10 +4,10 @@ class JSON_MakePicks extends JSONUserAction
 {
 	public function execute()
 	{
-		$db_games	= new Games( $this->_db );
-		$db_picks	= new Picks( $this->_db );
-		$db_teams	= new Teams( $this->_db );
-		$db_weeks	= new Weeks( $this->_db );
+		$db_games	= $this->db()->games();
+		$db_picks	= $this->db()->picks();
+		$db_teams	= $this->db()->teams();
+		$db_weeks	= $this->db()->weeks();
 		$date_now 	= time();
 
 		$gameid 	= Functions::Post( 'gameid' );

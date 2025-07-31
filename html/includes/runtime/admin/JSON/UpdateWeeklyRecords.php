@@ -4,11 +4,11 @@ class JSON_UpdateWeeklyRecords extends JSONAdminAction
 {
 	public function execute()
 	{
-		$db_users			= new Users( $this->_db );
-		$db_weeks			= new Weeks( $this->_db );
-		$db_games			= new Games( $this->_db );
-		$db_picks			= new Picks( $this->_db );
-		$db_weekly_records	= new Weekly_Records( $this->_db );
+		$db_users			= $this->db()->users();
+		$db_weeks			= $this->db()->weeks();
+		$db_games			= $this->db()->games();
+		$db_picks			= $this->db()->picks();
+		$db_weekly_records	= $this->db()->weeklyrecords();
 
 		$user_id	= Functions::Post_Int( 'user_id' );
 		$week_id	= Functions::Post_Int( 'week_id' );
@@ -104,7 +104,7 @@ class JSON_UpdateWeeklyRecords extends JSONAdminAction
 			return $this->setDBError();
 		}
 
-		if ( !Functions::Update_User_Records( $this->_db ) )
+		if ( !Functions::Update_User_Records( $this->db() ) )
 		{
 			return $this->setError( array( '#Error#', 'Failed to update user records' ) );
 		}
@@ -114,7 +114,7 @@ class JSON_UpdateWeeklyRecords extends JSONAdminAction
 
 	private function _load_min_wins_user_week( $user_id, $week_id, &$min_wins )
 	{
-		if ( !$this->_db->single( 'SELECT
+		if ( !$this->db()->single( 'SELECT
 									COUNT( p.id ) AS wins
 								   FROM
 									games g,

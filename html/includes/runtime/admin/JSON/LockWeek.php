@@ -4,7 +4,7 @@ class JSON_LockWeek extends JSONAdminAction
 {
 	public function execute()
 	{
-		$db_weeks	= new Weeks( $this->_db );
+		$db_weeks	= $this->db()->weeks();
 		$week_id 	= Functions::Post( 'week_id' );
 		$count 		= $db_weeks->Load( $week_id, $week );
 

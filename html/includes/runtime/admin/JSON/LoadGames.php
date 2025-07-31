@@ -9,8 +9,8 @@ class JSON_LoadGames extends JSONAdmin
 
 	public function execute()
 	{
-		$db_games	= new Games( $this->_db );
-		$db_weeks	= new Weeks( $this->_db );
+		$db_games	= $this->db()->games();
+		$db_weeks	= $this->db()->weeks();
 		$count 		= $db_weeks->List_Load( $weeks );
 		$current	= $db_weeks->Current();
 		

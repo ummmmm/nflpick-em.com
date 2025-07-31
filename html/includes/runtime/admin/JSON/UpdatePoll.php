@@ -8,9 +8,9 @@ class JSON_UpdatePoll extends JSONAdminAction
 		$question			= Functions::Post( 'question' );
 		$answers 			= Functions::Post_Array( 'answers' );
 		$active				= Functions::Post_Active( 'active' );
-		$db_polls			= new Polls( $this->_db );
-		$db_poll_votes		= new Poll_Votes( $this->_db );
-		$db_poll_answers	= new Poll_Answers( $this->_db );
+		$db_polls			= $this->db()->polls();
+		$db_poll_votes		= $this->db()->pollvotes();
+		$db_poll_answers	= $this->db()->pollanswers();
 
 		if ( $question === '' )
 		{
