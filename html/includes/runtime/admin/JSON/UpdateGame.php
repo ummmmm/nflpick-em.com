@@ -15,13 +15,13 @@ class JSON_UpdateGame extends JSONAdminAction
 
 		if ( $scored === true )
 		{
-			return $this->_Update_Scores( $this->_db, $user, $loaded_game );
+			return $this->_Update_Scores( $user, $loaded_game );
 		}
 
-		return $this->_Update_Games( $this->_db, $user, $loaded_game );
+		return $this->_Update_Games( $user, $loaded_game );
 	}
 
-	private function _Update_Scores( &$db, &$user, &$game )
+	private function _Update_Scores( &$user, &$game )
 	{
 		$db_games	= $this->db()->games();
 		$db_teams	= $this->db()->teams();
@@ -60,7 +60,7 @@ class JSON_UpdateGame extends JSONAdminAction
 			return $this->setDBError();
 		}
 
-		if ( !Functions::Update_Records( $this->_db ) )
+		if ( !Functions::Update_Records( $this->db() ) )
 		{
 			return $this->setError( 'Failed to update weekly / user records' );
 		}
@@ -73,7 +73,7 @@ class JSON_UpdateGame extends JSONAdminAction
 		return $this->setData( $game );
 	}
 
-	private function _Update_Games( &$db, &$user, &$game )
+	private function _Update_Games( &$user, &$game )
 	{
 		$db_games	= $this->db()->games();
 		$db_teams	= $this->db()->teams();
@@ -142,7 +142,7 @@ class JSON_UpdateGame extends JSONAdminAction
 			return $this->setDBError();
 		}
 
-		if ( !$this->_Picks_Update_Week( $db, $game[ 'id' ], $week_id ) )
+		if ( !$this->_Picks_Update_Week( $game[ 'id' ], $week_id ) )
 		{
 			return $this->setDBError();
 		}
@@ -155,9 +155,9 @@ class JSON_UpdateGame extends JSONAdminAction
 		return $this->setData( $game );
 	}
 
-	private function _Picks_Update_Week( &$db, $game_id, $week )
+	private function _Picks_Update_Week( $game_id, $week )
 	{
-		if ( !$db->query( 'UPDATE picks SET week = ? WHERE game_id = ?', $week, $game_id ) )
+		if ( !$this->db()->connection()->query( 'UPDATE picks SET week = ? WHERE game_id = ?', $week, $game_id ) )
 		{
 			return false;
 		}

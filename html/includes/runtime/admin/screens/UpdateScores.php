@@ -89,7 +89,7 @@ class Screen_UpdateScores extends Screen_Admin
 				return $this->setDBError();
 			}
 
-			if ( !Functions::Update_Records( $this->_db ) )
+			if ( !Functions::Update_Records( $this->db() ) )
 			{
 				return $this->setError( array( '#Error#', 'Failed to update weekly / user records' ) );
 			}

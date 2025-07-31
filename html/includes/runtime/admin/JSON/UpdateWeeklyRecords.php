@@ -104,7 +104,7 @@ class JSON_UpdateWeeklyRecords extends JSONAdminAction
 			return $this->setDBError();
 		}
 
-		if ( !Functions::Update_User_Records( $this->_db ) )
+		if ( !Functions::Update_User_Records( $this->db() ) )
 		{
 			return $this->setError( array( '#Error#', 'Failed to update user records' ) );
 		}
@@ -114,7 +114,7 @@ class JSON_UpdateWeeklyRecords extends JSONAdminAction
 
 	private function _load_min_wins_user_week( $user_id, $week_id, &$min_wins )
 	{
-		if ( !$this->_db->single( 'SELECT
+		if ( !$this->db()->connection()->single( 'SELECT
 									COUNT( p.id ) AS wins
 								   FROM
 									games g,

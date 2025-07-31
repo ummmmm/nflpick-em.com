@@ -217,7 +217,7 @@ class DatabaseTableUsers extends DatabaseTable
 
 	public function Recalculate_Records()
 	{
-		return Functions::Update_User_Records( $this->db );
+		return Functions::Update_User_Records( $this->db_manager );
 	}
 
 	public function Update_Record( $userid, $wins, $losses )

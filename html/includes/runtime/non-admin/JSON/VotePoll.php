@@ -63,6 +63,6 @@ class JSON_VotePoll extends JSONUserAction
 
 	private function _Vote_Load_Poll_User( $poll_id, $user_id )
 	{
-		return $this->_db->single( 'SELECT * FROM poll_votes WHERE poll_id = ? AND user_id = ?', $null, $poll_id, $user_id );
+		return $this->db()->connection()->single( 'SELECT * FROM poll_votes WHERE poll_id = ? AND user_id = ?', $null, $poll_id, $user_id );
 	}
 }
