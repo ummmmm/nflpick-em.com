@@ -127,7 +127,7 @@ class Screen_PerfectWeeks extends Screen_Admin
 
 	private function _PerfectWeekList_Load( &$weeks )
 	{
-		return $this->db()->connection()->select( 'SELECT
+		return $this->db()->select( 'SELECT
 										*
 									FROM
 										weeks w
@@ -153,22 +153,22 @@ class Screen_PerfectWeeks extends Screen_Admin
 
 	private function _PerfectWeekUserList_Load( $week_id, &$users )
 	{
-		return $this->db()->connection()->select( 'SELECT u.* FROM users u, weekly_records wr WHERE u.pw_opt_out = 0 AND u.id = wr.user_id AND wr.week_id = ? AND wr.wins = ( SELECT COUNT( * ) FROM games g WHERE g.week = wr.week_id ) AND wr.losses = 0 ORDER BY u.fname, u.lname', $users, $week_id );
+		return $this->db()->select( 'SELECT u.* FROM users u, weekly_records wr WHERE u.pw_opt_out = 0 AND u.id = wr.user_id AND wr.week_id = ? AND wr.wins = ( SELECT COUNT( * ) FROM games g WHERE g.week = wr.week_id ) AND wr.losses = 0 ORDER BY u.fname, u.lname', $users, $week_id );
 	}
 
 	private function _PerfectWeekUserOptOutList_Load( $week_id, &$users )
 	{
-		return $this->db()->connection()->select( 'SELECT u.* FROM users u, weekly_records wr WHERE u.pw_opt_out = 1 AND u.id = wr.user_id AND wr.week_id = ? AND wr.wins = ( SELECT COUNT( * ) FROM games g WHERE g.week = wr.week_id ) AND wr.losses = 0 ORDER BY u.fname, u.lname', $users, $week_id );
+		return $this->db()->select( 'SELECT u.* FROM users u, weekly_records wr WHERE u.pw_opt_out = 1 AND u.id = wr.user_id AND wr.week_id = ? AND wr.wins = ( SELECT COUNT( * ) FROM games g WHERE g.week = wr.week_id ) AND wr.losses = 0 ORDER BY u.fname, u.lname', $users, $week_id );
 	}
 
 	private function _PerfectWeekUserPaidList_Load( $week_id, &$users )
 	{
-		return $this->db()->connection()->select( 'SELECT u.* FROM users u, perfect_week_paid pwp WHERE u.id = pwp.user_id AND pwp.week_id = ? ORDER BY u.fname, u.lname', $users, $week_id );
+		return $this->db()->select( 'SELECT u.* FROM users u, perfect_week_paid pwp WHERE u.id = pwp.user_id AND pwp.week_id = ? ORDER BY u.fname, u.lname', $users, $week_id );
 	}
 
 	private function _PerfectWeekUserUnpaidList_Load( $week_id, &$users )
 	{
-		return $this->db()->connection()->select( 'SELECT
+		return $this->db()->select( 'SELECT
 										u.*
 									FROM
 										users u

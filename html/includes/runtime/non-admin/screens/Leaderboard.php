@@ -47,6 +47,6 @@ class Screen_Leaderboard extends Screen_User
 
 	private function _Leaderboard( &$users )
 	{
-		return $this->db()->connection()->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name FROM users ORDER BY current_place, name, id', $users );
+		return $this->db()->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name FROM users ORDER BY current_place, name, id', $users );
 	}
 }

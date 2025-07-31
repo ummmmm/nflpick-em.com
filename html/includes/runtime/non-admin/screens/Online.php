@@ -36,7 +36,7 @@ class Screen_Online extends Screen
 	private function _OnlineUsersList_Load( &$users, $minutes )
 	{
 		$time	= time() - ( 60 * $minutes );
-		$online = $this->db()->connection()->select( 'SELECT CONCAT( fname, \' \', lname ) AS name, last_on FROM users WHERE last_on > ? ORDER BY last_on DESC, name', $users, $time );
+		$online = $this->db()->select( 'SELECT CONCAT( fname, \' \', lname ) AS name, last_on FROM users WHERE last_on > ? ORDER BY last_on DESC, name', $users, $time );
 
 		if ( $online === false )
 		{

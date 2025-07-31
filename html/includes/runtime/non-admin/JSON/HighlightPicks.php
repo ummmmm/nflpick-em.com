@@ -81,8 +81,8 @@ class JSON_HighlightPicks extends JSONUser
 				  GROUP BY
 					p2.user_id";
 
-		if ( $single )	$result = $this->db()->connection()->single( $query, $picks, $userid1, $userid2, $weekid );
-		else			$result = $this->db()->connection()->select( $query, $picks, $userid1, $userid2, $weekid );
+		if ( $single )	$result = $this->db()->single( $query, $picks, $userid1, $userid2, $weekid );
+		else			$result = $this->db()->select( $query, $picks, $userid1, $userid2, $weekid );
 
 		return $result;
 	}

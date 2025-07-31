@@ -222,6 +222,6 @@ EOD );
 
 	private function _Users_List_Load( &$users )
 	{
-		return $this->db()->connection()->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name, CONCAT( SUBSTRING( fname, 1, 1 ), \'.\', SUBSTRING( lname, 1, 1 ), \'.\' ) AS abbr FROM users ORDER BY abbr, fname, lname, id', $users );
+		return $this->db()->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name, CONCAT( SUBSTRING( fname, 1, 1 ), \'.\', SUBSTRING( lname, 1, 1 ), \'.\' ) AS abbr FROM users ORDER BY abbr, fname, lname, id', $users );
 	}
 }

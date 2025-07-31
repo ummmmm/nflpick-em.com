@@ -157,7 +157,7 @@ class JSON_UpdateGame extends JSONAdminAction
 
 	private function _Picks_Update_Week( $game_id, $week )
 	{
-		if ( !$this->db()->connection()->query( 'UPDATE picks SET week = ? WHERE game_id = ?', $week, $game_id ) )
+		if ( !$this->db()->query( 'UPDATE picks SET week = ? WHERE game_id = ?', $week, $game_id ) )
 		{
 			return false;
 		}

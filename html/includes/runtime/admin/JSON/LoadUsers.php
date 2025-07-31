@@ -59,7 +59,7 @@ class JSON_LoadUsers extends JSONAdmin
 						ORDER BY
 							{$sort} {$direction}, name";
 
-		if ( !$this->db()->connection()->select( $sql, $users, $current, $current ) )
+		if ( !$this->db()->select( $sql, $users, $current, $current ) )
 		{
 			return $this->setDBError();
 		}

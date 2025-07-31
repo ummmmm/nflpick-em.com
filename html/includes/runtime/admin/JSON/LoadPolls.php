@@ -40,6 +40,6 @@ class JSON_LoadPolls extends JSONAdmin
 
 	private function _load_poll_votes( $poll_id, &$votes )
 	{
-		return $this->db()->connection()->select( 'SELECT pa.answer, CONCAT( u.fname, \' \', u.lname ) AS name FROM poll_votes pv, poll_answers pa, users u WHERE pv.poll_id = ? AND pv.answer_id = pa.id AND pv.user_id = u.id ORDER BY pv.answer_id, name', $votes, $poll_id );
+		return $this->db()->select( 'SELECT pa.answer, CONCAT( u.fname, \' \', u.lname ) AS name FROM poll_votes pv, poll_answers pa, users u WHERE pv.poll_id = ? AND pv.answer_id = pa.id AND pv.user_id = u.id ORDER BY pv.answer_id, name', $votes, $poll_id );
 	}
 }

@@ -77,6 +77,6 @@ class JSON_LoadPolls extends JSON
 
 	private function _Vote_Casted( $user_id, $poll_id )
 	{
-		return $this->db()->connection()->single( 'SELECT * FROM poll_votes WHERE user_id = ? AND poll_id = ?', $null, $user_id, $poll_id );
+		return $this->db()->single( 'SELECT * FROM poll_votes WHERE user_id = ? AND poll_id = ?', $null, $user_id, $poll_id );
 	}
 }
