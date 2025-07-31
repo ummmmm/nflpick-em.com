@@ -2,36 +2,6 @@
 
 class DatabaseTableSettings extends DatabaseTable
 {
-	public $max_news;
-	public $email_validation;
-	public $registration;
-	public $domain_url;
-	public $domain_email;
-	public $online;
-	public $site_title;
-	public $turnstile_sitekey;
-	public $turnstile_secretkey;
-
-	public function __construct( DatabaseManager &$db_manager )
-	{
-		parent::__construct( $db_manager );
-
-		if ( !$this->Load( $settings ) )
-		{
-			$settings = $this->Defaults();
-		}
-
-		$this->max_news 			= $settings[ 'max_news' ];
-		$this->email_validation 	= $settings[ 'email_validation' ];
-		$this->registration 		= $settings[ 'registration' ];
-		$this->domain_url 			= $settings[ 'domain_url' ];
-		$this->domain_email 		= $settings[ 'domain_email' ];
-		$this->online 				= $settings[ 'online' ];
-		$this->site_title 			= $settings[ 'site_title' ];
-		$this->turnstile_sitekey 	= $settings[ 'turnstile_sitekey' ];
-		$this->turnstile_secretkey 	= $settings[ 'turnstile_secretkey' ];
-	}
-
 	public function Create()
 	{
 		$sql = "CREATE TABLE settings
