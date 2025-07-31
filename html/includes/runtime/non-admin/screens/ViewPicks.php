@@ -50,7 +50,7 @@ class Screen_ViewPicks extends Screen_User
 		$db_games 			= $this->db()->games();
 		$db_picks 			= $this->db()->picks();
 		$db_weeks			= $this->db()->weeks();
-		$db_weekly_records	= $this->db()->weekly_records();
+		$db_weekly_records	= $this->db()->weeklyrecords();
 
 		if ( !$this->_Users_List_Load( $users ) )
 		{
