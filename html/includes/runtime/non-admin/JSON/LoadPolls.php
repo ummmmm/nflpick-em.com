@@ -8,66 +8,25 @@ class JSON_LoadPolls extends JSON
 		$db_poll_votes		= $this->db()->pollvotes();
 		$db_poll_answers	= $this->db()->pollanswers();
 		$nav_poll 			= Functions::Post( 'nav' );
-		
-		if ( $nav_poll === '1' )
-		{
-			$count = $db_polls->Latest( $loaded_polls );
-		} else {
-			$count = $db_polls->List_Load( $loaded_polls );
-		}
-		
-		if ( $count === false )
-		{
-			return $this->setDBError();
-		}
-		
+
+		if ( $nav_poll === '1' )	$db_polls->Latest( $loaded_polls );
+		else						$db_polls->List_Load( $loaded_polls );
+
 		foreach( $loaded_polls as &$poll )
 		{
-			$count = $db_poll_answers->List_Load_Poll( $poll[ 'id' ], $answers );
-			
-			if ( $count === false )
-			{
-				return $this->setDBError();
-			}
-			
-			$vote_count = $db_poll_votes->Total_Poll( $poll[ 'id' ] );
-			
-			if ( $vote_count === false )
-			{
-				return $this->setDBError();
-			}
-			
-			$poll[ 'total_votes' ] = $vote_count;
-			
+			$db_poll_answers->List_Load_Poll( $poll[ 'id' ], $answers );
+
+			$poll[ 'total_votes' ] = $db_poll_votes->Total_Poll( $poll[ 'id' ] );
+
 			foreach( $answers as &$answer )
 			{
-				$answer_count = $db_poll_votes->Total_Answer( $answer[ 'id' ] );
-				
-				if ( $answer_count === false )
-				{
-					return $this->setDBError();
-				}
-				
-				$answer[ 'total_votes' ] = $answer_count;
+				$answer[ 'total_votes' ] = $db_poll_votes->Total_Answer( $answer[ 'id' ] );
 			}
-			
+
 			$poll[ 'answers' ] = $answers;
-			
-			if ( !$this->_auth->isUser() )
-			{
-				$poll[ 'voted' ] = true;
-			}
-			else
-			{
-				$count = $this->_Vote_Casted( $this->_auth->getUserID(), $poll[ 'id' ] );
-				
-				if ( $count === false )
-				{
-					return $this->setDBError();
-				}
-				
-				$poll[ 'voted' ] = ( $count !== 0 ) ? true : false;
-			}
+
+			if ( !$this->_auth->isUser() )	$poll[ 'voted' ] = true;
+			else							$poll[ 'voted' ] = $this->_Vote_Casted( $this->_auth->getUserID(), $poll[ 'id' ] ) > 0;
 		}
 
 		return $this->setData( $loaded_polls );

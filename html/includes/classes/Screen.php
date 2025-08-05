@@ -371,7 +371,7 @@ class ScreenRenderer
 
 		if ( !file_exists( $file_path ) )
 		{
-			return $this->_setError( array( "#Error#", "Screen not found" ) );
+			throw new NFLPickEmException( '#Error#', 'Screen not found' );
 		}
 		else if ( !require_once( $file_path ) )
 		{

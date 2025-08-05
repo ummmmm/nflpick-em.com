@@ -4,6 +4,7 @@ ob_start();
 
 header( "Content-Type: text/html; charset=utf-8" );
 
+require_once( "includes/classes/Exceptions.php" );
 require_once( "includes/classes/functions.php" );
 require_once( "includes/classes/Database.php" );
 require_once( "includes/classes/Screen.php" );

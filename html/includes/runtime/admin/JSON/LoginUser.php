@@ -8,16 +8,9 @@ class JSON_LoginUser extends JSONAdminAction
 		$db_users		= $this->db()->users();
 		$db_sessions	= $this->db()->sessions();
 
-		$count = $db_users->Load( $user_id, $loaded_user );
-
-		if ( $count === false )
+		if ( !$db_users->Load( $user_id, $loaded_user ) )
 		{
-			return $this->setDBError();
-		}
-
-		if ( $count === 0 )
-		{
-			return $this->setError( array( '#Error#', 'Could not load user' ) );
+			throw new NFLPickEmException( 'User does not exist' );
 		}
 
 		$this->auth()->logout();

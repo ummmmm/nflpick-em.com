@@ -6,24 +6,15 @@ class JSON_UpdatePaidUser extends JSONAdminAction
 	{
 		$user_id	= Functions::Post( 'user_id' );
 		$db_users	= $this->db()->users();
-		$count 		= $db_users->Load( $user_id, $loaded_user );
 		
-		if ( $count === false )
+		if ( !$db_users->Load( $user_id, $loaded_user ) )
 		{
-			return $this->setDBError();
+			throw new NFLPickEmException( 'User does not exist' );
 		}
 		
-		if ( $count === 0 )
-		{
-			return $this->setError( array( 'NFL-USERS_UPDATE-1', 'Failed to load user' ) );
-		}
+		$loaded_user[ 'paid' ] = ( int ) !$loaded_user[ 'paid' ];
 		
-		$loaded_user[ 'paid' ] = ( $loaded_user[ 'paid' ] === 1 ) ? 0 : 1;
-		
-		if ( !$db_users->Update( $loaded_user ) )
-		{
-			return $this->setDBError();
-		}
+		$db_users->Update( $loaded_user );
 		
 		return true;
 	}

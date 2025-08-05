@@ -10,20 +10,9 @@ class JSON_UpdateUser extends JSONAdminAction
 		$last_name	= Functions::Post( 'last_name' );
 		$message	= Functions::Post( 'message' );
 
-		if ( !$db_users->Load( $user_id, $user ) )
-		{
-			return $this->setError( array( 'NFL-USER_UPDATE-1', 'User does not exist' ) );
-		}
-
-		if ( $first_name === '' )
-		{
-			return $this->setError( array( 'NFL-USER_UPDATE-2', 'First name cannot be blank' ) );
-		}
-
-		if ( $last_name === '' )
-		{
-			return $this->setError( array( 'NFL-USER_UPDATE-3', 'Last name cannot be blank' ) );
-		}
+		if ( !$db_users->Load( $user_id, $user ) )	throw new NFLPickEmException( 'User does not exist' );
+		else if ( $first_name === '' )				throw new NFLPickEmException( 'First name cannot be blank' );
+		else if ( $last_name === '' )				throw new NFLPickEmException( 'Last name cannot be blank' );
 
 		$user[ 'fname' ] = $first_name;
 		$user[ 'lname' ] = $last_name;
@@ -31,10 +20,7 @@ class JSON_UpdateUser extends JSONAdminAction
 		$user[ 'active' ]	= ( $message === '' ) ? 1 : 0;
 		$user[ 'message' ]	= $message;
 
-		if ( !$db_users->Update( $user ) )
-		{
-			return $this->setDBError();
-		}
+		$db_users->Update( $user );
 
 		return true;
 	}

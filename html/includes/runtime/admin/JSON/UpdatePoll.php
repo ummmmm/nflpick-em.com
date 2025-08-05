@@ -12,65 +12,33 @@ class JSON_UpdatePoll extends JSONAdminAction
 		$db_poll_votes		= $this->db()->pollvotes();
 		$db_poll_answers	= $this->db()->pollanswers();
 
-		if ( $question === '' )
-		{
-			return $this->setError( array( 'NFL-POLLS_UPDATE-1', 'Question cannot be blank' ) );
-		}
+		if ( $question === '' )							throw new NFLPickEmException( 'Question cannot be blank' );
+		else if ( !$db_polls->Load( $poll_id, $poll ) )	throw new NFLPickEmException( 'Poll does not exist' );
 		
-		$count = $db_polls->Load( $poll_id, $poll );
-		
-		if ( $count === false )
-		{
-			return $this->setDBError();
-		}
-		
-		if ( $count === 0 )
-		{
-			return $this->setError( array( 'NFL-POLLS_UPDATE-2', 'Failed to load poll' ) );
-		}
-		
-		$count = $db_poll_answers->List_Load_Poll( $poll_id, $loaded_answers );
-		
-		if ( $count === false )
-		{
-			return $this->setDBError();
-		}
+		$db_poll_answers->List_Load_Poll( $poll_id, $loaded_answers );
 		
 		$poll[ 'question' ] = $question;
 		$poll[ 'active' ] 	= $active;
 		
-		if ( !$db_polls->Update( $poll ) )
-		{
-			return $this->setDBError();
-		}
+		$db_polls->Update( $poll );
 		
 		foreach( $loaded_answers as $answer )
 		{
 			if ( !array_key_exists( $answer[ 'id' ], $answers ) )
 			{
-				if ( !$db_poll_answers->Delete( $answer[ 'id' ] ) )
-				{
-					return $this->setDBError();
-				}
-				
-				if ( !$db_poll_votes->Delete_Answer( $answer[ 'id' ] ) )
-				{
-					return $this->setDBError();
-				}
+				$db_poll_answers->Delete( $answer[ 'id' ] );
+				$db_poll_votes->Delete_Answer( $answer[ 'id' ] );
 			}
 			else
 			{
 				if ( !$db_poll_answers->Load( $answer[ 'id' ], $loaded_answer ) )
 				{
-					return $this->setDBError();	
+					throw new NFLPickEmException( 'Answer does not exist' );
 				}
 				
 				$loaded_answer[ 'answer' ] = $answers[ $answer[ 'id' ] ];
 				
-				if ( !$db_poll_answers->Update( $loaded_answer ) )
-				{
-					return $this->setDBError();
-				}
+				$db_poll_answers->Update( $loaded_answer );
 			}
 
 			unset( $answers[ $answer[ 'id' ] ] );
@@ -86,10 +54,7 @@ class JSON_UpdatePoll extends JSONAdminAction
 			$answer_insert[ 'poll_id' ] = $poll_id;
 			$answer_insert[ 'answer' ]	= $answer;
 			
-			if ( !$db_poll_answers->Insert( $answer_insert ) )
-			{
-				return $this->setDBError();
-			}
+			$db_poll_answers->Insert( $answer_insert );
 		}
 		
 		return true;

@@ -14,37 +14,13 @@ class JSON_MakePicks extends JSONUserAction
 		$winner		= Functions::Post( 'winner' );
 		$loser		= Functions::Post( 'loser' );
 
-		if ( !$db_games->Load( $gameid, $game ) )
-		{
-			return $this->setError( array( "#Error#", "Game not found" ) );
-		}
+		if ( !$db_games->Load( $gameid, $game ) )															throw new NFLPickEmException( 'Game does not exist' );
+		else if ( !$db_weeks->Load( $game[ 'week' ], $week ) )												throw new NFLPickEmException( 'Week does not exist' );
+		else if ( $week[ 'locked' ] === 1 || $date_now > $week[ 'date' ] )									throw new NFLPickEmException( 'This week has already been locked.  You can no longer make picks.' );
+		else if ( $date_now > $game[ 'date' ] )																throw new NFLPickEmException( 'This game has already started and can no longer be updated.' );
+		else if ( !$db_teams->Load( $winner, $winning_team ) || !$db_teams->Load( $loser, $losing_team ) )	throw new NFLPickEmException( 'Away / home team does not exist' );
 
-		if ( !$db_weeks->Load( $game[ 'week' ], $week ) )
-		{
-			return $this->setError( array( '#Error#', 'Week not found' ) );
-		}
-
-		if ( $week[ 'locked' ] === 1 || $date_now > $week[ 'date' ] )
-		{
-			return $this->setError( array( "#Error#", "This week has already been locked.  You can no longer make picks." ) );
-		}
-
-		if ( $date_now > $game[ 'date' ] )
-		{
-			return $this->setError( array( "#Error#", "This game has already started and can no longer be updated." ) );
-		}
-
-		if ( !$db_teams->Load( $winner, $winning_team ) || !$db_teams->Load( $loser, $losing_team ) )
-		{
-			return $this->setError( array( "#Error#", "Failed to load teams" ) );
-		}
-
-		$count_pick = $db_picks->Load_User_Game( $this->_auth->getUserID(), $gameid, $pick );
-
-		if ( $count_pick === false )
-		{
-			return $this->setDBError();
-		}
+		$pick_exists = $db_picks->Load_User_Game( $this->_auth->getUserID(), $gameid, $pick );
 
 		$pick[ 'user_id' ]		= $this->_auth->getUserID();
 		$pick[ 'game_id' ]		= $gameid;
@@ -52,23 +28,11 @@ class JSON_MakePicks extends JSONUserAction
 		$pick[ 'loser_pick' ]	= $loser;
 		$pick[ 'week' ]			= $game[ 'week' ];
 
-		if ( $count_pick === 0 )
-		{
-			if ( !$db_picks->Insert( $pick ) )
-			{
-				return $this->setDBError();
-			}
-		}
-		else
-		{
-			if ( !$db_picks->Update( $pick ) )
-			{
-				return $this->setDBError();
-			}
-		}
+		if ( !$pick_exists )	$db_picks->Insert( $pick );
+		else					$db_picks->Update( $pick );
 
 		$remaining = $db_picks->Remaining( $this->_auth->getUserID(), $week[ 'id' ] );
 
-		return $this->setData( array( 'remaining' => $remaining, 'message' => 'You have picked the <b>' . $winning_team[ 'team' ] . '</b> to beat the <b>' . $losing_team[ 'team' ] . '</b>' ) );
+		return $this->setData( array( 'remaining' => $remaining, 'message' => sprintf( 'You have picked the <b>%s</b> to beat the <b>%s</b>', $winning_team[ 'team' ], $losing_team[ 'team' ] ) ) );
 	}
 }
