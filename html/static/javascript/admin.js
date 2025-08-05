@@ -214,6 +214,8 @@ $( document ).ready( function()
 			}
 
 			$( '#paid' + user.id ).text( ( user.paid ? 'No' : 'Yes' ) );
+
+			user.paid = !user.paid;
 		} );
 	}
 
@@ -227,6 +229,8 @@ $( document ).ready( function()
 			}
 
 			$( '#pw_opt_out' + user.id ).text( ( user.pw_opt_out ? 'Yes' : 'No' ) );
+
+			user.pw_opt_out = !user.pw_opt_out;
 		} );
 	}
 
