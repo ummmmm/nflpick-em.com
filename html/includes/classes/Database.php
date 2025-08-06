@@ -5,13 +5,11 @@ include_once( "includes/classes/functions.php" );
 
 class DatabaseManager
 {
-	private $_error;
 	private $_connection;
 	private $_methods;
 
 	public function __construct()
 	{
-		$this->_error		= array();
 		$this->_methods		= array();
 		$this->_connection	= new DatabaseConnection();
 	}
@@ -27,20 +25,11 @@ class DatabaseManager
 
 		if ( !defined( "CONFIG_INI" ) || !Functions::Get_Config_Section( CONFIG_INI, "database", $db_settings ) )
 		{
-			return $this->_setError( array( '#Error#', 'Failed to load configuration settings' ) );
+			throw new NFLPickEmException( 'Failed to load configuration settings' );
 		}
 
-		if ( !$this->_connection->connect( $db_settings[ 'host' ], $db_settings[ 'username' ], $db_settings[ 'password' ], $db_settings[ 'schema' ] ) )
-		{
-			return $this->_setError( $this->_connection->Get_Error() );
-		}
-
-		if ( !$this->_load_tables() )
-		{
-			return false;
-		}
-
-		return true;
+		$this->_connection->connect( $db_settings[ 'host' ], $db_settings[ 'username' ], $db_settings[ 'password' ], $db_settings[ 'schema' ] );
+		$this->_load_tables();
 	}
 
 	public function connection()
@@ -71,18 +60,6 @@ class DatabaseManager
 		return $this->connection()->insertID();
 	}
 
-	private function _setError( $error )
-	{
-		$this->_error = $error;
-
-		return false;
-	}
-
-	public function Get_Error()
-	{
-		return $this->_error;
-	}
-
 	public function dynamic_tables()
 	{
 		return $this->_methods;
@@ -90,40 +67,31 @@ class DatabaseManager
 
 	private function _load_tables()
 	{
-		try
+		$loaded_classes = array();
+
+		foreach ( glob( 'includes/db/*.php' ) as $file )
 		{
-			$loaded_classes = array();
+			$before_classes = get_declared_classes();
+			require_once( $file );
+			$after_classes	= get_declared_classes();
+			$new_classes	= array_diff( $after_classes, $before_classes );
 
-			foreach ( glob( 'includes/db/*.php' ) as $file )
+			foreach ( $new_classes as $new_class )
 			{
-				$before_classes = get_declared_classes();
-				require_once( $file );
-				$after_classes	= get_declared_classes();
-				$new_classes	= array_diff( $after_classes, $before_classes );
+				$reflection = new ReflectionClass( $new_class );
 
-				foreach ( $new_classes as $new_class )
-				{
-					$reflection = new ReflectionClass( $new_class );
+				if ( $reflection->isInstantiable() && $reflection->isSubclassOf( DatabaseTable::class ) )
+				{						
+					$name		= strtolower( str_replace( 'DatabaseTable', '', $reflection->getShortName() ) );
+					$instance	= new $new_class( $this );
 
-					if ( $reflection->isInstantiable() && $reflection->isSubclassOf( DatabaseTable::class ) )
-					{						
-						$name		= strtolower( str_replace( 'DatabaseTable', '', $reflection->getShortName() ) );
-						$instance	= new $new_class( $this );
-
-						$this->_methods[ $name ] = function () use ( $instance )
-						{
-							return $instance;
-						};
-					}
+					$this->_methods[ $name ] = function () use ( $instance )
+					{
+						return $instance;
+					};
 				}
 			}
 		}
-		catch ( Exception $e )
-		{
-			return $this->_setError( $e );
-		}
-
-		return true;
 	}
 
 	public function __call( $name, $arguments )
@@ -213,11 +181,6 @@ abstract class DatabaseTable
 	}
 
 	abstract public function Create();
-
-	public function getError()
-	{
-		return $this->db()->connection()->Get_Error();
-	}
 
 	public function db()
 	{

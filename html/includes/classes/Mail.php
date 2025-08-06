@@ -2,7 +2,6 @@
 
 class Mail
 {
-	private $_error;
 	private $_to;
 	private $_subject;
 	private $_message;
@@ -67,23 +66,6 @@ class Mail
 		$headers = implode( "\r\n", $headers );
 		$message = preg_replace( "/\n/", '<br />', $this->_message );
 
-		if ( !mail( $this->_to, $this->_subject, $message, $headers ) )
-		{
-			return $this->_setError( array( "#Error#", "Failed to send email" ) );
-		}
-
-		return true;
-	}
-
-	private function _setError( $error )
-	{
-		$this->_error = $error;
-
-		return false;
-	}
-
-	public function getError()
-	{
-		return $this->_error;
+		return mail( $this->_to, $this->_subject, $message, $headers );
 	}
 }

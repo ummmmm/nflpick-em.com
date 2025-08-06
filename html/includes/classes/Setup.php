@@ -1,122 +1,68 @@
 <?php
 require_once( 'Database.php' );
 require_once( 'Authentication.php' );
-require_once( 'functions.php' );
 
 class Setup
 {
 	private $_db_manager;
 	private $_auth;
-	private $_error;
 
-	public function __construct( DatabaseManager &$db_manager, Authentication &$auth )
+	public function __construct()
 	{
-		$this->_db_manager	= $db_manager;
-		$this->_auth		= $auth;
+		$this->_db_manager	= new DatabaseManager();
+		$this->_auth		= new Authentication( $this->_db_manager );
 	}
 
-	public function Install()
+	public function initialize()
 	{
-		if ( $this->Configured() )
-		{
-			return false;
-		}
-
-		if ( !$this->_Create_Tables() )
-		{
-			return false;
-		}
-
-		return true;
+		$this->_db_manager->initialize();
 	}
 
-	public function Uninstall( $email, $password )
+	public function db()
 	{
-		if ( !$this->_auth->validate_login( $email, $password, $user ) )
-		{
-			return $this->_Set_Error( 'Invalid email / password' );
-		}
-		else if ( $user[ 'admin' ] != 1 )
-		{
-			return $this->_Set_Error( 'You must be an admin to uninstall the site' );
-		}
-		else if ( !$this->_Drop_Tables() )
-		{
-			return $this->_Set_Error( 'Failed to drop database' );
-		}
-
-		return true;
+		return $this->_db_manager;
 	}
 
-	private function _Drop_Tables()
+	public function auth()
 	{
-		if ( $this->_Get_Tables( $tables ) === false )
+		return $this->_auth;
+	}
+
+	public function install()
+	{
+		if ( $this->_get_tables( $null ) > 0 )
 		{
-			return false;
+			throw new NFLPickEmException( 'NFL Pick-Em site has already been configured' );
 		}
+
+		$this->_create_tables();
+	}
+
+	public function uninstall()
+	{
+		$this->_drop_tables();
+	}
+
+	private function _drop_tables()
+	{
+		$this->_get_tables( $tables );
 
 		foreach ( $tables as $table )
 		{
-			if ( $this->_db_manager->connection()->query( sprintf( 'DROP TABLE %s', array_values( $table )[ 0 ] ) ) === false )
-			{
-				return $this->_Set_Error( sprintf( 'Failed droping table %s', $table ) );
-			}
+			$this->_db_manager->query( sprintf( 'DROP TABLE %s', array_values( $table )[ 0 ] ) );
 		}
-
-		return true;
 	}
 
-	private function _Get_Tables( &$tables )
+	private function _get_tables( &$tables )
 	{
-		$count = $this->_db_manager->connection()->select( 'SHOW TABLES', $tables );
-
-		if ( $count === false )
-		{
-			return $this->_Set_Error( 'Failed to load tables' );
-		}
-
-		return $count;
+		return $this->_db_manager->select( 'SHOW TABLES', $tables );
 	}
 
-	public function Configured()
-	{
-		$count = $this->_Get_Tables( $null );
-
-		if ( $count === false )
-		{
-			return true;
-		}
-
-		if ( $count > 0 )
-		{
-			$this->_Set_Error( 'NFL Pick-Em site has already been configured' );
-			return true;
-		}
-
-		return false;
-	}
-
-	private function _Create_Tables()
+	private function _create_tables()
 	{
 		foreach ( $this->_db_manager->dynamic_tables() as $name => $func )
 		{
-			if ( !$func()->Create() )
-			{
-				return $this->_Set_Error( $func()->getError() );
-			}
+			$func()->Create();
 		}
-
-		return true;
-	}
-
-	private function _Set_Error( $error )
-	{
-		$this->_error = $error;
-		return false;
-	}
-
-	public function Get_Error()
-	{
-		return $this->_error;
 	}
 }

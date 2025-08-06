@@ -1,104 +1,74 @@
 <?php
 
 require_once( 'includes/classes/functions.php' );
+require_once( 'includes/classes/Exceptions.php' );
 require_once( 'includes/classes/Database.php' );
 require_once( 'includes/classes/Authentication.php' );
 require_once( 'includes/classes/Setup.php' );
 
 
-$action = Functions::Get( 'Action' );
+$setup	= new Setup();
+$action	= Functions::Get( 'Action' );
 
-if ( $action === 'INSTALL' )
+try
 {
-	install();
-	exit();
+	$setup->initialize();
+
+	if ( $action === 'INSTALL' )		install( $setup );
+	else if ( $action === 'UNINSTALL' )	uninstall( $setup );
 }
-else if ( $action === 'UNINSTALL' )
+catch ( NFLPickEmException $e )
 {
-	uninstall();
-	exit();
+	print( $e->getMessage() );
+}
+catch ( Exception $e )
+{
+	printf( 'A fatal error occurred: %s', htmlentities( $e->getMessage() ) );
 }
 
-die( 'Nothing to see here' );
-
-function install()
+function install( Setup &$setup )
 {
-	$install 	= Functions::Post( 'install' );
-	$db_manager	= new DatabaseManager();
-	$auth		= new Authentication( $db_manager );
-
-	if ( !$db_manager->initialize() )
-	{
-		print( $db_manager->Get_Error() );
-		exit();
-	}
-
-	$setup = new Setup( $db_manager, $auth );
-
-	if ( $setup->Configured() )
-	{
-		$setup->Get_Error();
-		exit();
-	}
+	$install = Functions::Post( 'install' );
 
 	if ( $install != '' )
 	{
-		$db_games		= $db_manager->games();
-		$db_settings	= $db_manager->settings();
-		$db_weeks		= $db_manager->weeks();
+		$db_games		= $setup->db()->games();
+		$db_settings	= $setup->db()->settings();
+		$db_weeks		= $setup->db()->weeks();
 		$site_title		= Functions::Post( 'site_title' );
 		$domain_url 	= Functions::Post( 'domain_url' );
 		$domain_email	= Functions::Post( 'domain_email' );
 		$start_date		= Functions::Post( 'start_date' );
 
-		if ( $site_title == '' )		die( 'A site title is required' );
-		else if ( $domain_url == '' )	die( 'A domain URL is required' );
-		else if ( $domain_email == '' )	die( 'A domain email is required' );
-		else if ( $start_date == '' )	die( 'Start date is required' );
+		if ( $site_title == '' )		throw new NFLPickEmException( 'A site title is required' );
+		else if ( $domain_url == '' )	throw new NFLPickEmException( 'A domain URL is required' );
+		else if ( $domain_email == '' )	throw new NFLPickEmException( 'A domain email is required' );
+		else if ( $start_date == '' )	throw new NFLPickEmException( 'Start date is required' );
 
 		if ( !preg_match( "/^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/20\d{2}$/", $start_date ) )
 		{
-			die( "Start date must be in format mm/dd/yyyy" );
+			throw new NFLPickEmException( "Start date must be in format mm/dd/yyyy" );
 		}
 
 		$timestamp = strtotime( $start_date . ' 10 A.M.' );
 
-		if ( $timestamp === false )				die( 'Invalid start date' );
-		elseif ( date( 'w', $timestamp ) != 0 )	die( 'Start date is expected to be a Sunday' );
+		if ( $timestamp === false )				throw new NFLPickEmException( 'Invalid start date' );
+		elseif ( date( 'w', $timestamp ) != 0 )	throw new NFLPickEmException( 'Start date is expected to be a Sunday' );
 
-		if ( !$setup->Install() )
-		{
-			print( $setup->Get_Error() );
-			exit();
-		}
-		if ( !$db_settings->Load( $settings ) )
-		{
-			printf( 'Failed to load settings<br />' );
-		}
-		else
-		{
-			$settings[ 'site_title' ] 	= $site_title;
-			$settings[ 'domain_url' ] 	= $domain_url;
-			$settings[ 'domain_email' ]	= $domain_email;
+		$setup->install();
 
-			if ( !$db_settings->Update( $settings ) )
-			{
-				printf( 'Failed to update default settings<br />' );
-			}
-		}
+		$db_settings->Load( $settings );
 
-		if ( !$db_weeks->Create_Weeks( $timestamp ) )
-		{
-			print( $db_weeks->Get_Error() );
-			exit();
-		}
+		$settings[ 'site_title' ] 	= $site_title;
+		$settings[ 'domain_url' ] 	= $domain_url;
+		$settings[ 'domain_email' ]	= $domain_email;
 
-		if ( !$db_games->Create_Games() )
-		{
-			printf( 'Failed to create games: %s<br />', htmlentities( $db_games->Get_Error() ) );
-		}
+		$db_settings->Update( $settings );
+		$db_weeks->Create_Weeks( $timestamp );
+		$db_games->Create_Games();
 
-		die( 'The NFL Pick-Em site has successfully been installed' );
+		header( sprintf( 'location: %s', $settings[ 'domain_url' ] ) );
+		exit();
 	}
 
 	print '<form method="POST">';
@@ -127,30 +97,22 @@ function install()
 	print '</form>';
 }
 
-function uninstall()
+function uninstall( Setup &$setup )
 {
-	$uninstall	= Functions::Post( 'uninstall' );
-	$db_manager	= new DatabaseManager();
-	$auth		= new Authentication( $db_manager );
-
-	if ( !$db_manager->initialize() )
-	{
-		print( $db_manager->Get_Error() );
-		exit();
-	}
+	$uninstall = Functions::Post( 'uninstall' );
 
 	if ( $uninstall != '' )
 	{
-		$setup		= new Setup( $db_manager, $auth );
 		$email 		= Functions::Post( 'email' );
 		$password 	= Functions::Post( 'password' );
 
-		if ( !$setup->Uninstall( $email, $password ) )
-		{
-			die( $setup->Get_Error() );
-		}
+		if ( !$setup->auth()->validate_login( $email, $password, $user ) )	throw new NFLPickEmException( 'Invalid email / password' );
+		else if ( $user[ 'admin' ] != 1 )									throw new NFLPickEmException( 'You must be an admin to uninstall the site' );
 
-		die( 'The NFL Pick-Em site has successfully been uninstalled' );
+		$setup->uninstall();
+
+		print( 'The NFL Pick-Em site has successfully been uninstalled' );
+		exit();
 	}
 
 	print '<form method="POST" autocomplete="off">';

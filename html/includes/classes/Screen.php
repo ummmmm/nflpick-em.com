@@ -294,7 +294,7 @@ class ScreenRenderer
 		{
 			if ( !$this->db()->settings()->Load( $this->_settings ) )
 			{
-				throw new Exception( sprintf( 'Failed to load settings: %s', $this->db()->Get_Error() ) );
+				throw new NFLPickEmException( 'Settings do not exist' );
 			}
 		}
 
