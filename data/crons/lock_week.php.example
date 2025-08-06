@@ -4,20 +4,26 @@ set_include_path( "/path/to/html" );
 
 require_once( "includes/classes/Database.php" );
 
-$db 		= new Database();
-$db_weeks	= new Weeks( $db );
-$current	= $db_weeks->Current();
-
-if ( $current === false )
+try
 {
-	return;
-}
+	$db_manager = new DatabaseManager();
+	$db_manager->initialize();
 
-if ( !$db_weeks->Load( $current, $week ) )
+	$db_weeks	= $db_manager->weeks();
+	$current	= $db_weeks->Current();
+
+	if ( !$db_weeks->Load( $current, $week ) )
+	{
+		return;
+	}
+
+	$week[ 'locked' ] = 1;
+
+	$db_weeks->Update( $week );
+
+}
+catch ( Exception $e )
 {
-	return;
+	print( $e );
+	exit( 1 );
 }
-
-$week[ 'locked' ] = 1;
-
-$db_weeks->Update( $week );

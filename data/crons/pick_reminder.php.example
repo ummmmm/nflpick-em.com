@@ -5,28 +5,29 @@ set_include_path( "/path/to/html" );
 require_once( "includes/classes/Database.php" );
 require_once( "includes/classes/Mail.php" );
 
-$db				= new Database();
-$db_picks		= new Picks( $db );
-$db_weeks		= new Weeks( $db );
-$db_users		= new Users( $db );
-$db_settings	= new Settings( $db );
+try
+{
+	$db_manager = new DatabaseManager();
+	$db_manager->initialize();
+}
+catch ( Exception $e )
+{
+	print( $e );
+	exit( 1 );
+}
+
+$db_picks		= $db_manager->picks();
+$db_weeks		= $db_manager->weeks();
+$db_users		= $db_manager->users();
+$db_settings	= $db_manager->settings();
 
 if ( !$db_settings->Load( $settings ) )
 {
-	exit;
+	exit( 1 );
 }
 
-$current	= $db_weeks->Current();
-
-if ( $current === false )
-{
-	exit;
-}
-
-if ( !$db_users->List_Load( $users ) )
-{
-	exit;
-}
+$current = $db_weeks->Current();
+$db_users->List_Load( $users );
 
 switch ( date( 'l' ) )
 {
@@ -52,7 +53,7 @@ switch ( date( 'l' ) )
 	default			:
 	{
 		// this script should only be run Thursday - Sunday
-		exit;
+		exit( 0 );
 	}
 }
 
@@ -63,13 +64,7 @@ foreach ( $users as &$user )
 		continue;
 	}
 
-	if ( GameList_Load_Missing( $db, $current, $user[ 'id' ], $start_time_t, $end_time_t, $games ) === false )
-	{
-		@list( $code, $message ) = $db->Get_Error();
-
-		print( $code . ': ' . $message );
-		exit;
-	}
+	GameList_Load_Missing( $db, $current, $user[ 'id' ], $start_time_t, $end_time_t, $games );
 
 	if ( count( $games ) == 0 )
 	{

@@ -7,17 +7,19 @@ require_once( "includes/classes/functions.php" );
 
 try
 {
-	$db			= new Database();
-	$db_games	= new Games( $db );
-	$db_teams	= new Teams( $db );
-	$db_users	= new Users( $db );
-	$db_weeks	= new Weeks( $db );
+	$db_manager = new DatabaseManager();
+	$db_manager->initialize();
+
+	$db_games	= $db_manager->games();
+	$db_teams	= $db_manager->teams();
+	$db_users	= $db_manager->users();
+	$db_weeks	= $db_manager->weeks();
 	$data		= json_decode( file_get_contents( sprintf( 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?week=%d', $db_weeks->Previous() ) ) );
 	$week_id	= $data->week->number;
 
 	if ( !$db_weeks->IsLocked( $week_id ) )
 	{
-		exit;
+		exit( 0 );
 	}
 
 	foreach ( $data->events as $event )
@@ -73,23 +75,14 @@ try
 		$game[ 'awayScore' ]	= $away_score;
 		$game[ 'final' ]		= 1;
 
-		if ( !$db_games->Update( $game ) )
-		{
-			exit;
-		}
+		$db_games->Update( $game );
 	}
 
-	if ( !$db_teams->Recalculate_Records()	)
-	{
-		exit;
-	}
-
-	if ( !Functions::Update_Records( $db ) )
-	{
-		exit;
-	}
+	$db_teams->Recalculate_Records();
+	Functions::Update_Records( $db );
 }
 catch( Exception $e )
 {
-	exit;
+	print( $e )
+	exit( 1 );
 }
