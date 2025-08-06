@@ -11,7 +11,6 @@ class Mail
 
 	public function __construct( $to = null, $subject = null, $message = null, $from = null, $replyto = null, $headers = null )
 	{
-		$this->_error	= array();
 		$this->_from 	= "NFL Pick-Em <contact@nflpick-em.com>";
 		$this->_replyto	= "NFL Pick-Em <contact@nflpick-em.com>";
 
