@@ -173,7 +173,7 @@ class DatabaseConnection
 
 abstract class DatabaseTable
 {
-	protected $_db_manager;
+	private $_db_manager;
 
 	public function __construct( DatabaseManager &$db_manager )
 	{

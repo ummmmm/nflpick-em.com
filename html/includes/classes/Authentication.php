@@ -153,7 +153,7 @@ class Authentication
 		if ( $this->_reload )
 		{
 			$this->_reload = false;
-			$this->_db_manager->users()->Load( $this->_userID, $this->_user );
+			$this->db()->users()->Load( $this->_userID, $this->_user );
 		}
 
 		return $this->_user;
@@ -176,7 +176,7 @@ class Authentication
 
 	public function isValidToken( $token )
 	{
-		$db_sessions	= $this->_db_manager->sessions();
+		$db_sessions	= $this->db()->sessions();
 		$count 			= $db_sessions->Load_User_Token( $this->_userID, $token, $null );
 
 		return $count ? true : false;

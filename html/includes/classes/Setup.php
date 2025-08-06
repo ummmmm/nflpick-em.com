@@ -49,18 +49,18 @@ class Setup
 
 		foreach ( $tables as $table )
 		{
-			$this->_db_manager->query( sprintf( 'DROP TABLE %s', array_values( $table )[ 0 ] ) );
+			$this->db()->query( sprintf( 'DROP TABLE %s', array_values( $table )[ 0 ] ) );
 		}
 	}
 
 	private function _get_tables( &$tables )
 	{
-		return $this->_db_manager->select( 'SHOW TABLES', $tables );
+		return $this->db()->select( 'SHOW TABLES', $tables );
 	}
 
 	private function _create_tables()
 	{
-		foreach ( $this->_db_manager->dynamic_tables() as $name => $func )
+		foreach ( $this->db()->dynamic_tables() as $name => $func )
 		{
 			$func()->Create();
 		}

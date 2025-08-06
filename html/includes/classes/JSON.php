@@ -8,14 +8,11 @@ require_once( "functions.php" );
 abstract class JSON
 {
 	private $_json_manager;
+	private $_data;
 
-	protected $_auth;
-	protected $_data;
-
-	public function __construct( JSONManager &$json_manager, Authentication &$auth )
+	public function __construct( JSONManager &$json_manager )
 	{
-		$this->_json_manager	= $json_manager;
-		$this->_auth			= $auth;
+		$this->_json_manager = $json_manager;
 	}
 
 	abstract protected function execute();
@@ -137,7 +134,7 @@ class JSONManager
 		else if ( !require_once( $file_path ) )	throw new NFLPickEmException( 'Failed to load action' );
 		else if ( !class_exists( $class ) )		throw new NFLPickEmException( 'Action is misconfigured' );
 
-		$this->_action = new $class( $this, $this->_auth );
+		$this->_action = new $class( $this );
 
 		if ( !$this->_action instanceof JSON )
 		{

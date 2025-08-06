@@ -7,19 +7,16 @@ require_once( "validation.php" );
 
 abstract class Screen
 {
-	private $_error;
+	private $_screen_renderer;
 	private $_validation_errors;
 	private $_validation_data;
 	private $_update_message;
 	private $_settings;
 
-	protected $_screen_renderer;
-
 	public function __construct( ScreenRenderer &$screen_renderer )
 	{
 		$this->_screen_renderer		= $screen_renderer;
 
-		$this->_error				= array();
 		$this->_validation_errors	= null;
 		$this->_validation_data		= null;
 		$this->_update_message		= null;
@@ -66,13 +63,6 @@ abstract class Screen
 	protected function settings()
 	{
 		return $this->_screen_renderer->settings();
-	}
-
-	protected function setError( $error )
-	{
-		$this->_error = $error;
-
-		return false;
 	}
 
 	protected function setValidationErrors( $errors )
