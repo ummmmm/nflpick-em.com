@@ -16,7 +16,7 @@ class JSON_LoadPolls extends JSONAdmin
 
 			$poll[ 'date' ] 		= Functions::FormatDate( $poll[ 'date' ] );
 			$poll[ 'answers' ] 		= $answers;
-			$poll[ 'total_votes' ]	= $count;
+			$poll[ 'total_votes' ]	= count( $votes );
 			$poll[ 'votes' ]		= $votes;
 		}
 
