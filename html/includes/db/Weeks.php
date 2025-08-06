@@ -100,12 +100,7 @@ class DatabaseTableWeeks extends DatabaseTable
 					$week[ 'date' ]		= $start_date;
 					$week[ 'locked' ]	= 0;
 
-					$start_date			= strtotime( '+1 week', $start_date );
-
-					if ( !$this->Insert( $week ) )
-					{
-						return false;
-					}		
+					$this->Insert( $week );
 				}
 
 				return true;
