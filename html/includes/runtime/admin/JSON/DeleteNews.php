@@ -6,12 +6,9 @@ class JSON_DeleteNews extends JSONAdminAction
 	{
 		$db_news	= $this->db()->news();
 		$news_id 	= Functions::Post( 'news_id' );
-		
-		if ( !$db_news->Delete( $news_id ) )
-		{
-			return $this->setDBError();
-		}
 
-		return true;		
+		$db_news->Delete( $news_id );
+
+		return true;
 	}
 }

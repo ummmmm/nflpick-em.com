@@ -66,7 +66,7 @@ EOF );
 
 		if ( $mail->send() === false )
 		{
-			return $this->setError( array( "#Error#", "Failed to send email.  Please try again later." ) );
+			throw new NFLPickEmException( 'Failed to send email, please try again later' );
 		}
 
 		return $this->setUpdateMessage( "Your message has been sent and you should receive a response within the next 24 hours." );

@@ -19,17 +19,14 @@ class JSON_UpdateSettings extends JSONAdminAction
 		$settings[ 'turnstile_sitekey' ]	= Functions::Post( 'turnstile_sitekey' );
 		$settings[ 'turnstile_secretkey' ]	= Functions::Post( 'turnstile_secretkey' );
 
-		if ( $settings[ 'max_news' ] <= 0 )						return $this->setError( array( '#Error#', 'Max News must be greater than 0' ) );
-		elseif ( $settings[ 'online' ] <= 0 )					return $this->setError( array( '#Error#', 'Online must be greater than 0' ) );
-		elseif ( $settings[ 'login_sleep' ] <= 0 )				return $this->setError( array( '#Error#', 'Login Sleep must be greater than 0' ) );
-		elseif ( $settings[ 'domain_url' ] === '' )				return $this->setError( array( '#Error#', 'Domain URL cannot be blank' ) );
-		elseif ( $settings[ 'site_title' ] === '' )				return $this->setError( array( '#Error#', 'Site Title cannot be blank' ) );
-		
-		if ( !$db_settings->Update( $settings ) )
-		{
-			return $this->setDBError();
-		}
-		
+		if ( $settings[ 'max_news' ] <= 0 )			throw new NFLPickEmException( 'Max News must be greater than 0' );
+		elseif ( $settings[ 'online' ] <= 0 )		throw new NFLPickEmException( 'Online must be greater than 0' );
+		elseif ( $settings[ 'login_sleep' ] <= 0 )	throw new NFLPickEmException( 'Login Sleep must be greater than 0' );
+		elseif ( $settings[ 'domain_url' ] === '' )	throw new NFLPickEmException( 'Domain URL cannot be blank' );
+		elseif ( $settings[ 'site_title' ] === '' )	throw new NFLPickEmException( 'Site Title cannot be blank' );
+
+		$db_settings->Update( $settings );
+
 		return true;
 	}
 }

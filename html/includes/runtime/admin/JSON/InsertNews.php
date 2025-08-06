@@ -9,22 +9,12 @@ class JSON_InsertNews extends JSONAdminAction
 		$message	= Functions::Post( 'message' );
 		$active		= Functions::Post_Active( 'active' );	
 		
-		if ( $title === '' )
-		{
-			return $this->setError( array( 'NFL-NEWS_INSERT-0', 'Title cannot be blank' ) );
-		}
-		
-		if ( $message === '' )
-		{
-			return $this->setError( array( 'NFL-NEWS_INSERT-1', 'Message cannot be blank' ) );
-		}
+		if ( $title === '' )		throw new NFLPickEmException( 'Title cannot be blank' );
+		else if ( $message === '' )	throw new NFLPickEmException( 'Message cannot be blank' );
 
 		$insert = array( 'title' => $title, 'news' => $message, 'active' => $active, 'user_id' => $this->_auth->getUserID() );
 		
-		if ( !$db_news->Insert( $insert ) )
-		{
-			return $this->setDBError();
-		}
+		$db_news->Insert( $insert );
 
 		return true;		
 	}

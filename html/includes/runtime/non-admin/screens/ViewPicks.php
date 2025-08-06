@@ -27,10 +27,7 @@ class Screen_ViewPicks extends Screen_User
 
 	private function _WeekList( &$db_weeks )
 	{
-		if ( !$db_weeks->List_Load( $weeks ) )
-		{
-			return false;
-		}
+		$db_weeks->List_Load( $weeks );
 
 		print( "<h1>Pick 'Em Weeks</h1>" );
 
@@ -52,17 +49,9 @@ class Screen_ViewPicks extends Screen_User
 		$db_weeks			= $this->db()->weeks();
 		$db_weekly_records	= $this->db()->weeklyrecords();
 
-		if ( !$this->_Users_List_Load( $users ) )
-		{
-			return false;
-		}
+		$this->_Users_List_Load( $users );
 
-		$games_count = $db_games->List_Load_Week( $week_id, $games );
-
-		if ( $games_count === false )
-		{
-			return false;
-		}
+		$db_games->List_Load_Week( $week_id, $games );
 
 		$previous_week_result	= $db_weeks->Load( $week[ 'id' ] - 1, $previous_week );
 		$next_week_result		= $db_weeks->Load( $week[ 'id' ] + 1, $next_week );
@@ -91,14 +80,9 @@ class Screen_ViewPicks extends Screen_User
 			$initials 		= strtoupper( sprintf( "%s.%s.", substr( $loaded_user[ 'fname' ], 0, 1 ), substr( $loaded_user[ 'lname' ], 0, 1 ) ) );
 			$missing_count 	= $db_picks->Missing( $loaded_user[ 'id' ], $week_id );
 
-			if ( $missing_count === false )
-			{
-				return false;
-			}
-
 			if ( !$db_weekly_records->Load_User_Week( $loaded_user[ 'id' ], $week_id, $weekly_record ) )
 			{
-				return $this->setError( 'Unable to load weekly records' );
+				throw new NFLPickEmException( 'Unable to load weekly records' );
 			}
 
 			print '<tr>';
@@ -108,14 +92,7 @@ class Screen_ViewPicks extends Screen_User
 
 			foreach( $games as $game )
 			{
-				$result = $db_picks->Load_User_Game( $loaded_user[ 'id' ], $game[ 'id' ], $pick );
-
-				if ( $result === false )
-				{
-					return $this->setDBError();
-				}
-
-				if ( count( $pick ) === 0 )
+				if ( !$db_picks->Load_User_Game( $loaded_user[ 'id' ], $game[ 'id' ], $pick ) )
 				{
 					$output = '<span style="color:red;">N/A</span>';
 				}
@@ -222,6 +199,6 @@ EOD );
 
 	private function _Users_List_Load( &$users )
 	{
-		return $this->db()->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name, CONCAT( SUBSTRING( fname, 1, 1 ), \'.\', SUBSTRING( lname, 1, 1 ), \'.\' ) AS abbr FROM users ORDER BY abbr, fname, lname, id', $users );
+		$this->db()->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name, CONCAT( SUBSTRING( fname, 1, 1 ), \'.\', SUBSTRING( lname, 1, 1 ), \'.\' ) AS abbr FROM users ORDER BY abbr, fname, lname, id', $users );
 	}
 }

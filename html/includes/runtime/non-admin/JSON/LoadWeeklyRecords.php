@@ -9,15 +9,8 @@ class JSON_LoadWeeklyRecords extends JSONUser
 		$db_weeks			= $this->db()->weeks();
 		$db_weekly_records	= $this->db()->weeklyrecords();
 
-		if ( !$db_users->List_Load( $users ) )
-		{
-			return $this->setDBError();
-		}
-
-		if ( $db_weeks->List_Load_Locked( $weeks ) === false )
-		{
-			return $this->setDBError();
-		}
+		$db_users->List_Load( $users );
+		$db_weeks->List_Load_Locked( $weeks );
 
 		foreach ( $users as &$user )
 		{
@@ -32,7 +25,7 @@ class JSON_LoadWeeklyRecords extends JSONUser
 			{
 				if ( !$db_weekly_records->Load_User_Week( $user[ 'id' ], $week[ 'id' ], $weekly_record ) )
 				{
-					return $this->setError( 'Unable to load all user records' );
+					throw new NFLPickEmException( 'Unable to load all user records' );
 				}
 
 				$week_entry				= array();

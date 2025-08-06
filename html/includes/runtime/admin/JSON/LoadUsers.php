@@ -7,10 +7,7 @@ class JSON_LoadUsers extends JSONAdmin
 		$sort		= Functions::Post( 'sort' );
 		$direction	= Functions::Post( 'direction' );
 
-		if ( !$this->_Load_Users( $sort, $direction, $users ) )
-		{
-			return false;
-		}
+		$this->_Load_Users( $sort, $direction, $users );
 
 		foreach( $users as &$loaded_user )
 		{
@@ -44,7 +41,7 @@ class JSON_LoadUsers extends JSONAdmin
 			}
 			default					:
 			{
-				return $this->setError( array( '#Error#', 'Invalid sort' ) );
+				throw new NFLPickEmException( 'Invalid sort' );
 			}
 		}
 
@@ -59,11 +56,6 @@ class JSON_LoadUsers extends JSONAdmin
 						ORDER BY
 							{$sort} {$direction}, name";
 
-		if ( !$this->db()->select( $sql, $users, $current, $current ) )
-		{
-			return $this->setDBError();
-		}
-
-		return true;
+		$this->db()->select( $sql, $users, $current, $current );
 	}
 }

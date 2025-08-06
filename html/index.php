@@ -1,9 +1,9 @@
 <?php
-session_start();
 ob_start();
 
 header( "Content-Type: text/html; charset=utf-8" );
 
+require_once( "includes/classes/Exceptions.php" );
 require_once( "includes/classes/functions.php" );
 require_once( "includes/classes/Database.php" );
 require_once( "includes/classes/Screen.php" );
@@ -13,16 +13,20 @@ $admin 				= Functions::Get( "view" ) == "admin" ? true : false;
 $screen				= Functions::Get( "screen" ) === "" ? "default" : Functions::Get( "screen" );
 $update				= Functions::Post_Int( "update" ) ? true : false;
 
-if ( !$screen_renderer->initialize() )
+try
 {
-	print_r( $screen_renderer->getError() );
-	die();
+	$screen_renderer->initialize( $admin, $screen, $update );
+
+	$settings	= $screen_renderer->settings();
+	$auth		= $screen_renderer->auth();
 }
-
-$screen_renderer->build( $admin, $screen, $update );
-
-$settings = $screen_renderer->settings();
+catch ( Exception $e )
+{
+	printf( 'A fatal error occurred: %s', htmlentities( $e->getMessage() ) );
+	exit();
+}
 ?>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -34,7 +38,7 @@ $settings = $screen_renderer->settings();
 	<script src="static/javascript/jqueryui.js" type="text/javascript"></script>
 	<script src="static/javascript/javascript.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		var token = <?php print json_encode( $screen_renderer->auth()->getToken() ); ?>;
+		var token = <?php print json_encode( $auth->getToken() ); ?>;
 	</script>
 	<?php
 		if ( $admin )
@@ -51,7 +55,7 @@ $settings = $screen_renderer->settings();
 	<div class="container">
 		<div class="header">
 			<div class="title">
-				<h1><a href="" title="<?php printf( "%s", htmlentities( $settings[ 'site_title' ] ) ); ?>"><?php printf( "%s", htmlentities( $settings[ 'site_title' ] ) ); ?></a></h1>
+				<h1><a href="" title="<?php print( htmlentities( $settings[ 'site_title' ] ) ); ?>"><?php print( htmlentities( $settings[ 'site_title' ] ) ); ?></a></h1>
 			</div>
 		</div>
 		<div class="navigation">

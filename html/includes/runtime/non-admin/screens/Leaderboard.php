@@ -6,14 +6,9 @@ class Screen_Leaderboard extends Screen_User
 	{
 		print "<h1>Leaderboard</h1>\n";
 
-		$count = $this->_Leaderboard( $leaders );
+		$this->_Leaderboard( $leaders );
 
-		if ( $count === false )
-		{
-			return $this->setDBError();
-		}
-
-		if ( $count === 0 )
+		if ( count( $leaders ) == 0 )
 		{
 			print "<p>The leaderboard is currently empty.</p>";
 
@@ -47,6 +42,6 @@ class Screen_Leaderboard extends Screen_User
 
 	private function _Leaderboard( &$users )
 	{
-		return $this->db()->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name FROM users ORDER BY current_place, name, id', $users );
+		$this->db()->select( 'SELECT *, CONCAT( fname, \' \', lname ) AS name FROM users ORDER BY current_place, name, id', $users );
 	}
 }

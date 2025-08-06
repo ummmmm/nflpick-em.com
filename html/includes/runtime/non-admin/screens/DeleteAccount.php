@@ -27,10 +27,7 @@ class Screen_DeleteAccount extends Screen_User
 
 		$this->auth()->logout();
 
-		if ( !$db_users->Delete( $this->_auth->getUserID() ) )
-		{
-			return $this->setDBError();
-		}
+		$db_users->Delete( $this->_auth->getUserID() );
 
 		header( sprintf( 'Location: %s', $settings[ 'domain_url' ] ) );
 

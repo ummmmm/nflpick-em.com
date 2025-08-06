@@ -7,10 +7,7 @@ class JSON_DeletePoll extends JSONAdminAction
 		$db_polls	= $this->db()->polls();
 		$poll_id	= Functions::Post( 'poll_id' );
 		
-		if ( !$db_polls->Delete( $poll_id ) )
-		{
-			return $this->setDBError();
-		}
+		$db_polls->Delete( $poll_id );
 	
 		return true;
 	}

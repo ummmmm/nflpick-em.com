@@ -10,7 +10,7 @@ class JSON_HighlightPicks extends JSONUser
 		
 		if ( !$db_weeks->IsLocked( $week ) )
 		{
-			return $this->setError( array( "#ERROR#", sprintf( "Week '%d' has not been locked yet.", $week ) ) );
+			throw new NFLPickEmException( sprintf( "Week '%d' has not been locked yet.", $week ) );
 		}
 
 		$diff_picks = array();
@@ -19,13 +19,10 @@ class JSON_HighlightPicks extends JSONUser
 		{	
 			if ( $userid == $this->_auth->getUserID() )
 			{
-				return $this->setError( array( "#Error#", "You cannot view picks you have different from yourself" ) );
+				throw new NFLPickEmException( 'You cannot view picks you have different from yourself' );
 			}
-			else if ( ( $count = $this->_Load_Different_Picks( $this->_auth->getUserID(), $userid, $week, $picks ) ) === false )
-			{
-				return $this->setDBError();
-			}
-			else if ( $count === 0 )
+			
+			if ( $this->_Load_Different_Picks( $this->_auth->getUserID(), $userid, $week, $picks ) == 0 )
 			{
 				return true;
 			}
@@ -34,11 +31,7 @@ class JSON_HighlightPicks extends JSONUser
 		}
 		else
 		{
-			if ( ( $count = $this->_Load_Different_Picks( $this->_auth->getUserID(), NULL, $week, $users_picks ) ) === false )
-			{
-				return $this->setDBError();
-			}
-			else if ( $count === 0 )
+			if ( $this->_Load_Different_Picks( $this->_auth->getUserID(), NULL, $week, $users_picks ) == 0 )
 			{
 				return true;
 			}

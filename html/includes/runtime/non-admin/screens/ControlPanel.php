@@ -82,10 +82,7 @@ class Screen_ControlPanel extends Screen_User
 			$user 				= $this->_auth->getUser();
 			$user[ 'email' ] 	= $data[ 'email' ];
 
-			if ( !$db_users->Update( $user ) )
-			{
-				return $this->setDBError();
-			}
+			$db_users->Update( $user );
 
 			return $this->setUpdateMessage( "Your email adddress has been updated." );
 		}
@@ -95,10 +92,7 @@ class Screen_ControlPanel extends Screen_User
 			$user				= $this->_auth->getUser();
 			$user[ 'password' ]	= $data[ 'password' ];
 
-			if ( !$db_users->Update( $user ) )
-			{
-				return $this->setDBError();
-			}
+			$db_users->Update( $user );
 
 			return $this->setUpdateMessage( "Your password has been updated." );
 		}

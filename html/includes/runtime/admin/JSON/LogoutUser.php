@@ -7,11 +7,8 @@ class JSON_LogoutUser extends JSONAdminAction
 		$db_sessions	= $this->db()->sessions();
 		$user_id		= Functions::Post( 'user_id' );
 
-		if ( !$db_sessions->Delete_User( $user_id ) )
-		{
-			return $this->setDBError();
-		}
-		
+		$db_sessions->Delete_User( $user_id );
+
 		return true;
 	}
 }

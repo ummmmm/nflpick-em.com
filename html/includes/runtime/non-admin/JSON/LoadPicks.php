@@ -9,30 +9,16 @@ class JSON_LoadPicks extends JSONUser
 		$db_weeks	= $this->db()->weeks();
 		$week_id	= Functions::Post( 'week_id' );
 
-		$count = $db_weeks->Load( $week_id, $week );
-
-		if ( $count === false )
+		if ( !$db_weeks->Load( $week_id, $week ) )
 		{
-			return $this->setDBError();
-		}
-
-		if ( $count === 0 )
-		{
-			return $this->setError( array( '#Error#', 'Failed to load week' ) );
+			throw new NFLPickEmException( 'Week does not exist' );
 		}
 
 		$db_games->List_Load_Week( $week_id, $week[ 'games' ] );
 
 		foreach( $week[ 'games' ] as &$game )
 		{
-			$count = $db_picks->Load_User_Game( $this->_auth->getUserID(), $game[ 'id' ], $pick );
-
-			if ( $count === false )
-			{
-				return $this->setDBError();
-			}
-
-			if ( $count === 0 )
+			if ( !$db_picks->Load_User_Game( $this->_auth->getUserID(), $game[ 'id' ], $pick ) )
 			{
 				$pick = null;
 			}

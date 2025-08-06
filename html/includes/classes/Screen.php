@@ -117,11 +117,6 @@ abstract class Screen
 	{
 		return $this->_update_message;
 	}
-
-	public function getError()
-	{
-		return $this->_error;
-	}
 }
 
 abstract class Screen_User extends Screen
@@ -174,7 +169,7 @@ class ScreenRenderer
 		$this->_auth				= new Authentication( $this->_db_manager );
 
 		$this->_screen				= null;
-		$this->_error				= array();
+		$this->_error				= null;
 		$this->_error_level			= 0x0;
 
 		$this->_settings			= null;
@@ -196,56 +191,73 @@ class ScreenRenderer
 		return $this->_auth;
 	}
 
-	public function initialize()
+	public function initialize( $admin, $screen, $update )
 	{
-		if ( !$this->db()->initialize() )
-		{
-			return $this->_setError( $this->db()->Get_Error() );
-		}
+		$this->db()->initialize();
+		$this->auth()->initialize();
 
-		$this->_auth->initialize();
-
-		return true;
+		$this->_build( $admin, $screen, $update );
 	}
 
 	private function _build_head()
 	{
-		ob_start();
-		if ( !$this->_screen->head() )
+		try
 		{
-			ob_end_clean();
+			ob_start();
+			$this->_screen->head();
+			$this->_setHeadData( ob_get_contents() );
+		}
+		catch ( NFLPickEmException $e )
+		{
+			$this->_setError( $e->getMessage() );
 			return $this->_setErrorLevel( self::FLAG_ERROR_HEAD );
 		}
-		$this->_setHeadData( ob_get_contents() );
-		ob_end_clean();
+		finally
+		{
+			ob_end_clean();
+		}
 
 		return true;
 	}
 
 	private function _build_jquery()
 	{
-		ob_start();
-		if ( !$this->_screen->jquery() )
+		try
 		{
-			ob_end_clean();
+			ob_start();
+			$this->_screen->jquery();
+			$this->_setJQueryData( ob_get_contents() );
+		}
+		catch ( NFLPickEmException $e )
+		{
+			$this->_setError( $e->getMessage() );
 			return $this->_setErrorLevel( self::FLAG_ERROR_JQUERY );
 		}
-		$this->_setJQueryData( ob_get_contents() );
-		ob_end_clean();
+		finally
+		{
+			ob_end_clean();
+		}
 
 		return true;
 	}
 
 	private function _build_content()
 	{
-		ob_start();
-		if ( !$this->_screen->content() )
+		try
 		{
-			ob_end_clean();
+			ob_start();
+			$this->_screen->content();
+			$this->_setContentData( ob_get_contents() );
+		}
+		catch ( NFLPickEmException $e )
+		{
+			$this->_setError( $e->getMessage() );
 			return $this->_setErrorLevel( self::FLAG_ERROR_CONTENT );
 		}
-		$this->_setContentData( ob_get_contents() );
-		ob_end_clean();
+		finally
+		{
+			ob_end_clean();
+		}
 
 		return true;
 	}
@@ -254,14 +266,27 @@ class ScreenRenderer
 	{
 		if ( $this->_run_update )
 		{
-			if ( !$this->_screen->validate() )
+			try
 			{
+				$this->_screen->validate();
+			}
+			catch ( NFLPickEmException $e )
+			{
+				$this->_setError( $e->getMessage() );
 				return $this->_setErrorLevel( self::FLAG_ERROR_VALIDATE );
 			}
 
-			if ( !$this->_screen->getValidationErrors() && !$this->_screen->update( $this->_screen->getValidationData() ) )
+			if ( !$this->_screen->getValidationErrors() )
 			{
-				return $this->_setErrorLevel( self::FLAG_ERROR_UPDATE );
+				try
+				{
+					$this->_screen->update( $this->_screen->getValidationData() );
+				}
+				catch ( NFLPickEmException $e )
+				{
+					$this->_setError( $e->getMessage() );
+					return $this->_setErrorLevel( self::FLAG_ERROR_UPDATE );
+				}
 			}
 		}
 
@@ -281,7 +306,7 @@ class ScreenRenderer
 		return $this->_settings;
 	}
 
-	public function build( $admin, $screen, $update )
+	public function _build( $admin, $screen, $update )
 	{
 		if ( !$this->_configure( $admin, $screen, $update ) )
 		{
@@ -293,13 +318,10 @@ class ScreenRenderer
 			return false;
 		}
 
-		
 		if ( !$this->_build_head() || !$this->_build_jquery() || !$this->_build_content() )
 		{
 			return false;
 		}
-		
-		return true;
 	}
 
 	private function _valid_configuration()
@@ -341,12 +363,6 @@ class ScreenRenderer
 			case self::FLAG_ERROR_CONTENT		:
 			case self::FLAG_ERROR_VALIDATE		:
 			case self::FLAG_ERROR_UPDATE		:
-			{
-				$this->_setError( $this->_screen->getError() );
-				$this->_outputFatalError();
-
-				break;
-			}
 			case self::FLAG_ERROR_MISCONFIGURED	:
 			{
 				$this->_outputFatalError();
@@ -362,56 +378,47 @@ class ScreenRenderer
 
 	private function _configure( $admin, $screen, $run_update )
 	{
-		if ( $admin )	$path = "includes/runtime/admin/screens";
-		else			$path = "includes/runtime/non-admin/screens";
-
-		$screen_name 	= $this->_screenName( $screen );
-		$class 			= sprintf( "Screen_%s", $screen_name );
-		$file_path		= sprintf( "%s/%s.php", $path, Functions::Strip_Nulls( $screen_name ) );
-
-		if ( !file_exists( $file_path ) )
+		try
 		{
-			return $this->_setError( array( "#Error#", "Screen not found" ) );
-		}
-		else if ( !require_once( $file_path ) )
-		{
-			return $this->_setError( array( "#Error#", "Failed to load screen" ) );
-		}
+			if ( $admin )	$path = "includes/runtime/admin/screens";
+			else			$path = "includes/runtime/non-admin/screens";
 
-		if ( !class_exists( $class ) )
-		{
-			return $this->_setError( array( "#Error#", "Screen is miscongifured" ) );
-		}
+			$screen_name 	= $this->_screenName( $screen );
+			$class 			= sprintf( "Screen_%s", $screen_name );
+			$file_path		= sprintf( "%s/%s.php", $path, Functions::Strip_Nulls( $screen_name ) );
 
-		$this->_screen = new $class( $this, $this->_auth );
+			if ( !file_exists( $file_path ) )		throw new NFLPickEmException( 'Screen not found' );
+			else if ( !require_once( $file_path ) )	throw new NFLPickEmException( 'Failed to load screen' );
+			else if ( !class_exists( $class ) )		throw new NFLPickEmException( 'Screen is miscongifured' );
 
-		if ( !$this->_screen instanceof Screen )
-		{
-			return $this->_setError( array( "#Error#", "Screen is missing required inheritance" ) );
-		}
+			$this->_screen = new $class( $this, $this->_auth );
 
-		$this->_getRequirements( $flags );
-
-		if ( ( $flags & self::FLAG_REQ_USER ) && !$this->_auth->isUser() )
-		{
-			return $this->_setError( array( '#Error#', 'You must be a user to view this screen' ) );
-		}
-
-		if ( ( $flags & self::FLAG_REQ_ADMIN ) && !$this->_auth->isAdmin() )
-		{
-			return $this->_setError( array( '#Error#', 'You must be an administrator to view this screen' ) );
-		}
-
-		if ( $run_update )
-		{
-			$token = Functions::Post( "token" );
-
-			if ( ( $flags & self::FLAG_REQ_TOKEN ) && !$this->_auth->isValidToken( $token ) )
+			if ( !$this->_screen instanceof Screen )
 			{
-				return $this->_setError( array( '#Error#', 'You must have a valid token to complete this action' ) );
+				throw new NFLPickEmException( 'Screen is missing required inheritance' );
 			}
 
-			$this->_run_update = true;
+			$this->_getRequirements( $flags );
+
+			if ( ( $flags & self::FLAG_REQ_USER ) && !$this->_auth->isUser() )			throw new NFLPickEmException( 'You must be a user to view this screen' );
+			else if ( ( $flags & self::FLAG_REQ_ADMIN ) && !$this->_auth->isAdmin() )	throw new NFLPickEmException( 'You must be an administrator to view this screen' );
+
+			if ( $run_update )
+			{
+				$token = Functions::Post( "token" );
+
+				if ( ( $flags & self::FLAG_REQ_TOKEN ) && !$this->_auth->isValidToken( $token ) )
+				{
+					throw new NFLPickEmException( 'You must have a valid token to complete this action' );
+				}
+
+				$this->_run_update = true;
+			}
+		}
+		catch ( NFLPickEmException $e )
+		{
+			$this->_setError( $e->getMessage() );
+			return false;
 		}
 
 		return true;
@@ -422,11 +429,6 @@ class ScreenRenderer
 		$this->_error = $error;
 
 		return false;
-	}
-
-	public function getError()
-	{
-		return $this->_error;
 	}
 
 	private function _setErrorLevel( $level )
@@ -468,10 +470,8 @@ class ScreenRenderer
 
 	private function _outputFatalError()
 	{
-		@list( $code, $message ) = $this->_error;
-
-		$code 		= ( !$code ) ? "UNKNOWN" : $code;
-		$message 	= ( !$message ) ? "An unknown error has occurred." : $message;
+		$code 		= '#Error#';
+		$message 	= $this->_error ?? 'An unknown error has occurred.';
 
 		printf( "<h1>An error has occurred</h1>\n" );
 		printf( "<div>Error Code: %s</div>\n", htmlentities( $code ) );

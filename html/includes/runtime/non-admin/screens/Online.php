@@ -4,15 +4,9 @@ class Screen_Online extends Screen
 {
 	public function content()
 	{
-		$settings	= $this->settings();
-		$count		= $this->_OnlineUsersList_Load( $users, $settings[ 'online' ] );
+		$settings = $this->settings();
 
-		if ( $count === false )
-		{
-			return false;
-		}
-
-		if ( $count == 0 )
+		if ( $this->_OnlineUsersList_Load( $users, $settings[ 'online' ] ) == 0 )
 		{
 			print '<h1>Online Users</h1>';
 			print '<p>Currently no users online.</p>';
@@ -35,14 +29,7 @@ class Screen_Online extends Screen
 
 	private function _OnlineUsersList_Load( &$users, $minutes )
 	{
-		$time	= time() - ( 60 * $minutes );
-		$online = $this->db()->select( 'SELECT CONCAT( fname, \' \', lname ) AS name, last_on FROM users WHERE last_on > ? ORDER BY last_on DESC, name', $users, $time );
-
-		if ( $online === false )
-		{
-			return $this->setDBError();
-		}
-
-		return $online;
+		$time = time() - ( 60 * $minutes );
+		return $this->db()->select( 'SELECT CONCAT( fname, \' \', lname ) AS name, last_on FROM users WHERE last_on > ? ORDER BY last_on DESC, name', $users, $time );
 	}
 }

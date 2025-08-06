@@ -14,10 +14,11 @@ class Screen_MakePicks extends Screen_User
 		$db_weeks	= $this->db()->weeks();
 		$now 		= new DateTime();
 		$then		= new DateTime();
-		$count		= $db_weeks->Load( $week_id, $loaded_week );
 
-		if ( $count === false )	return $this->setDBError();
-		else if ( $count == 0 )	return $this->setError( array( "#Error#", "Failed to load week" ) );
+		if ( !$db_weeks->Load( $week_id, $loaded_week ) )
+		{
+			throw new NFLPickEmException( 'Week does not exist' );
+		}
 
 		$then->setTimestamp( $loaded_week[ 'date' ] );
 
@@ -57,18 +58,18 @@ EOT;
 
 	public function jquery()
 	{
-		$week_id 	= Functions::Get( "week" );
+		$week_id	= Functions::Get( "week" );
+		$db_weeks	= $this->db()->weeks();
 
 		if ( !$week_id )
 		{
 			return true;
 		}
 
-		$db_weeks	= $this->db()->weeks();
-		$count		= $db_weeks->Load( $week_id, $loaded_week );
-
-		if ( $count === false )	return $this->setDBError();
-		else if ( $count == 0 )	return $this->setError( array( "#Error#", "Failed to load week" ) );
+		if ( !$db_weeks->Load( $week_id, $loaded_week ) )
+		{
+			throw new NFLPickEmException( 'Week does not exist' );
+		}
 
 		printf( "$.fn.load_picks( %d );", $loaded_week[ 'id' ] );
 
@@ -92,14 +93,9 @@ EOT;
 
 	private function _WeekList( &$db_weeks )
 	{
-		$count_weeks = $db_weeks->List_Load( $weeks );
+		$db_weeks->List_Load( $weeks );
 
-		if ( $count_weeks === false )
-		{
-			return false;
-		}
-
-		if ( $count_weeks === 0 )
+		if ( count( $weeks ) == 0 )
 		{
 			return Functions::Information( 'No Weeks Added', 'No weeks have been added yet.' );
 		}
@@ -119,21 +115,17 @@ EOT;
 	{
 		$db_games		= $this->db()->games();
 		$db_picks		= $this->db()->picks();
-		$games_count 	= $db_games->List_Load_Week( $week, $games );
+		
+		$db_games->List_Load_Week( $week, $games );
 
-		if ( $games_count === false )
-		{
-			return $this->setDBError();
-		}
-
-		if ( $games_count === 0 )
+		if ( count( $games ) == 0 )
 		{
 			return Functions::Information( 'No games found', 'No games have been added for this week yet.' );
 		}
 
 		if ( !$db_weeks->Load( $week, $loaded_week ) )
 		{
-			return $this->setDBError();
+			throw new NFLPickEmException( 'Week does not exist' );
 		}
 
 		$remaining = $db_picks->Remaining( $this->_auth->getUserID(), $week );

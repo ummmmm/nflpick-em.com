@@ -7,16 +7,11 @@ class Screen_Default extends Screen
 		$settings	= $this->settings();
 		$action		= Functions::Get( 'action' );
 
-		$total = ( $action === 'viewall' ) ? 1000 : $settings[ 'max_news' ];
+		$total = ( $action === 'viewall' ) ? 0 : $settings[ 'max_news' ];
 
-		$news_count = $this->_NewsLoad_List( $news_list, $total );
+		$this->_NewsLoad_List( $news_list, $total );
 
-		if ( $news_count === false )
-		{
-			return $this->setDBError();
-		}
-
-		if ( $news_count == 0 )
+		if ( count( $news_list ) == 0 )
 		{
 			$date = new DateTime( 'now', new DateTimeZone( 'America/Los_Angeles' ) );
 			print '<h1>No News</h1>';
@@ -45,8 +40,9 @@ class Screen_Default extends Screen
 		return true;
 	}
 
-	private function _NewsLoad_List( &$news, &$total )
+	private function _NewsLoad_List( &$news, $total )
 	{
-		return $this->db()->select( 'SELECT n.*, CONCAT( u.fname, \' \', u.lname ) AS name FROM news n, users u WHERE n.active = 1 AND n.user_id = u.id ORDER BY date DESC LIMIT ?', $news, $total );
+		if ( $total == 0 )	return $this->db()->select( 'SELECT n.*, CONCAT( u.fname, \' \', u.lname ) AS name FROM news n, users u WHERE n.active = 1 AND n.user_id = u.id ORDER BY date DESC', $news );
+		else				return $this->db()->select( 'SELECT n.*, CONCAT( u.fname, \' \', u.lname ) AS name FROM news n, users u WHERE n.active = 1 AND n.user_id = u.id ORDER BY date DESC LIMIT ?', $news, $total );
 	}
 }

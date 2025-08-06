@@ -114,10 +114,7 @@ EOF );
 							 'message'			=> '',
 							 'pw_opt_out'		=> $data[ 'pw_opt_out' ] ? 1 : 0 );
 
-		if ( !$db_users->Insert( $user ) )
-		{
-			return false;
-		}
+		$db_users->Insert( $user );
 
 		$this->auth()->login( $user[ 'id' ] );
 

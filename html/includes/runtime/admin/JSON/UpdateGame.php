@@ -10,7 +10,7 @@ class JSON_UpdateGame extends JSONAdminAction
 
 		if ( !$db_games->Load( $game_id, $loaded_game ) )
 		{
-			return $this->setError( array( 'NFL-GAMES_UPDATE-6', 'Failed to load game' ) );
+			throw new NFLPickEmException( 'Game does not exist' );
 		}
 
 		if ( $scored === true )
@@ -30,7 +30,7 @@ class JSON_UpdateGame extends JSONAdminAction
 
 		if ( $awayScore < 0 || $homeScore < 0 )
 		{
-			return $this->setError( array( 'NFL-GAMES_UPDATE-0', 'Invalid game score' ) );
+			throw new NFLPickEmException( 'Invalid game score' );
 		}
 
 		if ( $homeScore == $awayScore )
@@ -50,25 +50,11 @@ class JSON_UpdateGame extends JSONAdminAction
 		$game[ 'awayScore' ] 	= $awayScore;
 		$game[ 'final' ]		= 1;
 
-		if ( !$db_games->Update( $game ) )
-		{
-			return $this->setDBError();
-		}
+		$db_games->Update( $game );
+		$db_teams->Recalculate_Records();
+		Functions::Update_Records( $this->db() );
 
-		if ( !$db_teams->Recalculate_Records() )
-		{
-			return $this->setDBError();
-		}
-
-		if ( !Functions::Update_Records( $this->db() ) )
-		{
-			return $this->setError( 'Failed to update weekly / user records' );
-		}
-
-		if ( !$db_games->Load( $game[ 'id' ], $game ) )
-		{
-			return $this->setDBError();
-		}
+		$db_games->Load( $game[ 'id' ], $game );
 
 		return $this->setData( $game );
 	}
@@ -91,43 +77,22 @@ class JSON_UpdateGame extends JSONAdminAction
 
 		if ( !checkdate( $month, $day, $year ) || $mktime === false || $hour > 23 || $minute > 59 )
 		{
-			return $this->setError( array( 'NFL-GAMES_UPDATE-1', 'Invalid game date' ) );
+			throw new NFLPickEmException( 'Invalid game date' );
 		}
 
-		$team_count = $db_teams->Load( $away_id, $loaded_away );
-
-		if ( $team_count === false )
+		if ( !$db_teams->Load( $away_id, $loaded_away ) )
 		{
-			return $this->setDBError();
+			throw new NFLPickEmException( 'Away team does not exist' );
 		}
 
-		if ( $team_count === 0 )
+		if ( !$db_teams->Load( $home_id, $loaded_home ) )
 		{
-			return $this->setError( array( 'NFL-GAMES_UPDATE-2', 'Failed to load the away team' ) );
+			throw new NFLPickEmException( 'Home team does not exist' );
 		}
 
-		$team_count = $db_teams->Load( $home_id, $loaded_home );
-
-		if ( $team_count === false )
+		if ( !$db_weeks->Load( $week_id, $loaded_week ) )
 		{
-			return $this->setDBError();
-		}
-
-		if ( $team_count === 0 )
-		{
-			return $this->setError( array( 'NFL-GAMES_UPDATE-3', 'Failed to load the home team' ) );
-		}
-
-		$week_count = $db_weeks->Load( $week_id, $loaded_week );
-
-		if ( $week_count === false )
-		{
-			return $this->setDBError();
-		}
-
-		if ( $week_count === 0 )
-		{
-			return $this->setError( array( 'NFL-GAMES_UPDATE-4', 'Failed to load week' ) );
+			throw new NFLPickEmException( 'Week does not exist' );
 		}
 
 		$date = new DateTime( date( 'Y-m-d H:i:s', $mktime ) );
@@ -137,31 +102,15 @@ class JSON_UpdateGame extends JSONAdminAction
 		$game[ 'home' ] = $home_id;
 		$game[ 'date' ] = $date->getTimestamp();
 
-		if ( !$db_games->Update( $game ) )
-		{
-			return $this->setDBError();
-		}
-
-		if ( !$this->_Picks_Update_Week( $game[ 'id' ], $week_id ) )
-		{
-			return $this->setDBError();
-		}
-
-		if ( !$db_games->Load( $game[ 'id' ], $game ) )
-		{
-			return $this->setDBError();
-		}
+		$db_games->Update( $game );
+		$this->_Picks_Update_Week( $game[ 'id' ], $week_id );
+		$db_games->Load( $game[ 'id' ], $game );
 
 		return $this->setData( $game );
 	}
 
 	private function _Picks_Update_Week( $game_id, $week )
 	{
-		if ( !$this->db()->query( 'UPDATE picks SET week = ? WHERE game_id = ?', $week, $game_id ) )
-		{
-			return false;
-		}
-
-		return true;
+		$this->db()->query( 'UPDATE picks SET week = ? WHERE game_id = ?', $week, $game_id );
 	}
 }
