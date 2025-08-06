@@ -167,17 +167,17 @@ class DatabaseTableGames extends DatabaseTable
 
 				if ( !$db_teams->Load_Abbr( $away_abbr, $away_team ) )
 				{
-					return $this->_Set_Error( sprintf( 'Failed to load away team %s', $away_abbr ) );
+					throw new NFLPickEmException( sprintf( 'Failed to load away team %s', $away_abbr ) );
 				}
 
 				if ( !$db_teams->Load_Abbr( $home_abbr, $home_team ) )
 				{
-					return $this->_Set_Error( sprintf( 'Failed to load home team %s', $home_abbr ) );
+					throw new NFLPickEmException( sprintf( 'Failed to load home team %s', $home_abbr ) );
 				}
 
 				if ( $this->Exists_Week_Teams( $week[ 'id' ], $home_team[ 'id' ], $away_team[ 'id' ], $null ) )
 				{
-					return $this->_Set_Error( sprintf( 'Game already exists: %s vs. %s for week %d', $away_team[ 'team' ], $home_team[ 'team' ], $week[ 'id' ] ) );
+					throw new NFLPickEmException( sprintf( 'Game already exists: %s vs. %s for week %d', $away_team[ 'team' ], $home_team[ 'team' ], $week[ 'id' ] ) );
 				}
 
 				array_push( $games, array( 'away' => $away_team[ 'id' ], 'home' => $home_team[ 'id' ], 'stadium' => $stadium, 'date' => $date->getTimestamp(), 'week' => $week[ 'id' ] ) );
@@ -186,23 +186,9 @@ class DatabaseTableGames extends DatabaseTable
 
 		foreach ( $games as $game )
 		{
-			if ( !$this->Insert( $game ) )
-			{
-				return false;
-			}
+			$this->Insert( $game );
 		}
 
 		return true;
-	}
-
-	private function _Set_Error( $error )
-	{
-		$this->_error = $error;
-		return false;
-	}
-
-	public function Get_Error()
-	{
-		return $this->_error;
 	}
 }

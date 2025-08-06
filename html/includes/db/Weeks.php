@@ -88,11 +88,6 @@ class DatabaseTableWeeks extends DatabaseTable
 
 	public function Create_Weeks( $start_date )
 	{
-		$count = $this->List_Load( $null );
-
-		if ( $count === false )		return false;
-		else if ( $count !== 0 )	return $this->_Set_Error( 'Weeks table must be empty to call Create_Weeks' );
-
 		$data = json_decode( file_get_contents( 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?week=0' ) ); 
 
 		foreach ( $data->leagues[ 0 ]->calendar as $entry )
@@ -117,6 +112,6 @@ class DatabaseTableWeeks extends DatabaseTable
 			}
 		}
 
-		return $this->_Set_Error( 'Failed to get the regular season weeks' );
+		throw new NFLPickEmException( 'Failed to get the regular season weeks' );
 	}
 }
