@@ -20,10 +20,7 @@ class Screen_UserPreferences extends Screen_User
 		$user						= $this->_auth->getUser();
 		$user[ 'email_preference' ]	= $data[ 'email_preference' ] ? 1 : 0;
 
-		if ( !$db_users->Update( $user ) )
-		{
-			return $this->setDBError();
-		}
+		$db_users->Update( $user );
 
 		$this->_auth->forceUserReload();
 

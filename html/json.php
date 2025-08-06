@@ -24,7 +24,7 @@ catch ( NFLPickEmException $e )
 }
 catch ( Exception $e )
 {
-	print( json_encode( array( 'success' => false, 'error_code' => '#Error#', 'error_message' => sprintf( 'An unknown error has occurred: %d: %s', $e->getCode(), $e->getMessage() ) ) ) );
+	print( json_encode( array( 'success' => false, 'error_code' => '#Error#', 'error_message' => sprintf( 'An unknown error has occurred: %s (%d)', $e->getMessage(), $e->getCode() ) ) ) );
 	return;
 }
 

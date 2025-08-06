@@ -90,20 +90,15 @@ class DatabaseTablePicks extends DatabaseTable
 
 	public function Missing( $userid, $weekid )
 	{
-		$count = $this->single( 'SELECT
-										COUNT( * ) AS count
-									  FROM
-									  	games g
-									  	LEFT OUTER JOIN picks p ON p.game_id = g.id AND p.user_id = ?
-									  WHERE
-									  	g.week = ? AND
-									  	p.id IS NULL',
-									  $missing, $userid, $weekid );
-
-		if ( $count === false )
-		{
-			return false;
-		}
+		$this->single( 'SELECT
+							COUNT( * ) AS count
+						FROM
+						  	games g
+							LEFT OUTER JOIN picks p ON p.game_id = g.id AND p.user_id = ?
+						WHERE
+						  	g.week = ? AND
+						  	p.id IS NULL',
+						$missing, $userid, $weekid );
 
 		return $missing[ 'count' ];
 	}

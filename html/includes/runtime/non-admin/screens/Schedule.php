@@ -11,12 +11,7 @@ class Screen_Schedule extends Screen
 
 		if ( $week_id == '' )
 		{
-			$count = $db_weeks->List_Load( $weeks );
-
-			if ( $count === false )
-			{
-				return false;
-			}
+			$db_weeks->List_Load( $weeks );
 
 			print '<h1>Weeks</h1>';
 
@@ -30,20 +25,11 @@ class Screen_Schedule extends Screen
 
 		if ( !$db_weeks->Load( $week_id, $loaded_week ) )
 		{
-			return $this->setError( array( '#Error#', 'Invalid week' ) );
+			return Functions::Information( 'Error', 'Invalid week.' );
 		}
 
-		if ( !$db_games->List_Load_Week( $week_id, $games ) )
-		{
-			return $this->setDBError();
-		}
-
-		$count = $db_teams->List_Load_Byes( $week_id, $teams );
-
-		if ( $count === false )
-		{
-			return false;
-		}
+		$db_games->List_Load_Week( $week_id, $games );
+		$db_teams->List_Load_Byes( $week_id, $teams );
 
 		printf( '<h1>Week %d</h1>', $week_id );
 

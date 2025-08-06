@@ -12,7 +12,7 @@ class Screen_ForgotPassword extends Screen
 		{
 			if ( !$this->_auth->getUserID() )
 			{
-				return $this->setError( array( "#Error#", "You must be logged in" ) );
+				throw new NFLPickEmException( 'You must be logged in to complete this action' );
 			}
 
 			$password	= Functions::Post( "password" );
@@ -40,13 +40,8 @@ class Screen_ForgotPassword extends Screen
 		{
 			$db_users	= $this->db()->users();
 			$email 		= Functions::Post( "email" );
-			$count		= $db_users->Load_Email( $email, $user );
 
-			if ( $count === false )
-			{
-				return $this->setDBError();
-			}
-			else if ( $count === 0 )
+			if ( !$db_users->Load_Email( $email, $user ) )
 			{
 				return $this->setValidationErrors( "Email not found" );
 			}
@@ -69,15 +64,8 @@ class Screen_ForgotPassword extends Screen
 			$user[ 'password' ]			= Functions::HashPassword( $data );
 			$user[ 'force_password' ]	= 0;
 
-			if ( !$db_users->Update( $user ) )
-			{
-				return $this->setDBError();
-			}
-
-			if ( !$db_reset_passwords->Delete_User( $this->_auth->getUserID() ) )
-			{
-				return $this->setDBError();
-			}
+			$db_users->Update( $user );
+			$db_reset_passwords->Delete_User( $this->_auth->getUserID() );
 
 			return $this->setUpdateMessage( "Your password has been updated" );
 		}
@@ -88,34 +76,24 @@ class Screen_ForgotPassword extends Screen
 			$temp_password	= Functions::Random( 10 );
 			$record			= array( 'userid' => $user[ 'id' ], 'password' => Functions::HashPassword( $temp_password ) );
 
-			if ( !$db_reset_passwords->Delete_User( $user[ 'id' ] ) )
-			{
-				return $this->setDBError();
-			}
-
-			if ( !$db_reset_passwords->Insert( $record ) )
-			{
-				return $this->setDBError();
-			}
+			$db_reset_passwords->Delete_User( $user[ 'id' ] );
+			$db_reset_passwords->Insert( $record );
 
 			$user[ 'force_password' ]	= 1;
 
-			if ( !$db_users->Update( $user ) )
-			{
-				return $this->setDBError();
-			}
+			$db_users->Update( $user );
 
 			$email = new Mail( $user[ 'email' ], "Forgot Password", sprintf( 'Your temporary password is <span style="font-weight: bold;">%s</span>', $temp_password ) );
 
 			if ( !$email->send() )
 			{
-				return $this->setError( array( "#Error#", "Failed to send email.  Please try again later."  ) );
+				throw new NFLPickEmException( 'Failed to send email, please try again later' );
 			}
 
 			return $this->setUpdateMessage( "A temporary password has been emailed to you." );
 		}
 
-		return $this->setError( array( "#Error#", "Invalid action" ) );
+		throw new NFLPickEmException( 'Invalid action' );
 	}
 
 	public function content()
@@ -133,7 +111,7 @@ class Screen_ForgotPassword extends Screen
 		if ( $action == "changepassword" )	return $this->_ChangePassword();
 		else if ( $action == '' )			return $this->_ForgotPassword();
 
-		return $this->setError( array( "#Error#", "Invalid action" ) );
+		throw new NFLPickEmException( 'Invalid action' );
 	}
 
 	private function _ForgotPassword()
