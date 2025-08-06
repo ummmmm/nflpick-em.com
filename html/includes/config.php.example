@@ -2,4 +2,3 @@
 
 date_default_timezone_set( "America/Los_Angeles" );
 define( "CONFIG_INI", "path_to_data/data/config.ini" ); // path to config.ini file outside of the web root
-define( "INDEX", "/" ); // domain path to use (use / for top level /dir_name/ for any sub directory)

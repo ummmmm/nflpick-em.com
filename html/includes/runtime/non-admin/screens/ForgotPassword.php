@@ -98,11 +98,12 @@ class Screen_ForgotPassword extends Screen
 
 	public function content()
 	{
-		$user = $this->_auth->getUser();
+		$settings	= $this->settings();
+		$user		= $this->_auth->getUser();
 
 		if ( $this->_auth->getUserID() && !$user[ 'force_password' ] )
 		{
-			header( sprintf( "Location: %s", INDEX ) );
+			header( sprintf( 'Location: %s', $settings[ 'domain_url' ] ) );
 			die();
 		}
 

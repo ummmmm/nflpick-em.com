@@ -121,7 +121,7 @@ class Authentication
 		$token			= sha1( uniqid( rand(), TRUE ) );
 		$session		= array( 'token' => $token, 'cookieid' => $cookieid, 'userid' => $user_id );
 
-		setcookie( 'session', $cookieid, time() + 60 * 60 * 24 * 30, INDEX, '', true, true );
+		setcookie( 'session', $cookieid, time() + 60 * 60 * 24 * 30, '', '', true, true );
 
 		$db_sessions->Insert( $session );
 
@@ -135,7 +135,7 @@ class Authentication
 
 		$this->_setDefaults();
 
-		setcookie( 'session', '', -1, INDEX );
+		setcookie( 'session', '', -1, '' );
 	}
 
 	public function forceUserReload()
