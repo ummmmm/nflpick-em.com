@@ -27,18 +27,6 @@ class DatabaseTableSessions extends DatabaseTable
 		return $this->query( 'DELETE FROM sessions WHERE userid = ?', $user_id );
 	}
 
-	private function _Error( $message )
-	{
-		$this->_error = $message;
-
-		return false;
-	}
-
-	public function Get_Error()
-	{
-		return $this->_error;
-	}
-
 	public function Load_User_Token( $user_id, $token, &$session )
 	{
 		return $this->single( 'SELECT * FROM sessions WHERE userid = ? AND token = ?', $session, $user_id, $token );
@@ -67,14 +55,5 @@ class DatabaseTableSessions extends DatabaseTable
 		$date = time();
 
 		return $this->query( 'UPDATE sessions SET last_active = ? WHERE cookieid = ?', $date, $cookieid );
-	}
-
-	public static function Validate( &$db, $userid, $token )
-	{
-		$cookieid = Functions::Cookie( 'session' );
-
-		$count = $db->single( 'SELECT * FROM sessions WHERE token = ? AND cookieid = ? AND userid = ?', $null, $token, $cookieid, $userid );
-
-		return $count ? true : false;
 	}
 }
