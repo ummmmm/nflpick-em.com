@@ -14,12 +14,10 @@ abstract class Screen
 	private $_settings;
 
 	protected $_screen_renderer;
-	protected $_auth;
 
-	public function __construct( ScreenRenderer &$screen_renderer, Authentication &$auth )
+	public function __construct( ScreenRenderer &$screen_renderer )
 	{
 		$this->_screen_renderer		= $screen_renderer;
-		$this->_auth				= $auth;
 
 		$this->_error				= array();
 		$this->_validation_errors	= null;
@@ -386,7 +384,7 @@ class ScreenRenderer
 			else if ( !require_once( $file_path ) )	throw new NFLPickEmException( 'Failed to load screen' );
 			else if ( !class_exists( $class ) )		throw new NFLPickEmException( 'Screen is miscongifured' );
 
-			$this->_screen = new $class( $this, $this->_auth );
+			$this->_screen = new $class( $this );
 
 			if ( !$this->_screen instanceof Screen )
 			{
@@ -395,14 +393,14 @@ class ScreenRenderer
 
 			$this->_getRequirements( $flags );
 
-			if ( ( $flags & self::FLAG_REQ_USER ) && !$this->_auth->isUser() )			throw new NFLPickEmException( 'You must be a user to view this screen' );
-			else if ( ( $flags & self::FLAG_REQ_ADMIN ) && !$this->_auth->isAdmin() )	throw new NFLPickEmException( 'You must be an administrator to view this screen' );
+			if ( ( $flags & self::FLAG_REQ_USER ) && !$this->auth()->isUser() )			throw new NFLPickEmException( 'You must be a user to view this screen' );
+			else if ( ( $flags & self::FLAG_REQ_ADMIN ) && !$this->auth()->isAdmin() )	throw new NFLPickEmException( 'You must be an administrator to view this screen' );
 
 			if ( $run_update )
 			{
 				$token = Functions::Post( "token" );
 
-				if ( ( $flags & self::FLAG_REQ_TOKEN ) && !$this->_auth->isValidToken( $token ) )
+				if ( ( $flags & self::FLAG_REQ_TOKEN ) && !$this->auth()->isValidToken( $token ) )
 				{
 					throw new NFLPickEmException( 'You must have a valid token to complete this action' );
 				}
@@ -521,9 +519,9 @@ class ScreenRenderer
 	public function topNavigation()
 	{
 		$db_weeks 	= $this->db()->weeks();
-		$user		= $this->_auth->getUser();
+		$user		= $this->auth()->getUser();
 
-		if ( !$this->_auth->getUserID() )
+		if ( !$this->auth()->getUserID() )
 		{
 			printf( "<span>Welcome, Guest. Please login to start making your picks for week %d.</span>\n", $db_weeks->Current() );
 		}
@@ -537,9 +535,9 @@ class ScreenRenderer
 	{
 		$db_weeks 	= $this->db()->weeks();
 		$weekid 	= $db_weeks->Previous();
-		$admin 		= ( $this->_auth->isAdmin() ) ? '<li><a href="?view=admin" title="Admin Control Panel">Admin Control Panel</a></li>' : '';
+		$admin 		= ( $this->auth()->isAdmin() ) ? '<li><a href="?view=admin" title="Admin Control Panel">Admin Control Panel</a></li>' : '';
 
-		if ( $this->_auth->getUserID() )
+		if ( $this->auth()->getUserID() )
 		{
 			print <<<EOT
 <h1>User Links</h1>
@@ -559,7 +557,7 @@ EOT;
 		print "<h1>Quick Links</h1>\n";
 		print "<ul>";
 
-		if ( !$this->_auth->getUserID() )
+		if ( !$this->auth()->getUserID() )
 		{
 			print "<li><a href=\"?screen=register\" title=\"Register\">Register</a></li>";
 			print "<li><a href=\"?screen=login\" title=\"Login\">Login</a></li>";

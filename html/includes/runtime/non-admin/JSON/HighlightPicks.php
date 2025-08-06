@@ -17,12 +17,12 @@ class JSON_HighlightPicks extends JSONUser
 
 		if ( $userid != 0 )
 		{	
-			if ( $userid == $this->_auth->getUserID() )
+			if ( $userid == $this->auth()->getUserID() )
 			{
 				throw new NFLPickEmException( 'You cannot view picks you have different from yourself' );
 			}
 			
-			if ( $this->_Load_Different_Picks( $this->_auth->getUserID(), $userid, $week, $picks ) == 0 )
+			if ( $this->_Load_Different_Picks( $this->auth()->getUserID(), $userid, $week, $picks ) == 0 )
 			{
 				return true;
 			}
@@ -31,7 +31,7 @@ class JSON_HighlightPicks extends JSONUser
 		}
 		else
 		{
-			if ( $this->_Load_Different_Picks( $this->_auth->getUserID(), NULL, $week, $users_picks ) == 0 )
+			if ( $this->_Load_Different_Picks( $this->auth()->getUserID(), NULL, $week, $users_picks ) == 0 )
 			{
 				return true;
 			}

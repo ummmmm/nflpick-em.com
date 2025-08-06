@@ -25,8 +25,8 @@ class JSON_LoadPolls extends JSON
 
 			$poll[ 'answers' ] = $answers;
 
-			if ( !$this->_auth->isUser() )	$poll[ 'voted' ] = true;
-			else							$poll[ 'voted' ] = $this->_Vote_Casted( $this->_auth->getUserID(), $poll[ 'id' ] ) > 0;
+			if ( !$this->auth()->isUser() )	$poll[ 'voted' ] = true;
+			else							$poll[ 'voted' ] = $this->_Vote_Casted( $this->auth()->getUserID(), $poll[ 'id' ] ) > 0;
 		}
 
 		return $this->setData( $loaded_polls );

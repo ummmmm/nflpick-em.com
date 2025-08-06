@@ -10,7 +10,7 @@ class Screen_ForgotPassword extends Screen
 
 		if ( $action == "changepassword" )
 		{
-			if ( !$this->_auth->getUserID() )
+			if ( !$this->auth()->getUserID() )
 			{
 				throw new NFLPickEmException( 'You must be logged in to complete this action' );
 			}
@@ -60,12 +60,12 @@ class Screen_ForgotPassword extends Screen
 
 		if ( $action == "changepassword" )
 		{
-			$user 						= $this->_auth->getUser();
+			$user 						= $this->auth()->getUser();
 			$user[ 'password' ]			= Functions::HashPassword( $data );
 			$user[ 'force_password' ]	= 0;
 
 			$db_users->Update( $user );
-			$db_reset_passwords->Delete_User( $this->_auth->getUserID() );
+			$db_reset_passwords->Delete_User( $this->auth()->getUserID() );
 
 			return $this->setUpdateMessage( "Your password has been updated" );
 		}
@@ -99,9 +99,9 @@ class Screen_ForgotPassword extends Screen
 	public function content()
 	{
 		$settings	= $this->settings();
-		$user		= $this->_auth->getUser();
+		$user		= $this->auth()->getUser();
 
-		if ( $this->_auth->getUserID() && !$user[ 'force_password' ] )
+		if ( $this->auth()->getUserID() && !$user[ 'force_password' ] )
 		{
 			header( sprintf( 'Location: %s', $settings[ 'domain_url' ] ) );
 			die();

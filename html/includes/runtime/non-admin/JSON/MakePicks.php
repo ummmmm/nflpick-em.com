@@ -20,9 +20,9 @@ class JSON_MakePicks extends JSONUserAction
 		else if ( $date_now > $game[ 'date' ] )																throw new NFLPickEmException( 'This game has already started and can no longer be updated.' );
 		else if ( !$db_teams->Load( $winner, $winning_team ) || !$db_teams->Load( $loser, $losing_team ) )	throw new NFLPickEmException( 'Away / home team does not exist' );
 
-		$pick_exists = $db_picks->Load_User_Game( $this->_auth->getUserID(), $gameid, $pick );
+		$pick_exists = $db_picks->Load_User_Game( $this->auth()->getUserID(), $gameid, $pick );
 
-		$pick[ 'user_id' ]		= $this->_auth->getUserID();
+		$pick[ 'user_id' ]		= $this->auth()->getUserID();
 		$pick[ 'game_id' ]		= $gameid;
 		$pick[ 'winner_pick' ] 	= $winner;
 		$pick[ 'loser_pick' ]	= $loser;
@@ -31,7 +31,7 @@ class JSON_MakePicks extends JSONUserAction
 		if ( !$pick_exists )	$db_picks->Insert( $pick );
 		else					$db_picks->Update( $pick );
 
-		$remaining = $db_picks->Remaining( $this->_auth->getUserID(), $week[ 'id' ] );
+		$remaining = $db_picks->Remaining( $this->auth()->getUserID(), $week[ 'id' ] );
 
 		return $this->setData( array( 'remaining' => $remaining, 'message' => sprintf( 'You have picked the <b>%s</b> to beat the <b>%s</b>', $winning_team[ 'team' ], $losing_team[ 'team' ] ) ) );
 	}

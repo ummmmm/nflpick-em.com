@@ -80,10 +80,10 @@ EOF );
 		$subject	= Functions::Post( 'subject' );
 		$message	= Functions::Post( 'message' );
 
-		if ( $this->_auth->getUserID() )
+		if ( $this->auth()->getUserID() )
 		{
-			$name	= ( !$name ) ? $this->_auth->getUser()[ 'name' ] : $name;
-			$email	= ( !$email ) ? $this->_auth->getUser()[ 'email' ] : $email;
+			$name	= ( !$name ) ? $this->auth()->getUser()[ 'name' ] : $name;
+			$email	= ( !$email ) ? $this->auth()->getUser()[ 'email' ] : $email;
 		}
 ?>
 		<form name="contact" action="?screen=contact" method="post" id="contact">

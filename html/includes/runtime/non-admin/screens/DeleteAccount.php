@@ -12,7 +12,7 @@ class Screen_DeleteAccount extends Screen_User
 		$db_users = $this->db()->users();
 		$password = Functions::Post( 'password' );
 
-		if ( !$this->auth()->validate_login( $this->_auth->getUser()[ 'email' ], $password, $null ) )
+		if ( !$this->auth()->validate_login( $this->auth()->getUser()[ 'email' ], $password, $null ) )
 		{
 			return $this->setValidationErrors( 'Invalid password' );
 		}
@@ -27,7 +27,7 @@ class Screen_DeleteAccount extends Screen_User
 
 		$this->auth()->logout();
 
-		$db_users->Delete( $this->_auth->getUserID() );
+		$db_users->Delete( $this->auth()->getUserID() );
 
 		header( sprintf( 'Location: %s', $settings[ 'domain_url' ] ) );
 
@@ -36,7 +36,7 @@ class Screen_DeleteAccount extends Screen_User
 
 	public function content()
 	{
-		$token = htmlentities( $this->_auth->getToken() );
+		$token = htmlentities( $this->auth()->getToken() );
 
 		print <<<EOT
 		<form action="" method="post">

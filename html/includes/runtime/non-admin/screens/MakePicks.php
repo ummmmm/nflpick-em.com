@@ -128,7 +128,7 @@ EOT;
 			throw new NFLPickEmException( 'Week does not exist' );
 		}
 
-		$remaining = $db_picks->Remaining( $this->_auth->getUserID(), $week );
+		$remaining = $db_picks->Remaining( $this->auth()->getUserID(), $week );
 		$timeUntil = Functions::TimeUntil( $loaded_week[ 'date' ] );
 
 		$now 		= new DateTime();

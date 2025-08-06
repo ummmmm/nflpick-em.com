@@ -18,7 +18,7 @@ class JSON_LoadPicks extends JSONUser
 
 		foreach( $week[ 'games' ] as &$game )
 		{
-			if ( !$db_picks->Load_User_Game( $this->_auth->getUserID(), $game[ 'id' ], $pick ) )
+			if ( !$db_picks->Load_User_Game( $this->auth()->getUserID(), $game[ 'id' ], $pick ) )
 			{
 				$pick = null;
 			}

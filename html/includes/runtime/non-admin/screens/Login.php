@@ -43,7 +43,7 @@ class Screen_Login extends Screen
 
 	public function content()
 	{
-		if ( $this->_auth->getUserID() )
+		if ( $this->auth()->getUserID() )
 		{
 			$settings = $this->settings();
 

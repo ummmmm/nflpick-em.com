@@ -17,21 +17,21 @@ class Screen_UserPreferences extends Screen_User
 	public function update( $data )
 	{
 		$db_users					= $this->db()->users();
-		$user						= $this->_auth->getUser();
+		$user						= $this->auth()->getUser();
 		$user[ 'email_preference' ]	= $data[ 'email_preference' ] ? 1 : 0;
 
 		$db_users->Update( $user );
 
-		$this->_auth->forceUserReload();
+		$this->auth()->forceUserReload();
 
 		return $this->setUpdateMessage( "Preferences saved." );
 	}
 
 	public function content()
 	{
-		$checked = $this->_auth->getUser()[ 'email_preference' ] ? 'checked' : '';
+		$checked = $this->auth()->getUser()[ 'email_preference' ] ? 'checked' : '';
 
-		$token = htmlentities( $this->_auth->getToken() );
+		$token = htmlentities( $this->auth()->getToken() );
 
 		print <<<EOT
 		<h1>User Preferences</h1>

@@ -22,12 +22,12 @@ class Screen_ControlPanel extends Screen_User
 			{
 				array_push( $errors, 'Email address\' do not match.' );
 			}
-			else if ( $db_users->Load_Email( $email, $loaded_user ) && $loaded_user[ 'id' ] != $this->_auth->getUserID() )
+			else if ( $db_users->Load_Email( $email, $loaded_user ) && $loaded_user[ 'id' ] != $this->auth()->getUserID() )
 			{
 				array_push( $errors, 'The email address is already in use.' );
 			}
 
-			if ( !Functions::VerifyPassword( $pass, $this->_auth->getUser()[ 'password' ] ) )
+			if ( !Functions::VerifyPassword( $pass, $this->auth()->getUser()[ 'password' ] ) )
 			{
 				array_push( $errors, 'Invalid password.' );
 			}
@@ -56,7 +56,7 @@ class Screen_ControlPanel extends Screen_User
 				array_push( $errors, 'Passwords do not match.' );
 			}
 
-			if ( !Functions::VerifyPassword( $old_password, $this->_auth->getUser()[ 'password' ] ) )
+			if ( !Functions::VerifyPassword( $old_password, $this->auth()->getUser()[ 'password' ] ) )
 			{
 				array_push( $errors, 'Your old password does not match the password on file.' );
 			}
@@ -79,7 +79,7 @@ class Screen_ControlPanel extends Screen_User
 
 		if ( $action == 'changeemail' )
 		{
-			$user 				= $this->_auth->getUser();
+			$user 				= $this->auth()->getUser();
 			$user[ 'email' ] 	= $data[ 'email' ];
 
 			$db_users->Update( $user );
@@ -89,7 +89,7 @@ class Screen_ControlPanel extends Screen_User
 
 		if ( $action == 'changepassword' )
 		{
-			$user				= $this->_auth->getUser();
+			$user				= $this->auth()->getUser();
 			$user[ 'password' ]	= $data[ 'password' ];
 
 			$db_users->Update( $user );

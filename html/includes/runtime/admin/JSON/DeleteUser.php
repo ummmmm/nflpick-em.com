@@ -8,7 +8,7 @@ class JSON_DeleteUser extends JSONAdminAction
 		$password	= Functions::Post( 'password' );
 		$user_id 	= Functions::Post( 'user_id' );
 
-		if ( !$this->auth()->validate_login( $this->_auth->getUser()[ 'email' ], $password, $null ) )
+		if ( !$this->auth()->validate_login( $this->auth()->getUser()[ 'email' ], $password, $null ) )
 		{
 			throw new NFLPickEmException( 'Invalid password' );
 		}

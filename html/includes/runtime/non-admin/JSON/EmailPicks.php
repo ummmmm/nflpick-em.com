@@ -16,15 +16,15 @@ class JSON_EmailPicks extends JSONUserAction
 			throw new NFLPickEmException( 'Week does not exist' );
 		}
 
-		$db_picks->List_Load_UserWeek( $this->_auth->getUserID(), $week, $picks );
+		$db_picks->List_Load_UserWeek( $this->auth()->getUserID(), $week, $picks );
 
 		if ( count( $picks ) === 0 )
 		{
 			throw new NFLPickEmException( 'No picks have been selected' );
 		}
 
-		$sent = array( 'userid' => $this->_auth->getUserID(), 'week' => $week, 'date' => Functions::Timestamp(), 'picks' => array() );
-		$mail = new Mail( $this->_auth->getUser()[ 'email' ], sprintf( "Week %d Picks", $week ) );
+		$sent = array( 'userid' => $this->auth()->getUserID(), 'week' => $week, 'date' => Functions::Timestamp(), 'picks' => array() );
+		$mail = new Mail( $this->auth()->getUser()[ 'email' ], sprintf( "Week %d Picks", $week ) );
 
 		foreach( $picks as $pick )
 		{
@@ -38,7 +38,7 @@ class JSON_EmailPicks extends JSONUserAction
 			throw new NFLPickEmException( 'The email failed to send. Please try again later.' );
 		}
 
-		$insert = array( 'user_id' => $this->_auth->getUserID(), 'picks' => json_encode( $sent ), 'week' => $week, 'active' => 1 );
+		$insert = array( 'user_id' => $this->auth()->getUserID(), 'picks' => json_encode( $sent ), 'week' => $week, 'active' => 1 );
 		$db_sent_picks->Insert( $insert );
 
 		return $this->setData( sprintf( 'Your picks for week %d have been sent.', $week ) );

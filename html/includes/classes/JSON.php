@@ -146,9 +146,9 @@ class JSONManager
 
 		$this->_getRequirements( $flags );
 
-		if ( ( $flags & self::FLAG_REQ_USER ) && !$this->_auth->isUser() )						throw new NFLPickEmException( 'You must be a user to complete this action' );
-		else if ( ( $flags & self::FLAG_REQ_ADMIN ) && !$this->_auth->isAdmin() )				throw new NFLPickEmException( 'You must be an administrator to complete this action' );
-		else if ( ( $flags & self::FLAG_REQ_TOKEN ) && !$this->_auth->isValidToken( $token ) )	throw new NFLPickEmException( 'You must have a valid token to complete this action' );
+		if ( ( $flags & self::FLAG_REQ_USER ) && !$this->auth()->isUser() )						throw new NFLPickEmException( 'You must be a user to complete this action' );
+		else if ( ( $flags & self::FLAG_REQ_ADMIN ) && !$this->auth()->isAdmin() )				throw new NFLPickEmException( 'You must be an administrator to complete this action' );
+		else if ( ( $flags & self::FLAG_REQ_TOKEN ) && !$this->auth()->isValidToken( $token ) )	throw new NFLPickEmException( 'You must have a valid token to complete this action' );
 	}
 
 	public function execute()

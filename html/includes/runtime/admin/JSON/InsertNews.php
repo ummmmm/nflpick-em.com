@@ -12,7 +12,7 @@ class JSON_InsertNews extends JSONAdminAction
 		if ( $title === '' )		throw new NFLPickEmException( 'Title cannot be blank' );
 		else if ( $message === '' )	throw new NFLPickEmException( 'Message cannot be blank' );
 
-		$insert = array( 'title' => $title, 'news' => $message, 'active' => $active, 'user_id' => $this->_auth->getUserID() );
+		$insert = array( 'title' => $title, 'news' => $message, 'active' => $active, 'user_id' => $this->auth()->getUserID() );
 		
 		$db_news->Insert( $insert );
 
