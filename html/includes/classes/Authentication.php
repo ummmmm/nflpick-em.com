@@ -123,10 +123,7 @@ class Authentication
 
 		setcookie( 'session', $cookieid, time() + 60 * 60 * 24 * 30, INDEX, '', true, true );
 
-		if ( !$db_sessions->Insert( $session ) )
-		{
-			return $this->setDBError();
-		}
+		$db_sessions->Insert( $session );
 
 		return true;
 	}

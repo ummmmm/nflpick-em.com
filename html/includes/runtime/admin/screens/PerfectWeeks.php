@@ -23,11 +23,7 @@ class Screen_PerfectWeeks extends Screen_Admin
 	private function _WeekList()
 	{
 		$db_weeks = $this->db()->weeks();
-
-		if ( $db_weeks->List_Load_Locked( $weeks ) === false )
-		{
-			return $this->setDBError();
-		}
+		$db_weeks->List_Load_Locked( $weeks );
 
 		$count = $this->_PerfectWeekList_Load( $weeks );
 

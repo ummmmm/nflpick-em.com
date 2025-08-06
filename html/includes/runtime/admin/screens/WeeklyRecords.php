@@ -35,11 +35,7 @@ class Screen_WeeklyRecords extends Screen_Admin
 	private function _WeekList()
 	{
 		$db_weeks = $this->db()->weeks();
-
-		if ( $db_weeks->List_Load_Locked( $weeks ) === false )
-		{
-			return $this->setDBError();
-		}
+		$db_weeks->List_Load_Locked( $weeks );
 
 		print '<h1>Weekly Records</h1>';
 
@@ -63,15 +59,8 @@ class Screen_WeeklyRecords extends Screen_Admin
 		$db_picks			= $this->db()->picks();
 		$db_weekly_records	= $this->db()->weeklyrecords();
 
-		if ( !$db_users->List_Load( $users ) )
-		{
-			return $this->setDBError();
-		}
-
-		if ( !$db_games->List_Load_Week( $week[ 'id' ], $games ) )
-		{
-			return $this->setDBError();
-		}
+		$db_users->List_Load( $users );
+		$db_games->List_Load_Week( $week[ 'id' ], $games );
 
 		$games_in_progress = false;
 
@@ -96,20 +85,12 @@ class Screen_WeeklyRecords extends Screen_Admin
 		{
 			$missing_count = $db_picks->Missing( $user[ 'id' ], $week[ 'id' ] );
 
-			if ( $missing_count === false )
-			{
-				return $this->setDBError();
-			}
-
 			if ( $missing_count === 0 )
 			{
 				continue;
 			}
 
-			if ( !$db_weekly_records->Load_User_Week( $user[ 'id' ], $week[ 'id' ], $weekly_record ) )
-			{
-				return $this->setDBError();
-			}
+			$db_weekly_records->Load_User_Week( $user[ 'id' ], $week[ 'id' ], $weekly_record )
 
 			printf( '<p><a href="?view=admin&screen=weekly_records&week=%d&user=%d">%s</a>%s</p>', $week[ 'id' ], $user[ 'id' ], htmlentities( $user[ 'name' ] ), ( $weekly_record[ 'manual' ] ? ' - <span style="color:red;">Manual</span>' : '' ) );
 		}
@@ -122,17 +103,9 @@ class Screen_WeeklyRecords extends Screen_Admin
 		$db_picks			= $this->db()->picks();
 		$db_weekly_records	= $this->db()->weeklyrecords();
 
-		if ( !$db_weekly_records->Load_User_Week( $user[ 'id' ], $week[ 'id' ], $weekly_record ) )
-		{
-			return $this->setDBError();
-		}
+		$db_weekly_records->Load_User_Week( $user[ 'id' ], $week[ 'id' ], $weekly_record );
 
 		$missing_count = $db_picks->Missing( $user[ 'id' ], $week[ 'id' ] );
-
-		if ( $missing_count === false )
-		{
-			return $this->setDBError();
-		}
 
 		printf( '<h1>%s - Week %d</h1>', htmlentities( $user[ 'name' ] ), $week[ 'id' ] );
 		printf( '<p>Missing %d picks', $missing_count );

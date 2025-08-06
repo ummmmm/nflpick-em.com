@@ -77,11 +77,6 @@ abstract class Screen
 		return false;
 	}
 
-	protected function setDBError()
-	{
-		return $this->setError( $this->db()->Get_Error() );
-	}
-
 	protected function setValidationErrors( $errors )
 	{
 		$this->_validation_errors = $errors;
