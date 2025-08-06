@@ -8,17 +8,17 @@ require_once( "includes/classes/functions.php" );
 require_once( "includes/classes/Database.php" );
 require_once( "includes/classes/Screen.php" );
 
-$screen_renderer 	= new ScreenRenderer();
-$admin 				= Functions::Get( "view" ) == "admin" ? true : false;
-$screen				= Functions::Get( "screen" ) === "" ? "default" : Functions::Get( "screen" );
-$update				= Functions::Post_Int( "update" ) ? true : false;
+$screen_manager = new ScreenManager();
+$admin 			= Functions::Get( "view" ) == "admin" ? true : false;
+$screen			= Functions::Get( "screen" ) === "" ? "default" : Functions::Get( "screen" );
+$update			= Functions::Post_Int( "update" ) ? true : false;
 
 try
 {
-	$screen_renderer->initialize( $admin, $screen, $update );
+	$screen_manager->initialize( $admin, $screen, $update );
 
-	$settings	= $screen_renderer->settings();
-	$auth		= $screen_renderer->auth();
+	$settings	= $screen_manager->settings();
+	$auth		= $screen_manager->auth();
 }
 catch ( Exception $e )
 {
@@ -46,10 +46,10 @@ catch ( Exception $e )
 			print '<script type="text/javascript" src="static/javascript/admin.js"></script>';
 		}
 
-		print $screen_renderer->head();
+		print $screen_manager->head();
 	?>
 	<script type="text/javascript">$( document ).ready( function() { $.fn.load_poll(); } );</script>
-	<script type="text/javascript">$( document ).ready( function() { <?php print $screen_renderer->jquery_head(); ?> } );</script>
+	<script type="text/javascript">$( document ).ready( function() { <?php print $screen_manager->jquery_head(); ?> } );</script>
 </head>
 <body>
 	<div class="container">
@@ -59,14 +59,14 @@ catch ( Exception $e )
 			</div>
 		</div>
 		<div class="navigation">
-			<?php print $screen_renderer->topNavigation(); ?>
+			<?php print $screen_manager->topNavigation(); ?>
 		</div>
 		<div class="main">
 			<div class="content">
-				<?php print $screen_renderer->content(); ?>
+				<?php print $screen_manager->content(); ?>
 			</div>
 			<div class="sidenav">
-				<?php print $screen_renderer->sideNavigation(); ?>
+				<?php print $screen_manager->sideNavigation(); ?>
 				<h1>Poll</h1>
 				<div id="loading_polls_nav"></div>
 			</div>

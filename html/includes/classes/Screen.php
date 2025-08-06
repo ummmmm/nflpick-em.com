@@ -7,20 +7,18 @@ require_once( "validation.php" );
 
 abstract class Screen
 {
-	private $_screen_renderer;
+	private $_screen_manager;
 	private $_validation_errors;
 	private $_validation_data;
 	private $_update_message;
-	private $_settings;
 
-	public function __construct( ScreenRenderer &$screen_renderer )
+	public function __construct( ScreenManager &$screen_manager )
 	{
-		$this->_screen_renderer		= $screen_renderer;
+		$this->_screen_manager		= $screen_manager;
 
 		$this->_validation_errors	= null;
 		$this->_validation_data		= null;
 		$this->_update_message		= null;
-		$this->_settings			= null;
 	}
 
 	abstract public function content();
@@ -52,17 +50,17 @@ abstract class Screen
 
 	protected function auth()
 	{
-		return $this->_screen_renderer->auth();
+		return $this->_screen_manager->auth();
 	}
 
 	protected function db()
 	{
-		return $this->_screen_renderer->db();
+		return $this->_screen_manager->db();
 	}
 
 	protected function settings()
 	{
-		return $this->_screen_renderer->settings();
+		return $this->_screen_manager->settings();
 	}
 
 	protected function setValidationErrors( $errors )
@@ -118,7 +116,7 @@ abstract class Screen_Admin extends Screen
 	}
 }
 
-class ScreenRenderer
+class ScreenManager
 {
 	const FLAG_REQ_USER 			= 0x1;
 	const FLAG_REQ_ADMIN			= 0x2;
