@@ -171,10 +171,11 @@ class Screen_PerfectWeeks extends Screen_Admin
 										LEFT OUTER JOIN perfect_week_paid pwp ON u.id = pwp.user_id AND pwp.week_id = ?,
 										weekly_records wr
 									WHERE
+										pwp.user_id IS NULL		AND
 										u.pw_opt_out	= 0		AND
 										wr.user_id		= u.id	AND
 										wr.week_id		= ?		AND
-										wr.losses		<> 0	AND
-										pwp.user_id IS NULL', $users, $week_id, $week_id );
+										wr.wins			<> ( SELECT COUNT( * ) FROM games g WHERE g.week = wr.week_id )
+										', $users, $week_id, $week_id );
 	}
 }
