@@ -37,22 +37,19 @@ class DatabaseManager
 		return $this->_connection;
 	}
 
-	public function query( $query )
+	public function query( $query, ...$params )
 	{
-		$bind_parmas = array_slice( func_get_args(), 1 );
-		return $this->connection()->query( $query, ...$bind_parmas );
+		return $this->connection()->query( $query, ...$params );
 	}
 
-	public function select( $query, &$results )
+	public function select( $query, &$results, ...$params )
 	{
-		$bind_parmas = array_slice( func_get_args(), 2 );
-		return $this->connection()->select( $query, $results, ...$bind_parmas );
+		return $this->connection()->select( $query, $results, ...$params );
 	}
 
-	public function single( $query, &$result )
+	public function single( $query, &$result, ...$params )
 	{
-		$bind_parmas = array_slice( func_get_args(), 2 );
-		return $this->connection()->single( $query, $result, ...$bind_parmas );
+		return $this->connection()->single( $query, $result, ...$params );
 	}
 
 	public function insertID()
@@ -187,22 +184,19 @@ abstract class DatabaseTable
 		return $this->_db_manager;
 	}
 
-	public function query( $query )
+	public function query( $query, ...$params )
 	{
-		$bind_parmas = array_slice( func_get_args(), 1 );
-		return $this->db()->query( $query, ...$bind_parmas );
+		return $this->db()->query( $query, ...$params );
 	}
 
-	public function select( $query, &$results )
+	public function select( $query, &$results, ...$params )
 	{
-		$bind_parmas = array_slice( func_get_args(), 2 );
-		return $this->db()->select( $query, $results, ...$bind_parmas );
+		return $this->db()->select( $query, $results, ...$params );
 	}
 
-	public function single( $query, &$result )
+	public function single( $query, &$result, ...$params )
 	{
-		$bind_parmas = array_slice( func_get_args(), 2 );
-		return $this->db()->single( $query, $result, ...$bind_parmas );
+		return $this->db()->single( $query, $result, ...$params );
 	}
 
 	public function insertID()
