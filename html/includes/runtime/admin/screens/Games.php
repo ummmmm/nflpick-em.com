@@ -11,7 +11,7 @@ class Screen_Games extends Screen_Admin
 
 	public function content()
 	{
-		$this->db()->games()->List_Load( $teams );
+		$this->db()->teams()->List_Load( $teams );
 		
 		print '<h1>Edit Weeks</h1>';
 		print '<div id="weeks_loading">Loading...</div>';
