@@ -89,10 +89,6 @@ abstract class JSONAdminAction extends JSON
 
 class JSONManager
 {
-	const FLAG_REQ_USER 	= 0x1;
-	const FLAG_REQ_ADMIN	= 0x2;
-	const FLAG_REQ_TOKEN	= 0x4;
-
 	private $_db_manager;
 	private $_auth;
 
@@ -141,25 +137,19 @@ class JSONManager
 			throw new NFLPickEmException( 'Action is missing required inheritance' );
 		}
 
-		$this->_getRequirements( $flags );
+		$requirements	= $this->_action->requirements();
+		$require_user	= $requirements[ 'user' ] ?? false;
+		$require_admin	= $requirements[ 'admin' ] ?? false;
+		$require_token	= $requirements[ 'token' ] ?? false;
 
-		if ( ( $flags & self::FLAG_REQ_USER ) && !$this->auth()->isUser() )						throw new NFLPickEmException( 'You must be a user to complete this action' );
-		else if ( ( $flags & self::FLAG_REQ_ADMIN ) && !$this->auth()->isAdmin() )				throw new NFLPickEmException( 'You must be an administrator to complete this action' );
-		else if ( ( $flags & self::FLAG_REQ_TOKEN ) && !$this->auth()->isValidToken( $token ) )	throw new NFLPickEmException( 'You must have a valid token to complete this action' );
+		if ( $require_user && !$this->auth()->isUser() )						throw new NFLPickEmException( 'You must be a user to complete this action' );
+		else if ( $require_admin && !$this->auth()->isAdmin() )					throw new NFLPickEmException( 'You must be an administrator to complete this action' );
+		else if ( $require_token && !$this->auth()->isValidToken( $token ) )	throw new NFLPickEmException( 'You must have a valid token to complete this action' );
 	}
 
 	public function execute()
 	{
 		$this->_action->execute();
-	}
-
-	private function _getRequirements( &$flags )
-	{
-		$requirements 	= $this->_action->requirements();
-		$flags			= 0x0;
-		$flags			|= array_key_exists( 'user', 	$requirements ) && $requirements[ 'user' ] 	? self::FLAG_REQ_USER	: 0x0;
-		$flags			|= array_key_exists( 'admin', 	$requirements ) && $requirements[ 'admin' ] ? self::FLAG_REQ_ADMIN	: 0x0;
-		$flags			|= array_key_exists( 'token', 	$requirements ) && $requirements[ 'token' ] ? self::FLAG_REQ_TOKEN	: 0x0;
 	}
 
 	public function settings()

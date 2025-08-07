@@ -118,10 +118,6 @@ abstract class Screen_Admin extends Screen
 
 class ScreenManager
 {
-	const FLAG_REQ_USER 			= 0x1;
-	const FLAG_REQ_ADMIN			= 0x2;
-	const FLAG_REQ_TOKEN			= 0x4;
-
 	const FLAG_ERROR_NONE			= 0x0;
 	const FLAG_ERROR_MISCONFIGURED	= 0x1;
 	const FLAG_ERROR_VALIDATE		= 0x2;
@@ -379,16 +375,19 @@ class ScreenManager
 				throw new NFLPickEmException( 'Screen is missing required inheritance' );
 			}
 
-			$this->_getRequirements( $flags );
+			$requirements	= $this->_screen->requirements();
+			$require_user	= $requirements[ 'user' ] ?? false;
+			$require_admin	= $requirements[ 'admin' ] ?? false;
+			$require_token	= $requirements[ 'token' ] ?? false;
 
-			if ( ( $flags & self::FLAG_REQ_USER ) && !$this->auth()->isUser() )			throw new NFLPickEmException( 'You must be a user to view this screen' );
-			else if ( ( $flags & self::FLAG_REQ_ADMIN ) && !$this->auth()->isAdmin() )	throw new NFLPickEmException( 'You must be an administrator to view this screen' );
+			if ( $require_user && !$this->auth()->isUser() )		throw new NFLPickEmException( 'You must be a user to view this screen' );
+			else if ( $require_admin && !$this->auth()->isAdmin() )	throw new NFLPickEmException( 'You must be an administrator to view this screen' );
 
 			if ( $run_update )
 			{
 				$token = Functions::Post( "token" );
 
-				if ( ( $flags & self::FLAG_REQ_TOKEN ) && !$this->auth()->isValidToken( $token ) )
+				if ( $require_token && !$this->auth()->isValidToken( $token ) )
 				{
 					throw new NFLPickEmException( 'You must have a valid token to complete this action' );
 				}
@@ -490,16 +489,6 @@ class ScreenManager
 	private function _screenName( $screen )
 	{
 		return implode( "", array_map( function( $string ) { return ucfirst( $string ); }, explode( '_', $screen ) ) );
-	}
-
-	private function _getRequirements( &$flags )
-	{
-		$requirements	= $this->_screen->requirements();
-
-		$flags			= 0x0;
-		$flags			|= array_key_exists( 'user', 	$requirements ) && $requirements[ 'user' ] 	? self::FLAG_REQ_USER	: 0x0;
-		$flags			|= array_key_exists( 'admin', 	$requirements ) && $requirements[ 'admin' ] ? self::FLAG_REQ_ADMIN	: 0x0;
-		$flags			|= array_key_exists( 'token', 	$requirements ) && $requirements[ 'token' ] ? self::FLAG_REQ_TOKEN	: 0x0;
 	}
 
 	// stupid navigation stuff
