@@ -6,8 +6,8 @@ class DatabaseTableSessions extends DatabaseTable
 	{
 		$sql = "CREATE TABLE sessions
 				(
-					token 		varchar( 40 ),
-					cookieid 	varchar( 40 ),
+					token 		char( 64 ),
+					cookieid 	char( 64 ),
 					userid 		int( 11 ),
 					date 		int( 11 ),
 					last_active int( 11 ),

@@ -111,8 +111,8 @@ class Authentication
 	{
 		$db_sessions	= $this->db()->sessions();
 
-		$cookieid		= sha1( session_id() );
-		$token			= sha1( uniqid( rand(), TRUE ) );
+		$cookieid		= hash( 'sha256', openssl_random_pseudo_bytes( 64 ) );
+		$token			= hash( 'sha256', openssl_random_pseudo_bytes( 64 ) );
 		$session		= array( 'token' => $token, 'cookieid' => $cookieid, 'userid' => $user_id );
 
 		setcookie( 'session', $cookieid, time() + 60 * 60 * 24 * 30, '', '', true, true );
