@@ -13,7 +13,6 @@ class JSON_UpdatePerfectWeekPaidUser extends JSONAdminAction
 		if ( !$db_users->Load( $user_id, $loaded_user ) )		throw new NFLPickEmException( 'User does not exist' );
 		else if ( $loaded_user[ 'pw_opt_out' ] )				throw new NFLPickEmException( 'User is opted out of the perfect week pool' );
 		else if ( !$db_weeks->Load( $week_id, $loaded_week ) )	throw new NFLPickEmException( 'Week does not exist' );
-		}
 
 		if ( $db_perfect_week_paid->Load( $week_id, $user_id, $null ) )	$db_perfect_week_paid->Delete( $week_id, $user_id );
 		else															$db_perfect_week_paid->Insert( $week_id, $user_id );
