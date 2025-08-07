@@ -90,7 +90,7 @@ class Screen_WeeklyRecords extends Screen_Admin
 				continue;
 			}
 
-			$db_weekly_records->Load_User_Week( $user[ 'id' ], $week[ 'id' ], $weekly_record )
+			$db_weekly_records->Load_User_Week( $user[ 'id' ], $week[ 'id' ], $weekly_record );
 
 			printf( '<p><a href="?view=admin&screen=weekly_records&week=%d&user=%d">%s</a>%s</p>', $week[ 'id' ], $user[ 'id' ], htmlentities( $user[ 'name' ] ), ( $weekly_record[ 'manual' ] ? ' - <span style="color:red;">Manual</span>' : '' ) );
 		}
