@@ -6,12 +6,12 @@ include_once( "includes/classes/functions.php" );
 class DatabaseManager
 {
 	private $_connection;
-	private $_methods;
+	private $_dynamic_tables;
 
 	public function __construct()
 	{
-		$this->_methods		= array();
-		$this->_connection	= new DatabaseConnection();
+		$this->_dynamic_tables	= array();
+		$this->_connection		= new DatabaseConnection();
 	}
 
 	public function __destruct()
@@ -59,7 +59,7 @@ class DatabaseManager
 
 	public function dynamic_tables()
 	{
-		return $this->_methods;
+		return $this->_dynamic_tables;
 	}
 
 	private function _load_tables()
@@ -82,7 +82,7 @@ class DatabaseManager
 					$name		= strtolower( str_replace( 'DatabaseTable', '', $reflection->getShortName() ) );
 					$instance	= new $new_class( $this );
 
-					$this->_methods[ $name ] = function () use ( $instance )
+					$this->_dynamic_tables[ $name ] = function () use ( $instance )
 					{
 						return $instance;
 					};
@@ -93,9 +93,9 @@ class DatabaseManager
 
 	public function __call( $name, $arguments )
 	{
-		if ( isset( $this->_methods[ $name ] ) )
+		if ( isset( $this->_dynamic_tables[ $name ] ) )
 		{
-			return call_user_func_array( $this->_methods[ $name ], $arguments );
+			return call_user_func_array( $this->_dynamic_tables[ $name ], $arguments );
 		}
 
 		throw new BadMethodCallException( "Method \"{$name}\" does not exist" );
