@@ -15,12 +15,6 @@ class Authentication
 	public function __construct( DatabaseManager &$db_manager )
 	{
 		$this->_db_manager	= $db_manager;
-		
-		$this->_setDefaults();
-	}
-
-	private function _setDefaults()
-	{
 		$this->_user		= null;
 		$this->_session		= null;
 		$this->_userID		= 0;
@@ -133,7 +127,11 @@ class Authentication
 		$db_sessions = $this->db()->sessions();
 		$db_sessions->Delete_Cookie( $this->_session[ 'cookieid' ] );
 
-		$this->_setDefaults();
+		$this->_user	= null;
+		$this->_session	= null;
+		$this->_userID	= 0;
+		$this->_token	= 0;
+		$this->_reload	= false;
 
 		setcookie( 'session', '', -1, '' );
 	}
