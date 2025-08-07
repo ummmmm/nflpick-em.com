@@ -287,7 +287,7 @@ class Functions
 		return true;
 	}
 
-	public static function Update_Records( DatabaseManager &$db_manager )
+	public static function Update_Records( DatabaseManager $db_manager )
 	{
 		return Functions::Update_Weekly_Records( $db_manager ) && Functions::Update_User_Records( $db_manager );
 	}
@@ -304,7 +304,7 @@ class Functions
 													wr.manual	= 0' );
 	}
 
-	public static function Update_User_Records( DatabaseManager &$db_manager )
+	public static function Update_User_Records( DatabaseManager $db_manager )
 	{
 		$db_users = $db_manager->users();
 
