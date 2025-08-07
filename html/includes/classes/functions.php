@@ -89,84 +89,6 @@ class Draw
 
 class Functions
 {
-	public static function Module_Updated( $message )
-	{
-		global $updated_message;
-
-		$updated_message = $message;
-
-		return true;
-	}
-
-	public static function HandleModuleUpdate()
-	{
-		global $updated_message;
-
-		if ( !is_null( $updated_message ) && is_string( $updated_message ) && trim( $updated_message ) != '' )
-		{
-			print "<p><b>{$updated_message}</b></p>";
-			unset( $updated_message );
-		}
-
-		return true;
-	}
-
-	public static function HandleModuleErrors()
-	{
-		global $error_validation;
-
-		if ( !is_array( $error_validation ) )
-		{
-			return false;
-		}
-
-		$count = count( $error_validation );
-
-		if ( $count > 0 )
-		{
-			$output 	= '';
-			$message	= '';
-			$title 		= ( $count === 1 ) ? 'Error Has' : $count . ' Errors Have';
-
-			foreach( $error_validation as $error )
-			{
-				$message .= "- {$error}<br />";
-			}
-
-			print '<div class="error">';
-			printf( '<span class="error_text_top">The Following %s Occurred!</span><br />', htmlentities( $title ) );
-			printf( '<span class="error_text">%s</span>', $message );
-			print '</div>';
-
-			unset( $error_validation );
-		}
-
-		return true;
-	}
-
-	public static function OutputError()
-	{
-		global $error_code;
-		global $error_message;
-
-		$error_code 	= ( is_null( $error_code ) ) ? 'NFL-FUNCTIONS-0' : $error_code;
-		$error_message 	= ( is_null( $error_message ) ) ? 'An unknown error has occurred.' : $error_message;
-		print '<h1>An error has occurred</h1>';
-		print '<div>Error Code: ' . htmlentities( $error_code ) . '</div>';
-		print '<div>Error Message: ' . htmlentities( $error_message ) . '</div>';
-
-		return true;
-	}
-
-	public static function ValidationError( $errors )
-	{
-		global $error_validation;
-
-		$error_validation = $errors;
-
-		return false;
-	}
-
 	public static function Random( $length )
 	{
 		$string 	= '';
@@ -206,11 +128,6 @@ class Functions
 		}
 
 		return "{$number}<sup>{$s}</sup>";
-	}
-
-	public static function Trim_Boolean( $value )
-	{
-		return $value ? 1 : 0;
 	}
 
 	public static function Post_Int( $value )
