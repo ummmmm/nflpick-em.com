@@ -54,14 +54,7 @@ class DatabaseTableWeeks extends DatabaseTable
 
 	public function Current()
 	{
-		$count = $this->single( 'SELECT id FROM weeks WHERE locked = 0 ORDER BY id', $week );
-
-		if ( $count === false )
-		{
-			return false;
-		}
-
-		if ( $count === 0 )
+		if ( $this->single( 'SELECT id FROM weeks WHERE locked = 0 ORDER BY id', $week ) == 0 )
 		{
 			return 1;
 		}
@@ -71,14 +64,7 @@ class DatabaseTableWeeks extends DatabaseTable
 
 	public function Previous()
 	{
-		$count = $this->single( 'SELECT id FROM weeks WHERE locked = 1 ORDER BY id DESC', $week );
-
-		if ( $count === false )
-		{
-			return false;
-		}
-
-		if ( $count === 0 )
+		if ( $this->single( 'SELECT id FROM weeks WHERE locked = 1 ORDER BY id DESC', $week ) == 0 )
 		{
 			return 1;
 		}

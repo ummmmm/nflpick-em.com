@@ -69,21 +69,16 @@ class DatabaseTablePicks extends DatabaseTable
 
 	public function Remaining( $userid, $weekid )
 	{
-		$count = $this->single( 'SELECT
-										COUNT( g.id ) AS remaining
-								      FROM
-										games g
-										LEFT OUTER JOIN picks p ON p.game_id = g.id AND p.user_id = ?
-									   WHERE
-										g.week = ? AND
-										g.date > ? AND
-										p.id IS NULL',
-									   $remaining, $userid, $weekid, time() );
-
-		if ( $count === false )
-		{
-			return false;
-		}
+		$this->single( 'SELECT
+							COUNT( g.id ) AS remaining
+					    FROM
+							games g
+							LEFT OUTER JOIN picks p ON p.game_id = g.id AND p.user_id = ?
+						WHERE
+							g.week = ? AND
+							g.date > ? AND
+							p.id IS NULL',
+						$remaining, $userid, $weekid, time() );
 
 		return $remaining[ 'remaining' ];
 	}
