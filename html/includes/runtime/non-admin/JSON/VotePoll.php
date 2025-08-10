@@ -7,9 +7,8 @@ class JSON_VotePoll extends JSONUserAction
 		$db_polls			= $this->db()->polls();
 		$db_poll_answers	= $this->db()->pollanswers();
 		$db_poll_votes		= $this->db()->pollvotes();
-		$token				= Functions::Post( 'token' );
-		$poll_id			= Functions::Post( 'poll_id' );
-		$answer_id			= Functions::Post( 'answer_id' );
+		$poll_id			= $this->input()->value_int( 'poll_id' );
+		$answer_id			= $this->input()->value_int( 'answer_id' );
 		
 		if ( !$db_polls->Load( $poll_id, $poll ) )										throw new NFLPickEmException( 'Poll does not exist' );
 		else if ( !$db_poll_answers->Load_Poll( $answer_id, $poll_id, $answer ) )		throw new NFLPickEmException( 'Answer does not exist' );

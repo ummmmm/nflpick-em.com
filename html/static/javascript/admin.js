@@ -1,14 +1,23 @@
 $( document ).ready( function()
 {
-	$.fn.json_admin = function( action, variables, callback )
+	$.fn.val_int = function()
 	{
-		var data = 'action=' + encodeURIComponent( action ) + ( variables == '' ? '' : '&' ) + variables;
+		return parseInt( this.val(), 10 );
+	}
 
+	$.fn.val_bool = function()
+	{
+		return this.prop( 'checked' );
+	}
+
+	$.fn.json_admin = function( action, request_body, callback )
+	{
 		$.ajax( {
-			type: 'POST',
-			url: 'json.php',
-			dataType: 'JSON',
-			data: 'admin=true&token=' + token + '&' + data,
+			type: 			'POST',
+			url: 			'json.php',
+			dataType: 		'JSON',
+			data: 			JSON.stringify( { admin: true, token: token, action: action, ...request_body } ),
+			contentType:	'application/json',
 			success: function( response )
 			{
 				callback( response );
@@ -31,7 +40,19 @@ $( document ).ready( function()
 
 	$.fn.update_settings = function()
 	{
-		$.fn.json_admin( 'UpdateSettings', $( '#settings_addedit :input' ).serialize(), function( response )
+		$.fn.json_admin( 'UpdateSettings',
+		{
+			email_validation:		$( '#settings_addedit input[name="email_validation"]' ).val_bool(),
+			registration:			$( '#settings_addedit input[name="registration"]' ).val_bool(),
+			max_news:				$( '#settings_addedit input[name="max_news"]' ).val_int(),
+			online:					$( '#settings_addedit input[name="online"]' ).val_int(),
+			login_sleep:			$( '#settings_addedit input[name="login_sleep"]' ).val_int(),
+			domain_url:				$( '#settings_addedit input[name="domain_url"]' ).val(),
+			domain_email:			$( '#settings_addedit input[name="domain_email"]' ).val(),
+			site_title:				$( '#settings_addedit input[name="site_title"]' ).val(),
+			turnstile_sitekey:		$( '#settings_addedit input[name="turnstile_sitekey"]' ).val(),
+			turnstile_secretkey:	$( '#settings_addedit input[name="turnstile_secretkey"]' ).val()
+		}, function( response )
 		{
 			if ( !response.success )
 			{
@@ -49,7 +70,7 @@ $( document ).ready( function()
 
 		field.attr( 'direction', ( direction == 'asc' ) ? 'desc' : 'asc' );
 
-		$.fn.json_admin( action, 'sort=' + encodeURIComponent( sort ) + '&direction=' + encodeURIComponent( direction ), callback );
+		$.fn.json_admin( action, { sort: sort, direction: direction }, callback );
 	}
 
 	$.fn.sort_user_callback = function( response )
@@ -113,7 +134,7 @@ $( document ).ready( function()
 
 		password = prompt( "Please enter your password" );
 
-		$.fn.json_admin( 'DeleteUser', 'password=' + encodeURIComponent( password ) + '&user_id=' + encodeURIComponent( user.id ), function( response )
+		$.fn.json_admin( 'DeleteUser', { password: password, user_id: user.id }, function( response )
 		{
 			if ( !response.success )
 			{
@@ -148,7 +169,7 @@ $( document ).ready( function()
 			return $.fn.error( 'Last name cannot be blank' );
 		}
 
-		$.fn.json_admin( 'UpdateUser', 'user_id=' + encodeURIComponent( user.id ) + '&first_name=' + encodeURIComponent( $( '#user_edit_first_name' ).val() ) + '&last_name=' + encodeURIComponent( $( '#user_edit_last_name' ).val() ) + '&message=' + encodeURIComponent( $( '#user_edit_message' ).val() ), function( response )
+		$.fn.json_admin( 'UpdateUser', { user_id: user.id, first_name: $( '#user_edit_first_name' ).val(), last_name: $( '#user_edit_last_name' ).val(), message: $( '#user_edit_message' ).val() }, function( response )
 		{
 			if ( !response.success )
 			{
@@ -177,7 +198,7 @@ $( document ).ready( function()
 			return false;
 		}
 
-		$.fn.json_admin( 'LoginUser', 'user_id=' + encodeURIComponent( user.id ), function( response )
+		$.fn.json_admin( 'LoginUser', { user_id: user.id }, function( response )
 		{
 			if ( !response.success )
 			{
@@ -195,7 +216,7 @@ $( document ).ready( function()
 			return false;
 		}
 
-		$.fn.json_admin( 'LogoutUser', 'user_id=' + encodeURIComponent( user.id ), function( response )
+		$.fn.json_admin( 'LogoutUser', { user_id: user.id }, function( response )
 		{
 			if ( !response.success )
 			{
@@ -206,7 +227,7 @@ $( document ).ready( function()
 
 	$.fn.update_users = function( user )
 	{
-		$.fn.json_admin( 'UpdatePaidUser', 'user_id=' + encodeURIComponent( user.id ), function( response )
+		$.fn.json_admin( 'UpdatePaidUser', { user_id: user.id }, function( response )
 		{
 			if ( !response.success )
 			{
@@ -221,7 +242,7 @@ $( document ).ready( function()
 
 	$.fn.update_pw_opt_out_users = function( user )
 	{
-		$.fn.json_admin( 'UpdatePerfectWeekUser', 'user_id=' + encodeURIComponent( user.id ), function( response )
+		$.fn.json_admin( 'UpdatePerfectWeekUser', { user_id: user.id }, function( response )
 		{
 			if ( !response.success )
 			{
@@ -238,7 +259,7 @@ $( document ).ready( function()
 
 	$.fn.load_games = function()
 	{
-		$.fn.json_admin( 'LoadGames', '', function( response )
+		$.fn.json_admin( 'LoadGames', null, function( response )
 		{
 			if ( !response.success )
 			{
@@ -379,40 +400,61 @@ $( document ).ready( function()
 
 	$.fn.update_games = function( game )
 	{
-		var scored 	= $( '#scored' ).val();
-		var data 	= ( scored == 'true' ) ? $( '#scores :input' ).serialize() : $( '#games :input' ).serialize();
+		var data;
 
-		$.fn.json_admin( 	'UpdateGame',
-					'game_id=' + encodeURIComponent( game.id ) +
-					'&scored=' + encodeURIComponent( scored ) +
-					'&' + data,
-					function( response )
-					{
-						if ( !response.success )
-						{
-							return $.fn.error( response.error_message );
-						}
+		if ( $( '#scored' ).val() === 'true' )
+		{
+			data = {
+				awayScore:	$( '#games_addedit input[name="awayScore"]' ).val_int(),
+				homeScore:	$( '#games_addedit input[name="homeScore"]' ).val_int()
+			};
+		}
+		else
+		{
+			data = {
+				away:		$( '#games_addedit select[name="away"]' ).val_int(),
+				home:		$( '#games_addedit select[name="home"]' ).val_int(),
+				month:		$( '#games_addedit select[name="month"]' ).val_int(),
+				day:		$( '#games_addedit select[name="day"]' ).val_int(),
+				year:		$( '#games_addedit select[name="year"]' ).val_int(),
+				hour:		$( '#games_addedit select[name="hour"]' ).val_int(),
+				minute:		$( '#games_addedit select[name="minute"]' ).val_int(),
+				week:		$( '#games_addedit select[name="week"]' ).val_int()
+			};
+		}
+		$.fn.json_admin( 'UpdateGame',
+						 {
+						 	game_id:	game.id,
+						 	scored:		$( '#scored' ).val() === 'true',
+						 	...data
+						 },
+						 function( response )
+						 {
+							if ( !response.success )
+							{
+								return $.fn.error( response.error_message );
+							}
 
-						if ( response.data.final )
-						{
-							$( '#game_' + response.data.id ).css( 'text-decoration', 'line-through' );
-						}
+							if ( response.data.final )
+							{
+								$( '#game_' + response.data.id ).css( 'text-decoration', 'line-through' );
+							}
 
-						games[ game.key ] 		= response.data;
-						games[ game.key ].key	= game.key;
+							games[ game.key ] 		= response.data;
+							games[ game.key ].key	= game.key;
 
-						if ( ( game.key + 1 ) < games.length )
-						{
-							$.fn.edit_games( games[ game.key + 1 ] );
+							if ( ( game.key + 1 ) < games.length )
+							{
+								$.fn.edit_games( games[ game.key + 1 ] );
 
-							return false;
-						}
-					} );
+								return false;
+							}
+						 } );
 	}
 
 	$.fn.load_weeks = function()
 	{
-		$.fn.json_admin( 'LoadWeeks', '', function( response )
+		$.fn.json_admin( 'LoadWeeks', null, function( response )
 		{
 			if ( !response.success )
 			{
@@ -441,7 +483,7 @@ $( document ).ready( function()
 
 	$.fn.toggleWeek = function( week_id )
 	{
-		$.fn.json_admin( 'LockWeek', 'week_id=' + encodeURIComponent( week_id ), function( response )
+		$.fn.json_admin( 'LockWeek', { week_id: week_id }, function( response )
 		{
 			if ( !response.success )
 			{
@@ -454,7 +496,7 @@ $( document ).ready( function()
 
 	$.fn.load_news = function()
 	{
-		$.fn.json_admin( 'LoadNews', '', function( response )
+		$.fn.json_admin( 'LoadNews', null, function( response )
 		{
 			if ( !response.success )
 			{
@@ -490,7 +532,12 @@ $( document ).ready( function()
 
 	$.fn.insert_news = function()
 	{
-		$.fn.json_admin( 'InsertNews', $( '#news_addedit :input' ).serialize(), function( response )
+		$.fn.json_admin( 'InsertNews',
+		{
+			title:		$( '#news_addedit input[name="title"]' ).val(),
+			message:	$( '#news_addedit textarea[name="message"]' ).val(),
+			active:		$( '#news_addedit input[name="active"]' ).val_bool(),
+		}, function( response )
 		{
 			if ( !response.success )
 			{
@@ -514,7 +561,13 @@ $( document ).ready( function()
 
 	$.fn.update_news = function( news_id )
 	{
-		$.fn.json_admin( 'UpdateNews', 'news_id=' + encodeURIComponent( news_id ) + '&' + $( '#news_addedit :input' ).serialize(), function( response )
+		$.fn.json_admin( 'UpdateNews',
+		{
+			news_id:	news_id,
+			title:		$( '#news_addedit input[name="title"]' ).val(),
+			message:	$( '#news_addedit textarea[name="message"]' ).val(),
+			active:		$( '#news_addedit input[name="active"]' ).val_bool()
+		}, function( response )
 		{
 			if ( !response.success )
 			{
@@ -532,7 +585,7 @@ $( document ).ready( function()
 			return false;
 		}
 
-		$.fn.json_admin( 'DeleteNews', 'news_id=' + encodeURIComponent( news_id ), function( response )
+		$.fn.json_admin( 'DeleteNews', { news_id: news_id }, function( response )
 		{
 			if ( !response.success )
 			{
@@ -552,7 +605,7 @@ $( document ).ready( function()
 
 	$.fn.load_polls = function()
 	{
-		$.fn.json_admin( 'LoadPolls', '', function( response )
+		$.fn.json_admin( 'LoadPolls', null, function( response )
 		{
 			if ( !response.success )
 			{
@@ -620,7 +673,20 @@ $( document ).ready( function()
 
 	$.fn.insert_poll = function()
 	{
-		$.fn.json_admin( 'InsertPoll', $( '#polls_addedit :input' ).serialize(), function( response )
+		const answers = $( '#polls_addedit input[name^="answers["]' ).filter( function()
+		{
+			return $( this ).val().trim() !== '';
+		} ).map( function()
+		{
+			return $( this ).val();
+		} ).get();
+
+		$.fn.json_admin( 'InsertPoll',
+		{
+			question:	$( '#polls_addedit input[name="question"]' ).val(),
+			active:		$( '#polls_addedit input[name="active"]' ).val_bool(),
+			answers:	answers
+		}, function( response )
 		{
 			if ( !response.success )
 			{
@@ -646,7 +712,7 @@ $( document ).ready( function()
 			return false;
 		}
 
-		$.fn.json_admin( 'DeletePoll', 'poll_id=' + encodeURIComponent( poll_id ), function( response )
+		$.fn.json_admin( 'DeletePoll', { poll_id: poll_id }, function( response )
 		{
 			if ( !response.success )
 			{
@@ -706,9 +772,22 @@ $( document ).ready( function()
 
 	$.fn.update_poll = function( poll_id )
 	{
-		var data = 'poll_id=' + encodeURIComponent( poll_id ) + '&' + $( '#polls_addedit :input' ).serialize();
+		const answers = $( '#polls_addedit input[name^="answers["]' ).filter( function()
+		{
+			return $( this ).val().trim() !== '';
+		} ).map( function()
+		{
+			return $( this ).val();
+		} ).get();
 
-		$.fn.json_admin( 'UpdatePoll', data, function( response )
+		$.fn.json_admin( 'UpdatePoll',
+		{
+			poll_id:	poll_id,
+			question:	$( '#polls_addedit input[name="question"]' ).val(),
+			active:		$( '#polls_addedit input[name="active"]' ).val_bool(),
+			answers:	answers
+
+		}, function( response )
 		{
 			if ( !response.success )
 			{
@@ -789,22 +868,15 @@ $( document ).ready( function()
 		$( '.modal' ).css( { width: $( document ).width() + 'px', height: $( document ).height() + 'px' } );
 	}
 
-	$.fn.create_weeks = function()
-	{
-		$.fn.json_admin( 'weeks_create', '', function( response )
-		{
-			if ( !response.success )
-			{
-				return $.fn.error( response.error_message );
-			}
-
-			$.fn.load_weeks();
-		} );
-	}
-
 	$.fn.update_weekly_records = function( user_id, week_id )
 	{
-		$.fn.json_admin( 'UpdateWeeklyRecords', 'user_id=' + encodeURIComponent( user_id ) + '&week_id=' + encodeURIComponent( week_id ) + '&wins=' + encodeURIComponent( $( '#wins' ).val().trim() ) + ' &losses=' + encodeURIComponent( $( '#losses' ).val().trim() ), function( response )
+		$.fn.json_admin( 'UpdateWeeklyRecords',
+		{
+			user_id:	user_id,
+			week_id:	week_id,
+			wins:		$( '#wins' ).val_int(),
+			losses:		$( '#losses' ).val_int()
+		}, function( response )
 		{
 			if ( !response.success )
 			{
@@ -817,7 +889,7 @@ $( document ).ready( function()
 
 	$.fn.update_perfect_week_paid = function( week_id, user_id )
 	{
-		$.fn.json_admin( 'UpdatePerfectWeekPaidUser', 'week_id=' + encodeURIComponent( week_id ) +  '&user_id=' + encodeURIComponent( user_id ), function( response )
+		$.fn.json_admin( 'UpdatePerfectWeekPaidUser', { week_id: week_id, user_id: user_id }, function( response )
 		{
 			if ( !response.success )
 			{

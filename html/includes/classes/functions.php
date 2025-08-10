@@ -130,52 +130,6 @@ class Functions
 		return "{$number}<sup>{$s}</sup>";
 	}
 
-	public static function Post_Int( $value )
-	{
-		return isset( $_POST[ $value ] ) ? (int)$_POST[ $value ] : 0;
-	}
-
-	public static function Post_Boolean( $value )
-	{
-		if ( isset( $_POST[ $value ] ) )
-		{
-			if ( $_POST[ $value ] === 'true' )
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public static function Post_Active( $value )
-	{
-		if ( isset( $_POST[ $value ] ) )
-		{
-			if ( $_POST[ $value ] )
-			{
-				return 1;
-			}
-		}
-
-		return 0;
-	}
-
-	public static function Post_Array( $value )
-	{
-		return isset( $_POST[ $value ] ) ? array_map( 'trim', $_POST[ $value ] ) : array();
-	}
-
-	public static function Get( $value )
-	{
-		return isset( $_GET[ $value ] ) ? trim( $_GET[ $value ] ) : '';
-	}
-
-	public static function Post( $value )
-	{
-		return isset( $_POST[ $value ] ) ? trim( $_POST[ $value ] ) : '';
-	}
-
 	public static function Cookie( $value )
 	{
 		return isset( $_COOKIE[ $value ] ) ? trim( $_COOKIE[ $value ] ) : '';

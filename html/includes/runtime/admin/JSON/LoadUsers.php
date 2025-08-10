@@ -4,8 +4,8 @@ class JSON_LoadUsers extends JSONAdmin
 {
 	public function execute()
 	{
-		$sort		= Functions::Post( 'sort' );
-		$direction	= Functions::Post( 'direction' );
+		$sort		= $this->input()->value_str( 'sort' );
+		$direction	= $this->input()->value_str( 'direction' );
 
 		$this->_Load_Users( $sort, $direction, $users );
 

@@ -20,16 +20,16 @@ EOF );
 			return $this->setValidationErrors( array( "Registration is currently disabled." ) );
 		}
 
-		$agree						= Functions::Post_Boolean( 'agree' );
-		$turnstile					= Functions::Post( "cf-turnstile-response" );
+		$agree						= $this->input()->value_POST_bool( 'agree' );
+		$turnstile					= $this->input()->value_POST_str( "cf-turnstile-response" );
 
-		$register[ 'fname' ] 		= Functions::Post( 'fname' );
-		$register[ 'lname' ] 		= Functions::Post( 'lname' );
-		$register[ 'email' ] 		= Functions::Post( 'email' );
-		$register[ 'cemail' ] 		= Functions::Post( 'cemail' );
-		$register[ 'password' ] 	= Functions::Post( 'password' );
-		$register[ 'cpass' ] 		= Functions::Post( 'cpass' );
-		$register[ 'pw_opt_out'	]	= Functions::Post_Boolean( 'pw_opt_out' );
+		$register[ 'fname' ] 		= $this->input()->value_POST_str( 'fname' );
+		$register[ 'lname' ] 		= $this->input()->value_POST_str( 'lname' );
+		$register[ 'email' ] 		= $this->input()->value_POST_str( 'email' );
+		$register[ 'cemail' ] 		= $this->input()->value_POST_str( 'cemail' );
+		$register[ 'password' ] 	= $this->input()->value_POST_str( 'password' );
+		$register[ 'cpass' ] 		= $this->input()->value_POST_str( 'cpass' );
+		$register[ 'pw_opt_out'	]	= $this->input()->value_POST_bool( 'pw_opt_out', int: true );
 		$errors 					= array();
 
 		if ( !$agree )
@@ -112,7 +112,7 @@ EOF );
 							 'force_password' 	=> 0,
 							 'active'			=> 1,
 							 'message'			=> '',
-							 'pw_opt_out'		=> $data[ 'pw_opt_out' ] ? 1 : 0 );
+							 'pw_opt_out'		=> $data[ 'pw_opt_out' ] );
 
 		$db_users->Insert( $user );
 
@@ -140,25 +140,25 @@ EOF );
 			return Functions::Information( "Registration Disabled", "You currently cannot sign up for the NFL Pick-Em League." );
 		}
 
-		$pw_opt_out_checked = Functions::Post_Boolean( 'pw_opt_out' ) ? ' checked' : '';
+		$pw_opt_out_checked = $this->input()->value_POST_bool( 'pw_opt_out' ) ? ' checked' : '';
 ?>
 <form action="?screen=register" method="post">
   <fieldset>
 	  <legend>What's Your Name</legend>
 	  <label for="fname">First Name</label>
-	  <input type="text" name="fname" id="firstName" title="Please enter your first name" value="<?php print htmlentities( Functions::Post( 'fname' ) ); ?>" />
+	  <input type="text" name="fname" id="firstName" title="Please enter your first name" value="<?php print htmlentities( $this->input()->value_POST_str( 'fname' ) ); ?>" />
 	  <br />
 	  <label for="lname">Last Name</label>
-	  <input type="text" name="lname" id="lastName" value="<?php print htmlentities( Functions::Post( 'lname' ) ); ?>" />
+	  <input type="text" name="lname" id="lastName" value="<?php print htmlentities( $this->input()->value_POST_str( 'lname' ) ); ?>" />
   </fieldset>
 
   <fieldset>
 	  <legend>What's Your Email</legend>
 	  <label for="email">Email Address</label>
-	  <input type="text" name="email" id="email" value="<?php print htmlentities( Functions::Post( 'email' ) ); ?>" />
+	  <input type="text" name="email" id="email" value="<?php print htmlentities( $this->input()->value_POST_str( 'email' ) ); ?>" />
 	  <br />
 	  <label for="confirmEmail">Confirm Email Address</label>
-	  <input type="text" name="cemail" id="confirmEmail" value="<?php print htmlentities( Functions::Post( 'cemail' ) ); ?>" />
+	  <input type="text" name="cemail" id="confirmEmail" value="<?php print htmlentities( $this->input()->value_POST_str( 'cemail' ) ); ?>" />
   </fieldset>
 
   <fieldset>
@@ -172,8 +172,8 @@ EOF );
 
   <fieldset>
   	<legend>Additional</legend>
-  	<label><input type="checkbox" name="agree" value="true" /> I have read and agree to the <a href="rules.pdf" target="_blank">Rules</a></label>
-  	<label><input type="checkbox" name="pw_opt_out" value="true" <?php print $pw_opt_out_checked; ?> /> Opt-out of the perfect week pool</label>
+  	<label><input type="checkbox" name="agree" value="1" /> I have read and agree to the <a href="rules.pdf" target="_blank">Rules</a></label>
+  	<label><input type="checkbox" name="pw_opt_out" value="1" <?php print $pw_opt_out_checked; ?> /> Opt-out of the perfect week pool</label>
   </fieldset>
 
   <div class="cf-turnstile" data-sitekey="<?php print htmlentities( $settings[ 'turnstile_sitekey' ] ); ?>" data-appearance="interaction-only"></div>

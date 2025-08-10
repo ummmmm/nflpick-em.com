@@ -4,10 +4,10 @@ class JSON_UpdatePoll extends JSONAdminAction
 {
 	public function execute()
 	{
-		$poll_id			= Functions::Post( 'poll_id' );
-		$question			= Functions::Post( 'question' );
-		$answers 			= Functions::Post_Array( 'answers' );
-		$active				= Functions::Post_Active( 'active' );
+		$poll_id			= $this->input()->value_int( 'poll_id' );
+		$question			= $this->input()->value_str( 'question' );
+		$answers 			= $this->input()->value_array_str( 'answers' );
+		$active				= $this->input()->value_bool( 'active', int: true );
 		$db_polls			= $this->db()->polls();
 		$db_poll_votes		= $this->db()->pollvotes();
 		$db_poll_answers	= $this->db()->pollanswers();

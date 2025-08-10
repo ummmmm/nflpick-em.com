@@ -8,14 +8,10 @@ require_once( "includes/classes/functions.php" );
 require_once( "includes/classes/Database.php" );
 require_once( "includes/classes/Screen.php" );
 
-$screen_manager = new ScreenManager();
-$admin 			= Functions::Get( "view" ) == "admin" ? true : false;
-$screen			= Functions::Get( "screen" ) === "" ? "default" : Functions::Get( "screen" );
-$update			= Functions::Post_Int( "update" ) ? true : false;
-
 try
 {
-	$screen_manager->initialize( $admin, $screen, $update );
+	$screen_manager = new ScreenManager();
+	$screen_manager->initialize();
 
 	$settings	= $screen_manager->settings();
 	$auth		= $screen_manager->auth();
@@ -38,10 +34,10 @@ catch ( Exception $e )
 	<script src="static/javascript/jqueryui.js" type="text/javascript"></script>
 	<script src="static/javascript/javascript.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		var token = <?php print json_encode( $auth->getToken() ); ?>;
+		const token = <?php print json_encode( $auth->getToken() ); ?>;
 	</script>
 	<?php
-		if ( $admin )
+		if ( $auth->isAdmin() )
 		{
 			print '<script type="text/javascript" src="static/javascript/admin.js"></script>';
 		}

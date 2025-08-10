@@ -5,8 +5,8 @@ class JSON_UpdateGame extends JSONAdminAction
 	public function execute()
 	{
 		$db_games	= $this->db()->games();
-		$game_id	= Functions::Post_Int( 'game_id' );
-		$scored 	= Functions::Post_Boolean( 'scored' );
+		$game_id	= $this->input()->value_int( 'game_id' );
+		$scored 	= $this->input()->value_bool( 'scored' );
 
 		if ( !$db_games->Load( $game_id, $loaded_game ) )
 		{
@@ -25,8 +25,8 @@ class JSON_UpdateGame extends JSONAdminAction
 	{
 		$db_games	= $this->db()->games();
 		$db_teams	= $this->db()->teams();
-		$awayScore	= Functions::Post_Int( 'awayScore' );
-		$homeScore	= Functions::Post_Int( 'homeScore' );
+		$awayScore	= $this->input()->value_int( 'awayScore' );
+		$homeScore	= $this->input()->value_int( 'homeScore' );
 
 		if ( $awayScore < 0 || $homeScore < 0 )
 		{
@@ -64,14 +64,14 @@ class JSON_UpdateGame extends JSONAdminAction
 		$db_games	= $this->db()->games();
 		$db_teams	= $this->db()->teams();
 		$db_weeks	= $this->db()->weeks();
-		$week_id	= Functions::Post_Int( 'week' );
-		$away_id	= Functions::Post_Int( 'away' );
-		$home_id	= Functions::Post_Int( 'home' );
-		$month		= Functions::Post_Int( 'month' );
-		$day		= Functions::Post_Int( 'day' );
-		$year		= Functions::Post_Int( 'year' );
-		$hour		= Functions::Post_Int( 'hour' );
-		$minute		= Functions::Post_Int( 'minute' );
+		$week_id	= $this->input()->value_int( 'week' );
+		$away_id	= $this->input()->value_int( 'away' );
+		$home_id	= $this->input()->value_int( 'home' );
+		$month		= $this->input()->value_int( 'month' );
+		$day		= $this->input()->value_int( 'day' );
+		$year		= $this->input()->value_int( 'year' );
+		$hour		= $this->input()->value_int( 'hour' );
+		$minute		= $this->input()->value_int( 'minute' );
 
 		$mktime = mktime( $hour, $minute, 0, $month, $day, $year );
 

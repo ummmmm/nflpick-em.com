@@ -7,7 +7,7 @@ class JSON_LoadPicks extends JSONUser
 		$db_games	= $this->db()->games();
 		$db_picks	= $this->db()->picks();
 		$db_weeks	= $this->db()->weeks();
-		$week_id	= Functions::Post( 'week_id' );
+		$week_id	= $this->input()->value_int( 'week_id' );
 
 		if ( !$db_weeks->Load( $week_id, $week ) )
 		{

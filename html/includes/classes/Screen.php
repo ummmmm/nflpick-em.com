@@ -2,6 +2,7 @@
 
 require_once( "Database.php" );
 require_once( "Authentication.php" );
+require_once( "Input.php" );
 require_once( "functions.php" );
 require_once( "validation.php" );
 
@@ -51,6 +52,11 @@ abstract class Screen
 	protected function auth()
 	{
 		return $this->_screen_manager->auth();
+	}
+
+	protected function input()
+	{
+		return $this->_screen_manager->input();
 	}
 
 	protected function db()
@@ -126,9 +132,9 @@ class ScreenManager
 	const FLAG_ERROR_JQUERY			= 0x5;
 	const FLAG_ERROR_CONTENT		= 0x6;
 
-	private $_db;
 	private $_db_manager;
 	private $_auth;
+	private $_input;
 	private $_screen;
 	private $_error;
 	private $_error_level;
@@ -144,6 +150,7 @@ class ScreenManager
 	{
 		$this->_db_manager 			= new DatabaseManager();
 		$this->_auth				= new Authentication( $this->_db_manager );
+		$this->_input				= new RawInput();
 
 		$this->_screen				= null;
 		$this->_error				= null;
@@ -168,12 +175,17 @@ class ScreenManager
 		return $this->_auth;
 	}
 
-	public function initialize( $admin, $screen, $update )
+	public function input()
+	{
+		return $this->_input;
+	}
+
+	public function initialize()
 	{
 		$this->db()->initialize();
 		$this->auth()->initialize();
 
-		$this->_build( $admin, $screen, $update );
+		$this->_build();
 	}
 
 	private function _build_head()
@@ -283,9 +295,9 @@ class ScreenManager
 		return $this->_settings;
 	}
 
-	public function _build( $admin, $screen, $update )
+	public function _build()
 	{
-		if ( !$this->_configure( $admin, $screen, $update ) )
+		if ( !$this->_configure() )
 		{
 			return $this->_setErrorLevel( self::FLAG_ERROR_MISCONFIGURED );
 		}
@@ -353,8 +365,11 @@ class ScreenManager
 		return $data;
 	}
 
-	private function _configure( $admin, $screen, $run_update )
+	private function _configure()
 	{
+		$admin	= $this->input()->value_GET_str( 'view' ) == 'admin';
+		$screen	= strlen( $this->input()->value_GET_str( 'screen' ) ) ? $this->input()->value_GET_str( 'screen' ) : 'default';
+
 		try
 		{
 			if ( $admin )	$path = "includes/runtime/admin/screens";
@@ -383,9 +398,9 @@ class ScreenManager
 			if ( $require_user && !$this->auth()->isUser() )		throw new NFLPickEmException( 'You must be a user to view this screen' );
 			else if ( $require_admin && !$this->auth()->isAdmin() )	throw new NFLPickEmException( 'You must be an administrator to view this screen' );
 
-			if ( $run_update )
+			if ( $this->input()->value_POST_bool( 'update' ) )
 			{
-				$token = Functions::Post( "token" );
+				$token = $this->input()->value_POST_str( 'token' );
 
 				if ( $require_token && !$this->auth()->isValidToken( $token ) )
 				{

@@ -5,8 +5,8 @@ class JSON_HighlightPicks extends JSONUser
 	public function execute()
 	{
 		$db_weeks	= $this->db()->weeks();
-		$userid 	= Functions::Post( 'userid' );
-		$week		= Functions::Post( 'week' );
+		$userid 	= $this->input()->value_int( 'userid' );
+		$week		= $this->input()->value_int( 'week' );
 		
 		if ( !$db_weeks->IsLocked( $week ) )
 		{

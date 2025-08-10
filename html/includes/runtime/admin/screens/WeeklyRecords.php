@@ -4,12 +4,12 @@ class Screen_WeeklyRecords extends Screen_Admin
 {
 	public function content()
 	{
-		$week_id	= Functions::Get( 'week' );
-		$user_id	= Functions::Get( 'user' );
+		$week_id	= $this->input()->value_GET_int( 'week' );
+		$user_id	= $this->input()->value_GET_int( 'user' );
 		$db_weeks	= $this->db()->weeks();
 		$db_users	= $this->db()->users();
 
-		if ( $week_id == '' )
+		if ( $week_id == 0 )
 		{
 			return $this->_WeekList();
 		}
@@ -19,7 +19,7 @@ class Screen_WeeklyRecords extends Screen_Admin
 			return Functions::Information( 'Error', 'Invalid week.' );
 		}
 
-		if ( $user_id == '' )
+		if ( $user_id == 0 )
 		{
 			return $this->_WeekPicks( $week );
 		}
@@ -113,7 +113,7 @@ class Screen_WeeklyRecords extends Screen_Admin
 		printf( '<tr><td><b>Wins:</b></td><td><input type="number" length="5" id="wins" value="%d" /></td></tr>', $weekly_record[ 'wins' ] );
 		printf( '<tr><td><b>Losses:</b></td><td><input type="number" length="5" id="losses" value="%d" /></td></tr>', $weekly_record[ 'losses' ] );
 		print( '</table>' );
-		printf( '<input type="submit" onclick="$.fn.update_weekly_records( \'%d\', \'%d\' );" value="Update" />', $user[ 'id' ], $week[ 'id' ] );
+		printf( '<input type="submit" onclick="$.fn.update_weekly_records( %d, %d );" value="Update" />', $user[ 'id' ], $week[ 'id' ] );
 
 		return true;
 	}

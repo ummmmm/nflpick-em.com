@@ -10,9 +10,9 @@ class JSON_MakePicks extends JSONUserAction
 		$db_weeks	= $this->db()->weeks();
 		$date_now 	= time();
 
-		$gameid 	= Functions::Post( 'gameid' );
-		$winner		= Functions::Post( 'winner' );
-		$loser		= Functions::Post( 'loser' );
+		$gameid 	= $this->input()->value_int( 'gameid' );
+		$winner		= $this->input()->value_int( 'winner' );
+		$loser		= $this->input()->value_int( 'loser' );
 
 		if ( !$db_games->Load( $gameid, $game ) )															throw new NFLPickEmException( 'Game does not exist' );
 		else if ( !$db_weeks->Load( $game[ 'week' ], $week ) )												throw new NFLPickEmException( 'Week does not exist' );

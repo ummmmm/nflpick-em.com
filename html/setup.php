@@ -5,17 +5,19 @@ require_once( 'includes/classes/Exceptions.php' );
 require_once( 'includes/classes/Database.php' );
 require_once( 'includes/classes/Authentication.php' );
 require_once( 'includes/classes/Setup.php' );
+require_once( 'includes/classes/Input.php' );
 
 
 $setup	= new Setup();
-$action	= Functions::Get( 'Action' );
+$input	= new RawInput();
+$action	= $input->value_GET_str( 'Action' );
 
 try
 {
 	$setup->initialize();
 
-	if ( $action === 'INSTALL' )		install( $setup );
-	else if ( $action === 'UNINSTALL' )	uninstall( $setup );
+	if ( $action === 'INSTALL' )		install( $setup, $input );
+	else if ( $action === 'UNINSTALL' )	uninstall( $setup, $input );
 }
 catch ( NFLPickEmException $e )
 {
@@ -26,19 +28,19 @@ catch ( Exception $e )
 	printf( 'A fatal error occurred: %s', htmlentities( $e->getMessage() ) );
 }
 
-function install( Setup &$setup )
+function install( Setup &$setup, RawInput &$input )
 {
-	$install = Functions::Post( 'install' );
+	$install = $input->value_POST_str( 'install' );
 
 	if ( $install != '' )
 	{
 		$db_games		= $setup->db()->games();
 		$db_settings	= $setup->db()->settings();
 		$db_weeks		= $setup->db()->weeks();
-		$site_title		= Functions::Post( 'site_title' );
-		$domain_url 	= Functions::Post( 'domain_url' );
-		$domain_email	= Functions::Post( 'domain_email' );
-		$start_date		= Functions::Post( 'start_date' );
+		$site_title		= $input->value_POST_str( 'site_title' );
+		$domain_url 	= $input->value_POST_str( 'domain_url' );
+		$domain_email	= $input->value_POST_str( 'domain_email' );
+		$start_date		= $input->value_POST_str( 'start_date' );
 
 		if ( $site_title == '' )		throw new NFLPickEmException( 'A site title is required' );
 		else if ( $domain_url == '' )	throw new NFLPickEmException( 'A domain URL is required' );
@@ -97,14 +99,14 @@ function install( Setup &$setup )
 	print '</form>';
 }
 
-function uninstall( Setup &$setup )
+function uninstall( Setup &$setup, RawInput &$input )
 {
-	$uninstall = Functions::Post( 'uninstall' );
+	$uninstall = $input->value_POST_str( 'uninstall' );
 
 	if ( $uninstall != '' )
 	{
-		$email 		= Functions::Post( 'email' );
-		$password 	= Functions::Post( 'password' );
+		$email 		= $input->value_POST_str( 'email' );
+		$password 	= $input->value_POST_str( 'password' );
 
 		if ( !$setup->auth()->validate_login( $email, $password, $user ) )	throw new NFLPickEmException( 'Invalid email / password' );
 		else if ( $user[ 'admin' ] != 1 )									throw new NFLPickEmException( 'You must be an admin to uninstall the site' );

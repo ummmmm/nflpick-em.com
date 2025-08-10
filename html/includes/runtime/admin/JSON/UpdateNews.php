@@ -5,10 +5,10 @@ class JSON_UpdateNews extends JSONAdminAction
 	public function execute()
 	{
 		$db_news	= $this->db()->news();
-		$news_id	= Functions::Post( 'news_id' );
-		$title		= Functions::Post( 'title' );
-		$message	= Functions::Post( 'message' );
-		$active		= Functions::Post_Active( 'active' );	
+		$news_id	= $this->input()->value_int( 'news_id' );
+		$title		= $this->input()->value_str( 'title' );
+		$message	= $this->input()->value_str( 'message' );
+		$active		= $this->input()->value_bool( 'active', int: true );
 		
 		if ( !$db_news->Load( $news_id, $news ) )	throw new NFLPickEmException( 'News does not exist' );
 		else if ( $title === '' )					throw new NFLPickEmException( 'Title cannot be blank' );
