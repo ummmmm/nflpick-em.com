@@ -61,7 +61,7 @@ class Screen_ForgotPassword extends Screen
 		if ( $action == "changepassword" )
 		{
 			$user 						= $this->auth()->getUser();
-			$user[ 'password' ]			= Functions::HashPassword( $data );
+			$user[ 'password' ]			= password_hash( $data, PASSWORD_DEFAULT );
 			$user[ 'force_password' ]	= 0;
 
 			$db_users->Update( $user );
@@ -74,7 +74,7 @@ class Screen_ForgotPassword extends Screen
 		{
 			$user 			= $data;
 			$temp_password	= Functions::Random( 10 );
-			$record			= array( 'userid' => $user[ 'id' ], 'password' => Functions::HashPassword( $temp_password ) );
+			$record			= array( 'userid' => $user[ 'id' ], 'password' => password_hash( $temp_password, PASSWORD_DEFAULT ) );
 
 			$db_reset_passwords->Delete_User( $user[ 'id' ] );
 			$db_reset_passwords->Insert( $record );

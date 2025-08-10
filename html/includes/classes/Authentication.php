@@ -69,7 +69,7 @@ class Authentication
 
 			if ( $loaded_user[ 'force_password' ] == 0 )
 			{
-				if ( !Functions::VerifyPassword( $password, $loaded_user[ 'password' ] ) )
+				if ( !password_verify( $password, $loaded_user[ 'password' ] ) )
 				{
 					return false;
 				}
@@ -78,7 +78,7 @@ class Authentication
 			{
 				$db_reset_password = $this->db()->resetpasswords();
 
-				if ( !$db_reset_password->Load_User( $loaded_user[ 'id' ], $reset_password ) || !Functions::VerifyPassword( $password, $reset_password[ 'password'] ) )
+				if ( !$db_reset_password->Load_User( $loaded_user[ 'id' ], $reset_password ) || !password_verify( $password, $reset_password[ 'password'] ) )
 				{
 					return false;
 				}

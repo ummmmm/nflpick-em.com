@@ -83,7 +83,7 @@ class DatabaseTableUsers extends DatabaseTable
 	public function Insert( &$user )
 	{
 		$db_weekly_records		= $this->db()->weeklyrecords();
-		$user[ 'password' ]		= Functions::HashPassword( $user[ 'password' ] );
+		$user[ 'password' ]		= password_hash( $user[ 'password' ], PASSWORD_DEFAULT );
 
 		if ( !$this->_Insert_LowLevel( $user ) )
 		{

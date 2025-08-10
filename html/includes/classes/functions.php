@@ -162,34 +162,6 @@ class Functions
 		return sprintf( '%d days %d hours %d minutes %d seconds', $interval->days, $interval->h, $interval->i, $interval->s );
 	}
 
-	public static function VerifyPassword( $plaintext, $hashed )
-	{
-		if ( crypt( $plaintext, $hashed ) !== $hashed )
-		{
-			return false;
-		}
-
-		return true;
-	}
-
-	public static function HashPassword( $password )
-	{
-		return crypt( $password, '$6$rounds=10000$' . Functions::GenerateSalt() . '$' );
-	}
-
-	public static function GenerateSalt()
-	{
-		$hex_salt		= '';
-		$binary_salt 	= openssl_random_pseudo_bytes( 16 );
-
-		for( $i = 0; $i < 16; $i++ )
-		{
-			$hex_salt .= bin2hex( substr( $binary_salt, $i, 1 ) );
-		}
-
-		return strtoupper( $hex_salt );
-	}
-
 	public static function PrintR( $data )
 	{
 		print '<pre>';
