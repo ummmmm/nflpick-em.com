@@ -1,17 +1,14 @@
 <?php
 
 require_once( 'includes/classes/JSON.php' );
+require_once( 'includes/classes/Exceptions.php' );
 
 header( 'Content-type: application/json' );
-
-$admin	= Functions::Post_Boolean( 'admin' );
-$action	= Functions::Post( 'action' );
-$token	= Functions::Post( 'token' );
 
 try
 {
 	$jsonmanager = new JSONManager();
-	$jsonmanager->initialize( $admin, $action, $token );
+	$jsonmanager->initialize();
 	$jsonmanager->execute();
 
 	print( json_encode( array( 'success' => true, 'data' => $jsonmanager->action()->getData() ) ) );
@@ -21,6 +18,10 @@ catch ( NFLPickEmException $e )
 {
 	print( json_encode( array( 'success' => false, 'error_code' => '#Error#', 'error_message' => $e->getMessage() ) ) );
 	return;
+}
+catch ( JSONException $e )
+{
+	print( json_encode( array( 'success' => false, 'error_code' => '#Error#', 'error_message' => sprintf( 'Invalid JSON: %s (%d)', $e->getMessage(), $e->getLine() ) ) ) );
 }
 catch ( Exception $e )
 {

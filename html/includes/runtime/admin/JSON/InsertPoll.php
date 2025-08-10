@@ -6,9 +6,9 @@ class JSON_InsertPoll extends JSONAdminAction
 	{
 		$db_poll_answers	= $this->db()->pollanswers();
 		$db_polls			= $this->db()->polls();
-		$question			= Functions::Post( 'question' );
-		$answers			= array_filter( Functions::Post_Array( 'answers' ) );
-		$active				= Functions::Post_Active( 'active' );
+		$question			= $this->input()->value_str( 'question' );
+		$answers			= $this->input()->value_array_str( 'answers' );
+		$active				= $this->input()->value_bool( 'active', int: true );
 		$valid_answer		= false;
 		
 		if ( $question === '' )				throw new NFLPickEmException( 'Question cannot be blank' );

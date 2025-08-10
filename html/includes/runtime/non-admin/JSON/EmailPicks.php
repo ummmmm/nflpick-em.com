@@ -9,7 +9,7 @@ class JSON_EmailPicks extends JSONUserAction
 		$db_picks		= $this->db()->picks();
 		$db_sent_picks	= $this->db()->sentpicks();
 		$db_weeks		= $this->db()->weeks();
-		$week			= Functions::Post( 'week' );
+		$week			= $this->input()->value_int( 'week_id' );
 
 		if ( !$db_weeks->Load( $week, $null ) )
 		{

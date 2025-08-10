@@ -10,10 +10,10 @@ class JSON_UpdateWeeklyRecords extends JSONAdminAction
 		$db_picks			= $this->db()->picks();
 		$db_weekly_records	= $this->db()->weeklyrecords();
 
-		$user_id	= Functions::Post_Int( 'user_id' );
-		$week_id	= Functions::Post_Int( 'week_id' );
-		$wins		= Functions::Post_Int( 'wins' );
-		$losses		= Functions::Post_Int( 'losses' );
+		$user_id			= $this->input()->value_int( 'user_id' );
+		$week_id			= $this->input()->value_int( 'week_id' );
+		$wins				= $this->input()->value_int( 'wins' );
+		$losses				= $this->input()->value_int( 'losses' );
 
 		if ( !$db_users->Load( $user_id, $user ) )												throw new NFLPickEmException( 'User does not exist' );
 		else if ( !$db_weeks->Load( $week_id, $week ) )											throw new NFLPickEmException( 'Week does not exist' );

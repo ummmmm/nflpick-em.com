@@ -4,14 +4,14 @@ class Screen_ControlPanel extends Screen_User
 {
 	public function validate()
 	{
-		$action = Functions::Get( "action" );
+		$action = $this->input()->value_GET_str( "action" );
 
 		if ( $action == 'changeemail' )
 		{
 			$db_users	= $this->db()->users();
-			$email 		= Functions::Post( "email" );
-			$cemail 	= Functions::Post( "cemail" );
-			$pass 		= Functions::Post( "pass" );
+			$email 		= $this->input()->value_POST_str( "email" );
+			$cemail 	= $this->input()->value_POST_str( "cemail" );
+			$pass 		= $this->input()->value_POST_str( "pass" );
 			$errors		= array();
 
 			if ( !Validation::Email( $email ) )
@@ -42,9 +42,9 @@ class Screen_ControlPanel extends Screen_User
 
 		if ( $action == 'changepassword' )
 		{
-			$new_password 	= Functions::Post( "new_password" );
-			$c_new_password = Functions::Post( "c_new_password" );
-			$old_password	= Functions::Post( "old_password" );
+			$new_password 	= $this->input()->value_POST_str( "new_password" );
+			$c_new_password = $this->input()->value_POST_str( "c_new_password" );
+			$old_password	= $this->input()->value_POST_str( "old_password" );
 			$errors			= array();
 
 			if ( strlen( $new_password ) < 5 )
@@ -75,7 +75,7 @@ class Screen_ControlPanel extends Screen_User
 	public function update( $data )
 	{
 		$db_users	= $this->db()->users();
-		$action 	= Functions::Get( "action" );
+		$action		= $this->input()->value_GET_str( "action" );
 
 		if ( $action == 'changeemail' )
 		{
@@ -102,7 +102,7 @@ class Screen_ControlPanel extends Screen_User
 
 	public function content()
 	{
-		$action = Functions::Get( 'action' );
+		$action = $this->input()->value_GET_str( 'action' );
 
 		if ( $action == 'changeemail' )			return $this->_ChangeEmail();
 		else if ( $action == 'changepassword' )	return $this->_ChangePassword();

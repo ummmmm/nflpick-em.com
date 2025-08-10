@@ -2,7 +2,7 @@
 
 require_once( "Database.php" );
 require_once( "Authentication.php" );
-require_once( "Exceptions.php" );
+require_once( "Input.php" );
 require_once( "functions.php" );
 
 abstract class JSON
@@ -30,6 +30,11 @@ abstract class JSON
 	protected function db()
 	{
 		return $this->_json_manager->db();
+	}
+
+	protected function input()
+	{
+		return $this->_json_manager->input();
 	}
 
 	protected function settings()
@@ -91,6 +96,7 @@ class JSONManager
 {
 	private $_db_manager;
 	private $_auth;
+	private $_input;
 
 	private $_action;
 	private $_settings;
@@ -99,6 +105,7 @@ class JSONManager
 	{
 		$this->_db_manager 	= new DatabaseManager();
 		$this->_auth		= new Authentication( $this->_db_manager );
+		$this->_input		= new JSONInput();
 		$this->_action		= null;
 		$this->_settings	= null;
 	}
@@ -118,10 +125,19 @@ class JSONManager
 		return $this->_action;
 	}
 
-	public function initialize( $admin, $action, $token )
+	public function input()
+	{
+		return $this->_input;
+	}
+
+	public function initialize()
 	{
 		$this->db()->initialize();
 		$this->auth()->initialize();
+
+		$admin	= $this->input()->value_bool( 'admin' );
+		$action = $this->input()->value_str( 'action' );
+		$token	= $this->input()->value_str( 'token' );
 
 		$class 		= sprintf( 'JSON_%s', $action );
 		$file_path 	= $this->_filePath( $admin, $action );

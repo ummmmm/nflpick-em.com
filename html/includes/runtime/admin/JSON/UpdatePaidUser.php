@@ -4,7 +4,7 @@ class JSON_UpdatePaidUser extends JSONAdminAction
 {
 	public function execute()
 	{
-		$user_id	= Functions::Post( 'user_id' );
+		$user_id	= $this->input()->value_int( 'user_id' );
 		$db_users	= $this->db()->users();
 		
 		if ( !$db_users->Load( $user_id, $loaded_user ) )

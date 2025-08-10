@@ -8,16 +8,16 @@ class JSON_UpdateSettings extends JSONAdminAction
 		$db_settings	= $this->db()->settings();
 		$db_sessions	= $this->db()->sessions();
 
-		$settings[ 'email_validation' ]		= Functions::Post_Active( 'email_validation' );
-		$settings[ 'registration' ]			= Functions::Post_Active( 'registration' );
-		$settings[ 'max_news' ]				= Functions::Post_Int( 'max_news' );
-		$settings[ 'online' ]				= Functions::Post_Int( 'online' );
-		$settings[ 'login_sleep' ]			= Functions::Post_Int( 'login_sleep' );
-		$settings[ 'domain_url' ]			= Functions::Post( 'domain_url' );
-		$settings[ 'domain_email' ]			= Functions::Post( 'domain_email' );
-		$settings[ 'site_title' ]			= Functions::Post( 'site_title' );
-		$settings[ 'turnstile_sitekey' ]	= Functions::Post( 'turnstile_sitekey' );
-		$settings[ 'turnstile_secretkey' ]	= Functions::Post( 'turnstile_secretkey' );
+		$settings[ 'email_validation' ]		= $this->input()->value_bool( 'email_validation', int: true );
+		$settings[ 'registration' ]			= $this->input()->value_bool( 'registration', int: true );
+		$settings[ 'max_news' ]				= $this->input()->value_int( 'max_news' );
+		$settings[ 'online' ]				= $this->input()->value_int( 'online' );
+		$settings[ 'login_sleep' ]			= $this->input()->value_int( 'login_sleep' );
+		$settings[ 'domain_url' ]			= $this->input()->value_str( 'domain_url' );
+		$settings[ 'domain_email' ]			= $this->input()->value_str( 'domain_email' );
+		$settings[ 'site_title' ]			= $this->input()->value_str( 'site_title' );
+		$settings[ 'turnstile_sitekey' ]	= $this->input()->value_str( 'turnstile_sitekey' );
+		$settings[ 'turnstile_secretkey' ]	= $this->input()->value_str( 'turnstile_secretkey' );
 
 		if ( $settings[ 'max_news' ] <= 0 )			throw new NFLPickEmException( 'Max News must be greater than 0' );
 		elseif ( $settings[ 'online' ] <= 0 )		throw new NFLPickEmException( 'Online must be greater than 0' );

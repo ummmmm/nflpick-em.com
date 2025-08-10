@@ -4,7 +4,7 @@ class JSON_LoginUser extends JSONAdminAction
 {
 	public function execute()
 	{
-		$user_id 		= Functions::Post_Int( 'user_id' );
+		$user_id 		= $this->input()->value_int( 'user_id' );
 		$db_users		= $this->db()->users();
 		$db_sessions	= $this->db()->sessions();
 

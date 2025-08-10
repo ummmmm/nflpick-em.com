@@ -5,7 +5,7 @@ class Screen_Default extends Screen
 	public function content()
 	{
 		$settings	= $this->settings();
-		$action		= Functions::Get( 'action' );
+		$action		= $this->input()->value_GET_str( 'action' );
 
 		$total = ( $action === 'viewall' ) ? 0 : $settings[ 'max_news' ];
 

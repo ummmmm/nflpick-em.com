@@ -6,7 +6,7 @@ class Screen_ForgotPassword extends Screen
 {
 	public function validate()
 	{
-		$action = Functions::Get( "action" );
+		$action = $this->input()->value_GET_str( "action" );
 
 		if ( $action == "changepassword" )
 		{
@@ -15,8 +15,8 @@ class Screen_ForgotPassword extends Screen
 				throw new NFLPickEmException( 'You must be logged in to complete this action' );
 			}
 
-			$password	= Functions::Post( "password" );
-			$cpassword	= Functions::Post( "cpassword" );
+			$password	= $this->input()->value_POST_str( "password" );
+			$cpassword	= $this->input()->value_POST_str( "cpassword" );
 			$errors		= array();
 
 			if ( strlen( $password ) < 5 )
@@ -39,7 +39,7 @@ class Screen_ForgotPassword extends Screen
 		if ( $action == '' )
 		{
 			$db_users	= $this->db()->users();
-			$email 		= Functions::Post( "email" );
+			$email 		= $this->input()->value_POST_str( "email" );
 
 			if ( !$db_users->Load_Email( $email, $user ) )
 			{
@@ -56,7 +56,7 @@ class Screen_ForgotPassword extends Screen
 	{
 		$db_users			= $this->db()->users();
 		$db_reset_passwords = $this->db()->resetpasswords();
-		$action				= Functions::Get( "action" );
+		$action				= $this->input()->value_GET_str( "action" );
 
 		if ( $action == "changepassword" )
 		{
@@ -107,7 +107,7 @@ class Screen_ForgotPassword extends Screen
 			die();
 		}
 
-		$action = Functions::Get( "action" );
+		$action = $this->input()->value_GET_str( "action" );
 
 		if ( $action == "changepassword" )	return $this->_ChangePassword();
 		else if ( $action == '' )			return $this->_ForgotPassword();

@@ -16,11 +16,11 @@ EOF );
 	{
 		$settings	= $this->settings();
 
-		$name 		= Functions::Post( "name" );
-		$email		= Functions::Post( "email" );
-		$subject	= Functions::Post( "subject" );
-		$message	= Functions::Post( "message" );
-		$turnstile	= Functions::Post( "cf-turnstile-response" );
+		$name 		= $this->input()->value_POST_str( "name" );
+		$email		= $this->input()->value_POST_str( "email" );
+		$subject	= $this->input()->value_POST_str( "subject" );
+		$message	= $this->input()->value_POST_str( "message" );
+		$turnstile	= $this->input()->value_POST_str( "cf-turnstile-response" );
 		$errors		= array();
 
 		if ( $name == "" )
@@ -75,10 +75,10 @@ EOF );
 	public function content()
 	{
 		$settings	= $this->settings();
-		$name 		= Functions::Post( 'name' );
-		$email		= Functions::Post( 'email' );
-		$subject	= Functions::Post( 'subject' );
-		$message	= Functions::Post( 'message' );
+		$name 		= $this->input()->value_POST_str( 'name' );
+		$email		= $this->input()->value_POST_str( 'email' );
+		$subject	= $this->input()->value_POST_str( 'subject' );
+		$message	= $this->input()->value_POST_str( 'message' );
 
 		if ( $this->auth()->getUserID() )
 		{

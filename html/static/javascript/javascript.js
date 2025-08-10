@@ -1,18 +1,27 @@
 $( document ).ready( function(){
-	$.fn.json = function( action, variables, callback )
+	$.fn.val_int = function()
 	{
-		var data = 'action=' + encodeURIComponent( action ) + ( variables == '' ? '' : '&' ) + variables;
+		return parseInt( this.val(), 10 );
+	}
 
+	$.fn.val_bool = function()
+	{
+		return this.prop( 'checked' );
+	}
+
+	$.fn.json = function( action, request_body, callback )
+	{
 		$.ajax( {
-			type	: 'POST',
-			url		: 'json.php',
-			dataType: 'JSON',
-			data	:  'token=' + token + '&' + data,
-			success	: function( response, status )
+			type: 			'POST',
+			url: 			'json.php',
+			dataType: 		'JSON',
+			data: 			JSON.stringify( { token: token, action: action, ...request_body } ),
+			contentType:	'application/json',
+			success:		function( response, status )
 			{
 				callback( response );
 			},
-			error	: function( jqXHR, textStatus, errorThrown )
+			error:			function( jqXHR, textStatus, errorThrown )
 			{
 				var response 			= new Object();
 				response.success		= 0;
@@ -31,7 +40,7 @@ $( document ).ready( function(){
 
 	$.fn.load_weeklyrecords = function()
 	{
-		$.fn.json( 'LoadWeeklyRecords', '', function( response )
+		$.fn.json( 'LoadWeeklyRecords', null, function( response )
 		{
 			if ( !response.success )
 			{
@@ -84,7 +93,7 @@ $( document ).ready( function(){
 
 	$.fn.load_picks = function( week_id )
 	{
-		$.fn.json( 'LoadPicks', 'week_id=' + encodeURIComponent( week_id ), function( response )
+		$.fn.json( 'LoadPicks', { week_id: week_id }, function( response )
 		{
 			if ( !response.success )
 			{
@@ -180,7 +189,7 @@ $( document ).ready( function(){
 			return;
 		}
 
-		$.fn.json( 'HighlightPicks', 'userid=' + encodeURIComponent( userid ) + '&week=' + encodeURIComponent( week ), function( response )
+		$.fn.json( 'HighlightPicks', { userid: userid, week: week }, function( response )
 		{
 			if ( !response.success )
 			{
@@ -221,9 +230,9 @@ $( document ).ready( function(){
 		}
 	} );
 
-	$.fn.emailPicks = function( week )
+	$.fn.emailPicks = function( week_id )
 	{
-		$.fn.json( 'EmailPicks', 'week=' + encodeURIComponent( week ), function( response )
+		$.fn.json( 'EmailPicks', { week_id: week_id }, function( response )
 		{
 			if ( !response.success )
 			{
@@ -240,9 +249,11 @@ $( document ).ready( function(){
 	$.fn.makePicks = function( gameid, winner, loser )
 	{
 		$.fn.json(	'MakePicks',
-					'gameid=' + encodeURIComponent( gameid ) +
-					'&winner=' + encodeURIComponent( winner ) +
-					'&loser=' + encodeURIComponent( loser ),
+					{
+						gameid: gameid,
+						winner: winner,
+						loser: loser
+					},
 					function( response )
 					{
 						if ( !response.success )
@@ -259,7 +270,7 @@ $( document ).ready( function(){
 
 	$.fn.load_polls = function()
 	{
-		$.fn.json( 'LoadPolls', '', function( response )
+		$.fn.json( 'LoadPolls', { nav: false }, function( response )
 		{
 			if ( !response.success )
 			{
@@ -272,7 +283,7 @@ $( document ).ready( function(){
 
 	$.fn.load_poll = function()
 	{
-		$.fn.json( 'LoadPolls', 'nav=1', function( response )
+		$.fn.json( 'LoadPolls', { nav: true }, function( response )
 		{
 			if ( !response.success )
 			{
@@ -318,14 +329,14 @@ $( document ).ready( function(){
 
 	$.fn.cast_vote = function( poll_id )
 	{
-		var answer = $( 'input:radio[name=answer]:checked' ).val();
+		var answer = $( 'input:radio[name=answer]:checked' ).val_int();
 
-		if ( typeof answer === 'undefined' )
+		if ( isNaN( answer ) )
 		{
 			return $.fn.error( 'Select a poll answer' );
 		}
 
-		$.fn.json( 'VotePoll', 'poll_id=' + encodeURIComponent( poll_id ) + '&answer_id=' + encodeURIComponent( answer ), function( response )
+		$.fn.json( 'VotePoll', { poll_id: poll_id, answer_id: answer }, function( response )
 		{
 			if ( !response.success )
 			{

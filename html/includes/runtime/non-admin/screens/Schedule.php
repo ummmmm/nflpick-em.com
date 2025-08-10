@@ -7,9 +7,9 @@ class Screen_Schedule extends Screen
 		$db_games	= $this->db()->games();
 		$db_teams	= $this->db()->teams();
 		$db_weeks	= $this->db()->weeks();
-		$week_id 	= Functions::Get( 'week' );
+		$week_id 	= $this->input()->value_GET_int( 'week' );
 
-		if ( $week_id == '' )
+		if ( $week_id == 0 )
 		{
 			$db_weeks->List_Load( $weeks );
 

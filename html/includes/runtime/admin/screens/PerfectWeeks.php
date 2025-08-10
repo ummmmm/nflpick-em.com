@@ -4,10 +4,10 @@ class Screen_PerfectWeeks extends Screen_Admin
 {
 	public function content()
 	{
-		$week_id	= Functions::Get( 'week' );
+		$week_id	= $this->input()->value_GET_int( 'week' );
 		$db_weeks	= $this->db()->weeks();
 
-		if ( $week_id == '' )
+		if ( $week_id == 0 )
 		{
 			return $this->_WeekList();
 		}

@@ -10,7 +10,7 @@ class Screen_DeleteAccount extends Screen_User
 	public function validate()
 	{
 		$db_users = $this->db()->users();
-		$password = Functions::Post( 'password' );
+		$password = $this->input()->value_POST_str( 'password' );
 
 		if ( !$this->auth()->validate_login( $this->auth()->getUser()[ 'email' ], $password, $null ) )
 		{

@@ -7,10 +7,10 @@ class JSON_LoadPolls extends JSON
 		$db_polls			= $this->db()->polls();
 		$db_poll_votes		= $this->db()->pollvotes();
 		$db_poll_answers	= $this->db()->pollanswers();
-		$nav_poll 			= Functions::Post( 'nav' );
+		$nav_poll 			= $this->input()->value_bool( 'nav' );
 
-		if ( $nav_poll === '1' )	$db_polls->Latest( $loaded_polls );
-		else						$db_polls->List_Load( $loaded_polls );
+		if ( $nav_poll )	$db_polls->Latest( $loaded_polls );
+		else				$db_polls->List_Load( $loaded_polls );
 
 		foreach( $loaded_polls as &$poll )
 		{
