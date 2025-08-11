@@ -100,7 +100,7 @@ EOF );
 		$user 		= array( 'fname' 			=> $data[ 'fname' ],
 							 'lname' 			=> $data[ 'lname' ],
 							 'email' 			=> $data[ 'email' ],
-							 'password' 		=> $data[ 'password' ],
+							 'password' 		=> Security::password_hash( $data[ 'password' ] ),
 							 'admin' 			=> 0,
 							 'sign_up' 			=> time(),
 							 'last_on' 			=> time(),

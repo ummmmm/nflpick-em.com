@@ -2,6 +2,7 @@
 
 require_once( "Database.php" );
 require_once( "functions.php" );
+require_once( "Security.php" );
 
 class Authentication
 {
@@ -69,7 +70,7 @@ class Authentication
 
 			if ( $loaded_user[ 'force_password' ] == 0 )
 			{
-				if ( !password_verify( $password, $loaded_user[ 'password' ] ) )
+				if ( Security::password_verify( $password, $loaded_user[ 'password' ] ) )
 				{
 					return false;
 				}
@@ -78,7 +79,7 @@ class Authentication
 			{
 				$db_reset_password = $this->db()->resetpasswords();
 
-				if ( !$db_reset_password->Load_User( $loaded_user[ 'id' ], $reset_password ) || !password_verify( $password, $reset_password[ 'password'] ) )
+				if ( !$db_reset_password->Load_User( $loaded_user[ 'id' ], $reset_password ) || !Security::password_verify( $password, $reset_password[ 'password' ] ) )
 				{
 					return false;
 				}

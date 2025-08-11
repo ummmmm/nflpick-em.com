@@ -27,7 +27,7 @@ class Screen_ControlPanel extends Screen_User
 				array_push( $errors, 'The email address is already in use.' );
 			}
 
-			if ( !password_verify( $pass, $this->auth()->getUser()[ 'password' ] ) )
+			if ( !Security::password_verify( $pass, $this->auth()->getUser()[ 'password' ] ) )
 			{
 				array_push( $errors, 'Invalid password.' );
 			}
@@ -56,7 +56,7 @@ class Screen_ControlPanel extends Screen_User
 				array_push( $errors, 'Passwords do not match.' );
 			}
 
-			if ( !password_verify( $old_password, $this->auth()->getUser()[ 'password' ] ) )
+			if ( !Security::password_verify( $old_password, $this->auth()->getUser()[ 'password' ] ) )
 			{
 				array_push( $errors, 'Your old password does not match the password on file.' );
 			}
@@ -66,7 +66,7 @@ class Screen_ControlPanel extends Screen_User
 				return $this->setValidationErrors( $errors );
 			}
 
-			return $this->setValidationData( array( "password" => password_hash( $new_password, PASSWORD_DEFAULT ) ) );
+			return $this->setValidationData( array( "password" => Security::password_hash( $new_password ) ) );
 		}
 
 		return true;

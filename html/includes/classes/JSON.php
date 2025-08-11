@@ -2,6 +2,7 @@
 
 require_once( "Database.php" );
 require_once( "Authentication.php" );
+require_once( "Security.php" );
 require_once( "Input.php" );
 require_once( "functions.php" );
 
