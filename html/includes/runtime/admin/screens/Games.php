@@ -12,6 +12,7 @@ class Screen_Games extends Screen_Admin
 	public function content()
 	{
 		$this->db()->teams()->List_Load( $teams );
+		$this->db()->weeks()->List_Load( $weeks );
 		
 		print '<h1>Edit Weeks</h1>';
 		print '<div id="weeks_loading">Loading...</div>';
@@ -23,36 +24,62 @@ class Screen_Games extends Screen_Admin
 		print '<tr>';
 		print '<td>';
 		print '<select id="games_addedit_away" name="away">';
-			Draw::Teams( $teams );
+			foreach ( $teams as $team )
+			{
+				printf( '<option value="%d">%s</option>', $team[ 'id'], $team[ 'team' ] );
+			}
 		print '</select>';
 		print ' <b>vs.</b> ';	
 		print '<select id="games_addedit_home" name="home">';
-			Draw::Teams( $teams );
+			foreach ( $teams as $team )
+			{
+				printf( '<option value="%d">%s</option>', $team[ 'id'], $team[ 'team' ] );
+			}
 		print '</select>';
 		print '</td>';
 		print '<tr>';
 		print '<td>';
 		print '<select id="games_addedit_month" name="month">';
-			Draw::Months();
+			for ( $i = 1; $i <= 12; $i++ )
+			{
+				printf( '<option value="%d">%s</option>', $i, date( 'F', mktime( 0, 0, 0, $i ) ) );
+			}
 		print '</select>';
 		print '<select id="games_addedit_day" name="day">';
-			Draw::Days();
+			for ( $i = 1; $i <= 31; $i++ )
+			{
+				printf( '<option value="%d">%s</option>', $i, str_pad( $i, 2, '0', STR_PAD_LEFT ) );
+			}
 		print '</select>';
 		print '<select id="games_addedit_year" name="year">';
-			Draw::Years();
+			$year = ( int ) date( 'Y' );
+
+			for ( $i = $year; $i <= $year + 1; $i++ )
+			{
+				printf( '<option value="%d">%s</option>', $i, $i );
+			}
 		print '</select>';
 		print '<select id="games_addedit_hour" name="hour">';
-			Draw::Hours();
+			for ( $i = 0; $i <= 23; $i++ )
+			{
+				printf( '<option value="%d">%s</option>', $i, str_pad( $i, 2, '0', STR_PAD_LEFT ) );
+			}
 		print '</select>';
 		print '<select id="games_addedit_minute" name="minute">';
-			Draw::Minutes();
+			for ( $i = 0; $i <= 55; $i += 5 )
+			{
+				printf( '<option value="%d">%s</option>', $i, str_pad( $i, 2, '0', STR_PAD_LEFT ) );
+			}
 		print '</select>';
 		print '</td>';
 		print '</tr>';
 		print '<tr>';
 		print '<td>';
 		print '<select id="games_addedit_week" name="week">';
-			Draw::Weeks();
+			foreach ( $weeks as $week )
+			{
+				printf( '<option value="%d">%s</option>', $week[ 'id'], $week[ 'id' ] );
+			}
 		print '</select>';
 		print '</td>';
 		print '</tr>';

@@ -4,15 +4,17 @@ class Screen_Settings extends Screen_Admin
 {
 	public function content()
 	{
-		$settings = $this->settings();
+		$settings	= $this->settings();
+		$reg_on		= $settings[ 'registration' ] ? 'checked' : '';
+		$reg_off	= !$settings[ 'registration' ] ? 'checked' : '';
 
 		print '<div id="settings_addedit">';
 		print '<table>';
 		print '<tr>';
 		print '<td valign="top">Registration: </td>';
 		print '<td>';
-		print Draw::Radio( 'registration', 1, $settings[ 'registration' ], 'On' ) . '<br />';
-		print Draw::Radio( 'registration', 0, $settings[ 'registration' ], 'Off' );
+		print '<input type="radio" name="registration" value="1" ' . $reg_on . '/> On<br />';
+		print '<input type="radio" name="registration" value="0" ' . $reg_off . '/> Off';
 		print '</td>';
 		print '</tr>';
 		print '<tr>';
