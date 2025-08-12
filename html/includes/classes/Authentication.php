@@ -30,7 +30,7 @@ class Authentication
 
 	public function initialize()
 	{
-		$session_cookie = Functions::Cookie( 'session' );
+		$session_cookie = $_COOKIE[ 'session' ] ?? '';
 
 		if ( $session_cookie != '' )
 		{

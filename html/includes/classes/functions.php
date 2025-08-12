@@ -43,11 +43,6 @@ class Functions
 		return "{$number}<sup>{$s}</sup>";
 	}
 
-	public static function Cookie( $value )
-	{
-		return isset( $_COOKIE[ $value ] ) ? trim( $_COOKIE[ $value ] ) : '';
-	}
-
 	public static function Information( $h1, $p )
 	{
 		printf( "<h1>%s</h1>\n", $h1 );
