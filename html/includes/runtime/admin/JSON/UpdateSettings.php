@@ -8,7 +8,6 @@ class JSON_UpdateSettings extends JSONAdminAction
 		$db_settings	= $this->db()->settings();
 		$db_sessions	= $this->db()->sessions();
 
-		$settings[ 'email_validation' ]		= $this->input()->value_bool( 'email_validation', int: true );
 		$settings[ 'registration' ]			= $this->input()->value_bool( 'registration', int: true );
 		$settings[ 'max_news' ]				= $this->input()->value_int( 'max_news' );
 		$settings[ 'online' ]				= $this->input()->value_int( 'online' );

@@ -9,13 +9,6 @@ class Screen_Settings extends Screen_Admin
 		print '<div id="settings_addedit">';
 		print '<table>';
 		print '<tr>';
-		print '<td valign="top">Email Validation: </td>';
-		print '<td>';
-		print Draw::Radio( 'email_validation', 1, $settings[ 'email_validation' ], 'On' ) . '<br />';
-		print Draw::Radio( 'email_validation', 0, $settings[ 'email_validation' ], 'Off' );
-		print '</td>';
-		print '</tr>';
-		print '<tr>';
 		print '<td valign="top">Registration: </td>';
 		print '<td>';
 		print Draw::Radio( 'registration', 1, $settings[ 'registration' ], 'On' ) . '<br />';

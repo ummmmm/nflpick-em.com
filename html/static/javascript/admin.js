@@ -42,7 +42,6 @@ $( document ).ready( function()
 	{
 		$.fn.json_admin( 'UpdateSettings',
 		{
-			email_validation:		$( '#settings_addedit input[name="email_validation"]' ).val_bool(),
 			registration:			$( '#settings_addedit input[name="registration"]' ).val_bool(),
 			max_news:				$( '#settings_addedit input[name="max_news"]' ).val_int(),
 			online:					$( '#settings_addedit input[name="online"]' ).val_int(),
