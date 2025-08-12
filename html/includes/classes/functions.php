@@ -2,11 +2,6 @@
 
 class Draw
 {
-	public static function Hidden( $name, $value )
-	{
-		print '<input type="hidden" id="' . htmlentities( $name ) . '" name="' . htmlentities( $name ) . '" value="' . htmlentities( $value ) . '" />';
-	}
-
 	public static function Radio( $name, $value, $default, $prompt = '' )
 	{
 		if ( $value === $default )

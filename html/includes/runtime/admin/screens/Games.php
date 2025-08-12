@@ -70,7 +70,7 @@ class Screen_Games extends Screen_Admin
 				</tr>
 				</table>
 				</div>';
-		print Draw::Hidden( 'scored', 'false' );
+		print '<input type="hidden" id="scored" name="name" value="0" />';
 		print '<div class="buttons_left">
 			<input type="button" id="games_addedit_cancel" value="Cancel" />
 		</div>

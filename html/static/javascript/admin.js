@@ -312,7 +312,7 @@ $( document ).ready( function()
 	$.fn.toggle_games = function()
 	{
 		$( '#scores, #games' ).slideToggle();
-		$( '#scored' ).val( ( $( '#scored' ).val() == 'true' ) ? 'false' : 'true' );
+		$( '#scored' ).val( ( $( '#scored' ).val() == '1' ) ? '0' : '1' );
 	}
 
 	$.fn.show_games = function( week_id ) { $( '#games_week' + week_id ).toggle(); }
@@ -336,11 +336,11 @@ $( document ).ready( function()
 		{
 			$( '#scores' ).show();
 			$( '#games' ).hide();
-			$( '#scored' ).val( 'true' );
+			$( '#scored' ).val( '1' );
 		} else {
 			$( '#games' ).show();
 			$( '#scores' ).hide();
-			$( '#scored' ).val( 'false' );
+			$( '#scored' ).val( '0' );
 		}
 
 		$( '#games_addedit_away' ).val( game.away );
@@ -401,7 +401,7 @@ $( document ).ready( function()
 	{
 		var data;
 
-		if ( $( '#scored' ).val() === 'true' )
+		if ( $( '#scored' ).val() === '1' )
 		{
 			data = {
 				awayScore:	$( '#games_addedit input[name="awayScore"]' ).val_int(),
@@ -424,7 +424,7 @@ $( document ).ready( function()
 		$.fn.json_admin( 'UpdateGame',
 						 {
 						 	game_id:	game.id,
-						 	scored:		$( '#scored' ).val() === 'true',
+						 	scored:		$( '#scored' ).val() === '1',
 						 	...data
 						 },
 						 function( response )
