@@ -17,7 +17,8 @@ EOF );
 
 		if ( $settings[ 'registration' ] != 1 )
 		{
-			return $this->setValidationErrors( array( "Registration is currently disabled." ) );
+			$this->addValidationError( 'Registration is currently disabled.' );
+			return true;
 		}
 
 		$agree						= $this->input()->value_POST_bool( 'agree' );
@@ -30,67 +31,66 @@ EOF );
 		$register[ 'password' ] 	= $this->input()->value_POST_str( 'password' );
 		$register[ 'cpass' ] 		= $this->input()->value_POST_str( 'cpass' );
 		$register[ 'pw_opt_out'	]	= $this->input()->value_POST_bool( 'pw_opt_out', int: true );
-		$errors 					= array();
 
 		if ( !$agree )
 		{
-			array_push( $errors, 'You must agree to the rules.' );
+			$this->addValidationError( 'You must agree to the rules.' );
 		}
 
 		if ( Functions::Turnstile_Active( $settings ) && !Functions::Turnstile_Validate( $settings, $turnstile ) )
 		{
-			array_push( $errors, "Invalid validation token" );
+			$this->addValidationError( "Invalid validation token" );
 		}
 
 		if ( empty( $register[ 'fname' ] ) || ( strlen( $register[ 'fname' ] ) < 3 ) || ( strlen( $register[ 'fname' ] ) > 15 ) )
 		{
-			array_push( $errors, 'First name must be between 3 and 15 characters.' );
+			$this->addValidationError( 'First name must be between 3 and 15 characters.' );
 		}
 		else if ( !Validation::IsAlpha( $register[ 'fname' ] ) )
 		{
-			array_push( $errors, 'First name can only contain letters.' );
+			$this->addValidationError( 'First name can only contain letters.' );
 		}
 
 		if ( empty( $register[ 'lname' ] ) || ( strlen( $register[ 'lname' ] ) < 3 ) || ( strlen( $register[ 'lname' ] ) > 15 ) )
 		{
-			array_push( $errors, 'Last name must be between 3 and 15 characters.' );
+			$this->addValidationError( 'Last name must be between 3 and 15 characters.' );
 		}
 		else if ( !Validation::IsAlpha( $register[ 'lname' ] ) )
 		{
-			array_push( $errors, 'Last name can only contain letters.' );
+			$this->addValidationError( 'Last name can only contain letters.' );
 		}
 
 		if ( !Validation::Email( $register[ 'email' ] ) )
 		{
-			array_push( $errors, 'Please enter a valid email address.' );
+			$this->addValidationError( 'Please enter a valid email address.' );
 		}
 
 		if ( ( $db_users->Load_Email( $register[ 'email' ], $null ) ) )
 		{
-			array_push( $errors, 'The email address is already in use.' );
+			$this->addValidationError( 'The email address is already in use.' );
 		}
 
 		if ( $register[ 'email' ] !== $register[ 'cemail' ] )
 		{
-			array_push( $errors, 'Please make sure email address\' match.' );
+			$this->addValidationError( 'Please make sure email address\' match.' );
 		}
 
 		if ( strlen( $register[ 'password' ] ) < 5 )
 		{
-			array_push( $errors, 'Password must be at least 5 characters.' );
+			$this->addValidationError( 'Password must be at least 5 characters.' );
 		}
 
 		if ( $register[ 'password' ] !== $register[ 'cpass' ] )
 		{
-			array_push ( $errors, 'Passwords do not match.' );
+			$this->addValidationError( 'Passwords do not match.' );
 		}
 
-		if ( !empty( $errors ) )
+		if ( !$this->hasValidationErrors() )
 		{
-			return $this->setValidationErrors( $errors );
+			 $this->setValidationData( $register );
 		}
 
-		return $this->setValidationData( $register );
+		return true;
 	}
 
 	public function update( $data )

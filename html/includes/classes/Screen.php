@@ -18,7 +18,7 @@ abstract class Screen
 	{
 		$this->_screen_manager		= $screen_manager;
 
-		$this->_validation_errors	= null;
+		$this->_validation_errors	= array();
 		$this->_validation_data		= null;
 		$this->_update_message		= null;
 	}
@@ -70,11 +70,9 @@ abstract class Screen
 		return $this->_screen_manager->settings();
 	}
 
-	protected function setValidationErrors( $errors )
+	protected function addValidationError( string $message )
 	{
-		$this->_validation_errors = $errors;
-
-		return true;
+		array_push( $this->_validation_errors, $message );
 	}
 
 	protected function setValidationData( $data )
@@ -89,6 +87,11 @@ abstract class Screen
 		$this->_update_message = $message;
 
 		return true;
+	}
+
+	public function hasValidationErrors()
+	{
+		return count( $this->_validation_errors ) > 0;
 	}
 
 	public function getValidationErrors()
@@ -266,7 +269,7 @@ class ScreenManager
 				return $this->_setErrorLevel( self::FLAG_ERROR_VALIDATE );
 			}
 
-			if ( !$this->_screen->getValidationErrors() )
+			if ( !$this->_screen->hasValidationErrors() )
 			{
 				try
 				{

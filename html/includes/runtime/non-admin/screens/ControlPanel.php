@@ -12,32 +12,31 @@ class Screen_ControlPanel extends Screen_User
 			$email 		= $this->input()->value_POST_str( "email" );
 			$cemail 	= $this->input()->value_POST_str( "cemail" );
 			$pass 		= $this->input()->value_POST_str( "pass" );
-			$errors		= array();
 
 			if ( !Validation::Email( $email ) )
 			{
-				array_push( $errors, 'Invalid email address.' );
+				$this->addValidationError( 'Invalid email address.' );
 			}
 			else if ( $email != $cemail )
 			{
-				array_push( $errors, 'Email address\' do not match.' );
+				$this->addValidationError( 'Email address\' do not match.' );
 			}
 			else if ( $db_users->Load_Email( $email, $loaded_user ) && $loaded_user[ 'id' ] != $this->auth()->getUserID() )
 			{
-				array_push( $errors, 'The email address is already in use.' );
+				$this->addValidationError( 'The email address is already in use.' );
 			}
 
 			if ( !Security::password_verify( $pass, $this->auth()->getUser()[ 'password' ] ) )
 			{
-				array_push( $errors, 'Invalid password.' );
+				$this->addValidationError( 'Invalid password.' );
 			}
 
-			if ( !empty( $errors ) )
+			if ( !$this->hasValidationErrors() )
 			{
-				return $this->setValidationErrors( $errors );
+				$this->setValidationData( array( "email" => $email ) );
 			}
 
-			return $this->setValidationData( array( "email" => $email ) );
+			return true;
 		}
 
 		if ( $action == 'changepassword' )
@@ -45,28 +44,27 @@ class Screen_ControlPanel extends Screen_User
 			$new_password 	= $this->input()->value_POST_str( "new_password" );
 			$c_new_password = $this->input()->value_POST_str( "c_new_password" );
 			$old_password	= $this->input()->value_POST_str( "old_password" );
-			$errors			= array();
-
-			if ( strlen( $new_password ) < 5 )
-			{
-				array_push( $errors, 'Password must be at least 5 characters.' );
-			}
-			else if ( $new_password !== $c_new_password )
-			{
-				array_push( $errors, 'Passwords do not match.' );
-			}
 
 			if ( !Security::password_verify( $old_password, $this->auth()->getUser()[ 'password' ] ) )
 			{
-				array_push( $errors, 'Your old password does not match the password on file.' );
+				$this->addValidationError( 'Old password is incorrect.' );
 			}
 
-			if ( !empty( $errors ) )
+			if ( strlen( $new_password ) < 5 )
 			{
-				return $this->setValidationErrors( $errors );
+				$this->addValidationError( 'New password must be at least 5 characters.' );
+			}
+			else if ( $new_password !== $c_new_password )
+			{
+				$this->addValidationError( 'New passwords do not match.' );
 			}
 
-			return $this->setValidationData( array( "password" => Security::password_hash( $new_password ) ) );
+			if ( !$this->hasValidationErrors() )
+			{
+				$this->setValidationData( array( "password" => Security::password_hash( $new_password ) ) );
+			}
+
+			return true;
 		}
 
 		return true;

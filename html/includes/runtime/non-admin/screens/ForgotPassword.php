@@ -17,39 +17,36 @@ class Screen_ForgotPassword extends Screen
 
 			$password	= $this->input()->value_POST_str( "password" );
 			$cpassword	= $this->input()->value_POST_str( "cpassword" );
-			$errors		= array();
 
 			if ( strlen( $password ) < 5 )
 			{
-				array_push( $errors, 'Password must be at least 5 characters.' );
+				$this->addValidationError( 'Password must be at least 5 characters.' );
 			}
 			else if ( $password !== $cpassword )
 			{
-				array_push( $errors, 'Passwords do not match.' );
+				$this->addValidationError( 'Passwords do not match.' );
 			}
 
-			if ( !empty( $errors ) )
+			if ( !$this->hasValidationErrors() )
 			{
-				return $this->setValidationErrors( $errors );
+				$this->setValidationData( $password );
 			}
 
-			return $this->setValidationData( $password );
+			return true;
 		}
 
 		if ( $action == '' )
 		{
 			$db_users	= $this->db()->users();
 			$email 		= $this->input()->value_POST_str( "email" );
+			$user		= null;
 
-			if ( !$db_users->Load_Email( $email, $user ) )
-			{
-				return $this->setValidationErrors( "Email not found" );
-			}
+			$db_users->Load_Email( $email, $user );
 
 			return $this->setValidationData( $user );
 		}
 
-		return $this->setValidationErrors( array( "Invalid action" ) );
+		throw new NFLPickEmException( 'Invalid action' );
 	}
 
 	public function update( $data )
@@ -72,6 +69,15 @@ class Screen_ForgotPassword extends Screen
 
 		if ( $action == '' )
 		{
+			$settings = $this->settings();
+
+			usleep( $settings[ 'login_sleep' ] * 1000 );
+
+			if ( $data == null )
+			{
+				return $this->setUpdateMessage( "A temporary password has been emailed to you." );
+			}
+
 			$user 			= $data;
 			$temp_password	= Functions::Random( 10 );
 			$record			= array( 'userid' => $user[ 'id' ], 'password' => Security::password_hash( $temp_password ) );

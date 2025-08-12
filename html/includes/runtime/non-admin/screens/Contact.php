@@ -21,21 +21,20 @@ EOF );
 		$subject	= $this->input()->value_POST_str( "subject" );
 		$message	= $this->input()->value_POST_str( "message" );
 		$turnstile	= $this->input()->value_POST_str( "cf-turnstile-response" );
-		$errors		= array();
 
 		if ( $name == "" )
 		{
-			array_push( $errors, "Please enter your name." );
+			$this->addValidationError( 'Please enter your name.' );
 		}
 
 		if ( $email == "" )
 		{
-			array_push( $errors, "Please enter an email address." );
+			$this->addValidationError( 'Please enter an email address.' );
 		}
 
 		if ( $message == "" )
 		{
-			array_push( $errors, "Please enter a message." );
+			$this->addValidationError( 'Please enter a message.' );
 		}
 
 		if ( $subject == "" )
@@ -45,15 +44,15 @@ EOF );
 
 		if ( Functions::Turnstile_Active( $settings ) && !Functions::Turnstile_Validate( $settings, $turnstile ) )
 		{
-			array_push( $errors, "Invalid validation token" );
+			$this->addValidationError( 'Invalid validation token' );
 		}
 
-		if ( !empty( $errors ) )
+		if ( !$this->hasValidationErrors() )
 		{
-			return $this->setValidationErrors( $errors );
+			$this->setValidationData( array( "name" => $name, "email" => $email, "subject" => $subject, "message" => $message ) );
 		}
 
-		return $this->setValidationData( array( "name" => $name, "email" => $email, "subject" => $subject, "message" => $message ) );
+		return true;
 	}
 
 	public function update( $data )

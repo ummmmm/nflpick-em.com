@@ -10,15 +10,19 @@ class Screen_Login extends Screen
 
 		if ( !$this->auth()->validate_login( $email, $password, $user ) )
 		{
-			return $this->setValidationErrors( array( "Invalid email or password" ) );
+			$this->addValidationError( 'Invalid email or password' );
 		}
-
-		if ( !$user[ 'active' ] )
+		else if ( !$user[ 'active' ] )
 		{
-			return $this->setValidationErrors( array( $user[ 'message' ] ) );
+			$this->addValidationError( sprintf( 'Your account is currently inactive: %s', $user[ 'message' ] ) );
 		}
 
-		return $this->setValidationData( $user );
+		if ( !$this->hasValidationErrors() )
+		{
+			$this->setValidationData( $user );
+		}
+
+		return true;
 	}
 
 	public function update( $data )

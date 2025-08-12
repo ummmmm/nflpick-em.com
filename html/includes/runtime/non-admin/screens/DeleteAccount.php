@@ -14,7 +14,7 @@ class Screen_DeleteAccount extends Screen_User
 
 		if ( !$this->auth()->validate_login( $this->auth()->getUser()[ 'email' ], $password, $null ) )
 		{
-			return $this->setValidationErrors( 'Invalid password' );
+			$this->addValidationError( 'Invalid password' );
 		}
 
 		return true;
