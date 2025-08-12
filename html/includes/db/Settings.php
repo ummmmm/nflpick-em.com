@@ -6,7 +6,6 @@ class DatabaseTableSettings extends DatabaseTable
 	{
 		$sql = "CREATE TABLE settings
 				(
-					email_validation 	tinyint( 1 ),
 					registration 		tinyint( 1 ),
 					max_news 			tinyint( 3 ),
 					domain_url 			char( 255 ),
@@ -20,8 +19,7 @@ class DatabaseTableSettings extends DatabaseTable
 
 		$this->query( $sql );
 
-		$default_settings = array( 'email_validation'		=> 0,
-								   'registration' 			=> 1,
+		$default_settings = array( 'registration' 			=> 1,
 								   'max_news' 				=> 4,
 								   'domain_url' 			=> '',
 								   'domain_email' 			=> '',
@@ -31,8 +29,8 @@ class DatabaseTableSettings extends DatabaseTable
 								   'turnstile_sitekey'		=> '',
 								   'turnstile_secretkey'	=> '' );
 
-		return $this->query( 'INSERT INTO settings ( email_validation, registration, max_news, domain_url, domain_email, online, site_title, login_sleep, turnstile_sitekey, turnstile_secretkey ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )',
-							  $default_settings[ 'email_validation' ], $default_settings[ 'registration' ], $default_settings[ 'max_news' ], $default_settings[ 'domain_url' ], $default_settings[ 'domain_email' ], $default_settings[ 'online' ],
+		return $this->query( 'INSERT INTO settings ( registration, max_news, domain_url, domain_email, online, site_title, login_sleep, turnstile_sitekey, turnstile_secretkey ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )',
+							  $default_settings[ 'registration' ], $default_settings[ 'max_news' ], $default_settings[ 'domain_url' ], $default_settings[ 'domain_email' ], $default_settings[ 'online' ],
 							  $default_settings[ 'site_title' ], $default_settings[ 'login_sleep' ], $default_settings[ 'turnstile_sitekey' ], $default_settings[ 'turnstile_secretkey' ] );
 	}
 
@@ -46,7 +44,6 @@ class DatabaseTableSettings extends DatabaseTable
 		return $this->query( 'UPDATE
 								settings
 							  SET
-								email_validation	= ?,
 								registration		= ?,
 								max_news			= ?,
 								domain_url			= ?,
@@ -56,7 +53,7 @@ class DatabaseTableSettings extends DatabaseTable
 								login_sleep			= ?,
 								turnstile_sitekey	= ?,
 								turnstile_secretkey	= ?',
-							  $settings[ 'email_validation' ], $settings[ 'registration' ], $settings[ 'max_news' ], $settings[ 'domain_url' ],
+							  $settings[ 'registration' ], $settings[ 'max_news' ], $settings[ 'domain_url' ],
 							  $settings[ 'domain_email' ], $settings[ 'online' ], $settings[ 'site_title' ], $settings[ 'login_sleep' ],
 							  $settings[ 'turnstile_sitekey' ], $settings[ 'turnstile_secretkey' ] );
 
