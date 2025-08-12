@@ -70,7 +70,7 @@ class Authentication
 
 			if ( $loaded_user[ 'force_password' ] == 0 )
 			{
-				if ( Security::password_verify( $password, $loaded_user[ 'password' ] ) )
+				if ( !Security::password_verify( $password, $loaded_user[ 'password' ] ) )
 				{
 					return false;
 				}
