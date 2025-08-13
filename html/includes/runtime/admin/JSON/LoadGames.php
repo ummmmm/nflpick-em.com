@@ -2,11 +2,6 @@
 
 class JSON_LoadGames extends JSONAdmin
 {
-	public function requirements()
-	{
-		return array( 'admin' => true, 'token' => true );
-	}
-
 	public function execute()
 	{
 		$db_games	= $this->db()->games();
