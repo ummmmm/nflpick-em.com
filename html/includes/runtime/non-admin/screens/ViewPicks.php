@@ -14,12 +14,12 @@ class Screen_ViewPicks extends Screen_User
 
 		if ( !$db_weeks->Load( $week_id, $week ) )
 		{
-			return Functions::Information( 'Error', 'Invalid week.' );
+			return $this->outputInformation( 'Error', 'Invalid week.' );
 		}
 
 		if ( !$week[ 'locked' ] )
 		{
-			return Functions::Information( 'Error', 'Week ' . htmlentities( $week_id ) . ' is not locked yet.' );
+			return $this->outputInformation( 'Error', 'Week ' . htmlentities( $week_id ) . ' is not locked yet.' );
 		}
 
 		return $this->_PickLayout( $week );

@@ -2,20 +2,6 @@
 
 class Functions
 {
-	public static function Random( $length )
-	{
-		$string 	= '';
-		$charset 	= 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
-		$count 		= strlen( $charset );
-
-		while( $length-- )
-		{
-			$string .= $charset[ mt_rand( 0, $count - 1 ) ];
-		}
-
-		return $string;
-	}
-
 	public static function Place( $number )
 	{
 		$mod10	= $number % 10;
@@ -43,14 +29,6 @@ class Functions
 		return "{$number}<sup>{$s}</sup>";
 	}
 
-	public static function Information( $h1, $p )
-	{
-		printf( "<h1>%s</h1>\n", $h1 );
-		printf( "<p>%s</p>\n", $p );
-
-		return true;
-	}
-
 	public static function FormatDate( $unix )
 	{
 		$date = new DateTime();
@@ -58,30 +36,6 @@ class Functions
 		$date->setTimezone( new DateTimezone( 'America/Los_Angeles' ) );
 
 		return $date->format( 'm/d/y' ) . ' at '. $date->format( 'h:i a' );
-	}
-
-	public static function TimeUntil( $time )
-	{
-		$now	 	= new DateTime();
-		$then		= new DateTime();
-		$then->setTimestamp( $time );
-		$interval	= $now->diff( $then );
-
-		return sprintf( '%d days %d hours %d minutes %d seconds', $interval->days, $interval->h, $interval->i, $interval->s );
-	}
-
-	public static function PrintR( $data )
-	{
-		print '<pre>';
-		print_r( $data );
-		print '</pre>';
-	}
-
-	public static function Timestamp()
-	{
-		$date = new DateTime();
-
-		return $date->format( 'Y-m-d H:i:s' );
 	}
 
 	public static function Strip_Nulls( $string )
@@ -99,26 +53,6 @@ class Functions
 		}
 
 		return $string_ns;
-	}
-
-	public static function Get_Config_Section( $file, $section_name, &$section )
-	{
-		$file 		= Functions::Strip_Nulls( $file );
-		$settings	= @parse_ini_file( $file, true );
-
-		if ( !$settings )
-		{
-			return false;
-		}
-
-		if ( !array_key_exists( $section_name, $settings ) )
-		{
-			return false;
-		}
-
-		$section = $settings[ $section_name ];
-
-		return true;
 	}
 
 	public static function Update_Records( DatabaseManager $db_manager )

@@ -79,7 +79,7 @@ class Screen_ForgotPassword extends Screen
 			}
 
 			$user 			= $data;
-			$temp_password	= Functions::Random( 10 );
+			$temp_password	= $this->_generateRandomString( 12 );
 			$record			= array( 'userid' => $user[ 'id' ], 'password' => Security::password_hash( $temp_password ) );
 
 			$db_reset_passwords->Delete_User( $user[ 'id' ] );
@@ -157,5 +157,19 @@ EOT;
 EOT;
 
 		return true;
+	}
+
+	function _generateRandomString( int $length ): string
+	{
+	    $characters			= 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+	    $charactersLength	= strlen( $characters );
+	    $randomString		= '';
+	    
+	    for ( $i = 0; $i < $length; $i++ )
+	    {
+	        $randomString	.= $characters[ random_int( 0, $charactersLength - 1 ) ];
+	    }
+	    
+	    return $randomString;
 	}
 }

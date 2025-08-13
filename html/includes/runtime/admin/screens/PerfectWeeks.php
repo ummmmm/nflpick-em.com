@@ -14,7 +14,7 @@ class Screen_PerfectWeeks extends Screen_Admin
 
 		if ( !$db_weeks->Load( $week_id, $week ) )
 		{
-			return Functions::Information( 'Error', 'Invalid week.' );
+			return $this->outputInformation( 'Error', 'Invalid week.' );
 		}
 
 		return $this->_PerfectWeek( $week );

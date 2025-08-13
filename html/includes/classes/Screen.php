@@ -108,6 +108,14 @@ abstract class Screen
 	{
 		return $this->_update_message;
 	}
+
+	protected function outputInformation( string $h1, string $p )
+	{
+		printf( "<h1>%s</h1>\n", $h1 );
+		printf( "<p>%s</p>\n", $p );
+
+		return true;
+	}
 }
 
 abstract class Screen_User extends Screen

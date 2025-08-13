@@ -25,7 +25,7 @@ class Screen_Schedule extends Screen
 
 		if ( !$db_weeks->Load( $week_id, $loaded_week ) )
 		{
-			return Functions::Information( 'Error', 'Invalid week.' );
+			return $this->outputInformation( 'Error', 'Invalid week.' );
 		}
 
 		$db_games->List_Load_Week( $week_id, $games );

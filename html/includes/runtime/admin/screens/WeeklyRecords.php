@@ -16,7 +16,7 @@ class Screen_WeeklyRecords extends Screen_Admin
 
 		if ( !$db_weeks->Load( $week_id, $week ) )
 		{
-			return Functions::Information( 'Error', 'Invalid week.' );
+			return $this->outputInformation( 'Error', 'Invalid week.' );
 		}
 
 		if ( $user_id == 0 )
@@ -26,7 +26,7 @@ class Screen_WeeklyRecords extends Screen_Admin
 
 		if ( !$db_users->Load( $user_id, $user ) )
 		{
-			return Functions::Information( 'Error', 'Invalid user.' );
+			return $this->outputInformation( 'Error', 'Invalid user.' );
 		}
 
 		return $this->_WeekUserPicks( $week, $user );

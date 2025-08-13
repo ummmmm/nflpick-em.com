@@ -23,7 +23,7 @@ class JSON_EmailPicks extends JSONUserAction
 			throw new NFLPickEmException( 'No picks have been selected' );
 		}
 
-		$sent = array( 'userid' => $this->auth()->getUserID(), 'week' => $week, 'date' => Functions::Timestamp(), 'picks' => array() );
+		$sent = array( 'userid' => $this->auth()->getUserID(), 'week' => $week, 'picks' => array() );
 		$mail = new Mail( $this->auth()->getUser()[ 'email' ], sprintf( "Week %d Picks", $week ) );
 
 		foreach( $picks as $pick )

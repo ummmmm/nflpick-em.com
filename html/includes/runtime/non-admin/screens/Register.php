@@ -137,7 +137,7 @@ EOF );
 
 		if ( $settings[ 'registration' ] != 1 )
 		{
-			return Functions::Information( "Registration Disabled", "You currently cannot sign up for the NFL Pick-Em League." );
+			return $this->outputInformation( "Registration Disabled", "You currently cannot sign up for the NFL Pick-Em League." );
 		}
 
 		$pw_opt_out_checked = $this->input()->value_POST_bool( 'pw_opt_out' ) ? ' checked' : '';

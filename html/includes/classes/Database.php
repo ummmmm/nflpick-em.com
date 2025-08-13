@@ -23,12 +23,12 @@ class DatabaseManager
 	{
 		$db_settings = array();
 
-		if ( !defined( "CONFIG_INI" ) || !Functions::Get_Config_Section( CONFIG_INI, "database", $db_settings ) )
+		if ( !defined( 'CONFIG_INI' ) || !( $settings = parse_ini_file( CONFIG_INI, true ) ) || !array_key_exists( 'database', $settings ) )
 		{
 			throw new NFLPickEmException( 'Failed to load configuration settings' );
 		}
 
-		$this->_connection->connect( $db_settings[ 'host' ], $db_settings[ 'username' ], $db_settings[ 'password' ], $db_settings[ 'schema' ] );
+		$this->_connection->connect( $settings[ 'database' ][ 'host' ], $settings[ 'database' ][ 'username' ], $settings[ 'database' ][ 'password' ], $settings[ 'database' ][ 'schema' ] );
 		$this->_load_tables();
 	}
 

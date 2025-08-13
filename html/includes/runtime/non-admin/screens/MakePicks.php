@@ -97,7 +97,7 @@ EOT;
 
 		if ( count( $weeks ) == 0 )
 		{
-			return Functions::Information( 'No Weeks Added', 'No weeks have been added yet.' );
+			return $this->outputInformation( 'No Weeks Added', 'No weeks have been added yet.' );
 		}
 
 		print '<h1>Pick \'Em Weeks</h1>';
@@ -120,7 +120,7 @@ EOT;
 
 		if ( count( $games ) == 0 )
 		{
-			return Functions::Information( 'No games found', 'No games have been added for this week yet.' );
+			return $this->outputInformation( 'No games found', 'No games have been added for this week yet.' );
 		}
 
 		if ( !$db_weeks->Load( $week, $loaded_week ) )
@@ -129,7 +129,7 @@ EOT;
 		}
 
 		$remaining = $db_picks->Remaining( $this->auth()->getUserID(), $week );
-		$timeUntil = Functions::TimeUntil( $loaded_week[ 'date' ] );
+		$timeUntil = $this->_TimeUntil( $loaded_week[ 'date' ] );
 
 		$now 		= new DateTime();
 		$then		= new DateTime();
@@ -177,5 +177,15 @@ EOT;
 		print '<div id="picks_loading">Loading...</div>';
 
 		return true;
+	}
+
+	private function _TimeUntil( $time )
+	{
+		$now	 	= new DateTime();
+		$then		= new DateTime();
+		$then->setTimestamp( $time );
+		$interval	= $now->diff( $then );
+
+		return sprintf( '%d days %d hours %d minutes %d seconds', $interval->days, $interval->h, $interval->i, $interval->s );
 	}
 }
