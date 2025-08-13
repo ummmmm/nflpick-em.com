@@ -101,7 +101,7 @@ $( document ).ready( function()
 			$( '<div/>', { 'text': 'Last Active: ' + user.last_on } ).appendTo( fieldset );
 			$( '<div/>', { 'text': 'Record: ' + user.wins + ' - ' + user.losses	} ).appendTo( fieldset );
 			$( '<div/>', { 'text': 'Remaining: ' + user.remaining + ' remaining picks' } ).appendTo( fieldset );
-			$( '<div/>', { 'html': 'Current Place: ' + user.current_place } ).appendTo( fieldset );
+			$( '<div/>', { 'html': 'Current Place: ' + $.fn.ordinal_sup( user.current_place ) } ).appendTo( fieldset );
 			$( '<div/>', { 'text': 'Paid: '	} ).append( $( '<a/>', {
 															'id':	'paid' + user.id,
 															'href': 'javascript:;',
@@ -897,5 +897,27 @@ $( document ).ready( function()
 
 			window.location.reload();
 		} );
+	}
+
+	$.fn.ordinal_sup = function( number )
+	{
+		var suffix;
+
+		if ( number % 100 >= 11 && number % 100 <= 13 )
+		{
+			suffix = "th";
+		}
+		else
+		{
+			switch ( number % 10 )
+			{
+				case 1: suffix = "st"; break;
+				case 2: suffix = "nd"; break;
+				case 3: suffix = "rd"; break;
+				default: suffix = "th";
+			}
+		}
+
+		return `${number}<sup>${suffix}</sup>`;
 	}
 } );

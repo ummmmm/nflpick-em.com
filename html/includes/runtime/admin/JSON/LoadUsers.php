@@ -11,8 +11,7 @@ class JSON_LoadUsers extends JSONAdmin
 
 		foreach( $users as &$loaded_user )
 		{
-			$loaded_user[ 'last_on' ] 			= Functions::FormatDate( $loaded_user[ 'last_on' ] );
-			$loaded_user[ 'current_place' ] 	= Functions::Place( $loaded_user[ 'current_place' ] );
+			$loaded_user[ 'last_on' ] = Functions::FormatDate( $loaded_user[ 'last_on' ] );
 		}
 
 		return $this->setData( $users );

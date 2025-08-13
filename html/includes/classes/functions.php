@@ -2,31 +2,24 @@
 
 class Functions
 {
-	public static function Place( $number )
+	public static function Place( int $number ): string
 	{
-		$mod10	= $number % 10;
-		$mod100 = $number % 100;
-
-		if ( $mod100 >= 11 && $mod100 <= 13 )
+		if ( $number % 100 >= 11 && $number % 100 <= 13 )
 		{
-			$s = "th";
+			$suffix = 'th';
 		}
-		else if ( $mod10 === 1 )
+		else
 		{
-			$s = "st";
-		}
-		else if ( $mod10 === 2 )
-		{
-			$s = "nd";
-		}
-		else if ( $mod10 === 3 )
-		{
-			$s = "rd";
-		} else {
-			$s = "th";
+			$suffix = match ( $number % 10 )
+			{
+				1 =>		'st',
+				2 =>		'nd',
+				3 =>		'rd',
+				default =>	'th'
+			};
 		}
 
-		return "{$number}<sup>{$s}</sup>";
+		return sprintf( '%d<sup>%s</sup>', $number, $suffix );
 	}
 
 	public static function FormatDate( $unix )
