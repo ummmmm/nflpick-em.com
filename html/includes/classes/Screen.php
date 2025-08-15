@@ -487,18 +487,14 @@ class ScreenManager
 
 	private function _outputValidationErrors()
 	{
-		$errors = $this->_screen->getValidationErrors();
+		$errors		= $this->_screen->getValidationErrors();
+		$count 		= count( $errors );
 
-		if ( !$errors )
+		if ( $count == 0 )
 		{
 			return;
 		}
-		else if ( !is_array( $errors ) )
-		{
-			$errors = array( $errors );
-		}
 
-		$count 		= count( $errors );
 		$title 		= ( $count == 1 ) ? "Error Has" : sprintf( "%d Errors Have", $count );
 		$message	= "";
 
