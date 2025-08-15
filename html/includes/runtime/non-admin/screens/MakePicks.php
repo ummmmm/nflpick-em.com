@@ -4,7 +4,7 @@ class Screen_MakePicks extends Screen_User
 {
 	public function head()
 	{
-		$week_id = $this->input()->value_GET_int( 'week' );
+		$week_id = $this->input()->value_int_GET( 'week' );
 
 		if ( !$week_id )
 		{
@@ -58,7 +58,7 @@ EOT;
 
 	public function jquery()
 	{
-		$week_id	= $this->input()->value_GET_int( 'week' );
+		$week_id	= $this->input()->value_int_GET( 'week' );
 		$db_weeks	= $this->db()->weeks();
 
 		if ( !$week_id )
@@ -81,7 +81,7 @@ EOT;
 		$db_games	= $this->db()->games();
 		$db_picks	= $this->db()->picks();
 		$db_weeks	= $this->db()->weeks();
-		$weekid 	= $this->input()->value_GET_int( 'week' );
+		$weekid 	= $this->input()->value_int_GET( 'week' );
 
 		if ( empty( $weekid ) )
 		{

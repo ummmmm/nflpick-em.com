@@ -4,14 +4,14 @@ class Screen_ControlPanel extends Screen_User
 {
 	public function validate()
 	{
-		$action = $this->input()->value_GET_str( "action" );
+		$action = $this->input()->value_str_GET( "action" );
 
 		if ( $action == 'changeemail' )
 		{
 			$db_users	= $this->db()->users();
-			$email 		= $this->input()->value_POST_str( "email" );
-			$cemail 	= $this->input()->value_POST_str( "cemail" );
-			$pass 		= $this->input()->value_POST_str( "pass" );
+			$email 		= $this->input()->value_str_POST( "email" );
+			$cemail 	= $this->input()->value_str_POST( "cemail" );
+			$pass 		= $this->input()->value_str_POST( "pass" );
 
 			if ( !Validation::Email( $email ) )
 			{
@@ -41,9 +41,9 @@ class Screen_ControlPanel extends Screen_User
 
 		if ( $action == 'changepassword' )
 		{
-			$new_password 	= $this->input()->value_POST_str( "new_password" );
-			$c_new_password = $this->input()->value_POST_str( "c_new_password" );
-			$old_password	= $this->input()->value_POST_str( "old_password" );
+			$new_password 	= $this->input()->value_str_POST( "new_password" );
+			$c_new_password = $this->input()->value_str_POST( "c_new_password" );
+			$old_password	= $this->input()->value_str_POST( "old_password" );
 
 			if ( !Security::password_verify( $old_password, $this->auth()->getUser()[ 'password' ] ) )
 			{
@@ -73,7 +73,7 @@ class Screen_ControlPanel extends Screen_User
 	public function update( $data )
 	{
 		$db_users	= $this->db()->users();
-		$action		= $this->input()->value_GET_str( "action" );
+		$action		= $this->input()->value_str_GET( "action" );
 
 		if ( $action == 'changeemail' )
 		{
@@ -100,7 +100,7 @@ class Screen_ControlPanel extends Screen_User
 
 	public function content()
 	{
-		$action = $this->input()->value_GET_str( 'action' );
+		$action = $this->input()->value_str_GET( 'action' );
 
 		if ( $action == 'changeemail' )			return $this->_ChangeEmail();
 		else if ( $action == 'changepassword' )	return $this->_ChangePassword();

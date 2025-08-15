@@ -9,7 +9,7 @@ class Screen_UserPreferences extends Screen_User
 
 	public function validate()
 	{
-		$email_preference = $this->input()->value_POST_bool( 'email_preference', int: true );
+		$email_preference = $this->input()->value_bool_POST( 'email_preference', int: true );
 
 		return $this->setValidationData( array( 'email_preference' => $email_preference ) );
 	}

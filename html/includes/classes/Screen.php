@@ -379,8 +379,8 @@ class ScreenManager
 
 	private function _configure()
 	{
-		$admin	= $this->input()->value_GET_str( 'view' ) == 'admin';
-		$screen	= strlen( $this->input()->value_GET_str( 'screen' ) ) ? $this->input()->value_GET_str( 'screen' ) : 'default';
+		$admin	= $this->input()->value_str_GET( 'view' ) == 'admin';
+		$screen	= strlen( $this->input()->value_str_GET( 'screen' ) ) ? $this->input()->value_str_GET( 'screen' ) : 'default';
 
 		try
 		{
@@ -410,9 +410,9 @@ class ScreenManager
 			if ( $require_user && !$this->auth()->isUser() )		throw new NFLPickEmException( 'You must be a user to view this screen' );
 			else if ( $require_admin && !$this->auth()->isAdmin() )	throw new NFLPickEmException( 'You must be an administrator to view this screen' );
 
-			if ( $this->input()->value_POST_bool( 'update' ) )
+			if ( $this->input()->value_bool_POST( 'update' ) )
 			{
-				$token = $this->input()->value_POST_str( 'token' );
+				$token = $this->input()->value_str_POST( 'token' );
 
 				if ( $require_token && !$this->auth()->isValidToken( $token ) )
 				{

@@ -5,7 +5,7 @@ class Screen_ViewPicks extends Screen_User
 	public function content()
 	{
 		$db_weeks	= $this->db()->weeks();
-		$week_id 	= $this->input()->value_GET_int( 'week' );
+		$week_id 	= $this->input()->value_int_GET( 'week' );
 
 		if ( $week_id === 0 )
 		{

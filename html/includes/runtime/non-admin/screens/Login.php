@@ -5,8 +5,8 @@ class Screen_Login extends Screen
 	public function validate()
 	{
 		$db_users	= $this->db()->users();
-		$email 		= $this->input()->value_POST_str( "email" );
-		$password	= $this->input()->value_POST_str( "password" );
+		$email 		= $this->input()->value_str_POST( "email" );
+		$password	= $this->input()->value_str_POST( "password" );
 
 		if ( !$this->auth()->validate_login( $email, $password, $user ) )
 		{
@@ -55,7 +55,7 @@ class Screen_Login extends Screen
 			return true;
 		}
 
-		$email = $this->input()->value_POST_str( "email" );
+		$email = $this->input()->value_str_POST( "email" );
 
 ?>
 <form action="?screen=login" method="post">

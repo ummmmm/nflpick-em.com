@@ -21,16 +21,16 @@ EOF );
 			return true;
 		}
 
-		$agree						= $this->input()->value_POST_bool( 'agree' );
-		$turnstile					= $this->input()->value_POST_str( "cf-turnstile-response" );
+		$agree						= $this->input()->value_bool_POST( 'agree' );
+		$turnstile					= $this->input()->value_str_POST( "cf-turnstile-response" );
 
-		$register[ 'fname' ] 		= $this->input()->value_POST_str( 'fname' );
-		$register[ 'lname' ] 		= $this->input()->value_POST_str( 'lname' );
-		$register[ 'email' ] 		= $this->input()->value_POST_str( 'email' );
-		$register[ 'cemail' ] 		= $this->input()->value_POST_str( 'cemail' );
-		$register[ 'password' ] 	= $this->input()->value_POST_str( 'password' );
-		$register[ 'cpass' ] 		= $this->input()->value_POST_str( 'cpass' );
-		$register[ 'pw_opt_out'	]	= $this->input()->value_POST_bool( 'pw_opt_out', int: true );
+		$register[ 'fname' ] 		= $this->input()->value_str_POST( 'fname' );
+		$register[ 'lname' ] 		= $this->input()->value_str_POST( 'lname' );
+		$register[ 'email' ] 		= $this->input()->value_str_POST( 'email' );
+		$register[ 'cemail' ] 		= $this->input()->value_str_POST( 'cemail' );
+		$register[ 'password' ] 	= $this->input()->value_str_POST( 'password' );
+		$register[ 'cpass' ] 		= $this->input()->value_str_POST( 'cpass' );
+		$register[ 'pw_opt_out'	]	= $this->input()->value_bool_POST( 'pw_opt_out', int: true );
 
 		if ( !$agree )
 		{
@@ -140,25 +140,25 @@ EOF );
 			return $this->outputInformation( "Registration Disabled", "You currently cannot sign up for the NFL Pick-Em League." );
 		}
 
-		$pw_opt_out_checked = $this->input()->value_POST_bool( 'pw_opt_out' ) ? ' checked' : '';
+		$pw_opt_out_checked = $this->input()->value_bool_POST( 'pw_opt_out' ) ? ' checked' : '';
 ?>
 <form action="?screen=register" method="post">
   <fieldset>
 	  <legend>What's Your Name</legend>
 	  <label for="fname">First Name</label>
-	  <input type="text" name="fname" id="firstName" title="Please enter your first name" value="<?php print htmlentities( $this->input()->value_POST_str( 'fname' ) ); ?>" />
+	  <input type="text" name="fname" id="firstName" title="Please enter your first name" value="<?php print htmlentities( $this->input()->value_str_POST( 'fname' ) ); ?>" />
 	  <br />
 	  <label for="lname">Last Name</label>
-	  <input type="text" name="lname" id="lastName" value="<?php print htmlentities( $this->input()->value_POST_str( 'lname' ) ); ?>" />
+	  <input type="text" name="lname" id="lastName" value="<?php print htmlentities( $this->input()->value_str_POST( 'lname' ) ); ?>" />
   </fieldset>
 
   <fieldset>
 	  <legend>What's Your Email</legend>
 	  <label for="email">Email Address</label>
-	  <input type="text" name="email" id="email" value="<?php print htmlentities( $this->input()->value_POST_str( 'email' ) ); ?>" />
+	  <input type="text" name="email" id="email" value="<?php print htmlentities( $this->input()->value_str_POST( 'email' ) ); ?>" />
 	  <br />
 	  <label for="confirmEmail">Confirm Email Address</label>
-	  <input type="text" name="cemail" id="confirmEmail" value="<?php print htmlentities( $this->input()->value_POST_str( 'cemail' ) ); ?>" />
+	  <input type="text" name="cemail" id="confirmEmail" value="<?php print htmlentities( $this->input()->value_str_POST( 'cemail' ) ); ?>" />
   </fieldset>
 
   <fieldset>

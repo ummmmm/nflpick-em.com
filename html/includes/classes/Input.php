@@ -2,32 +2,32 @@
 
 class RawInput
 {
-	public function value_POST_str( $name, $default = '' )
+	public function value_str_POST( $name, $default = '' )
 	{
 		return $this->_value_xxx_str( $_POST, $name, $default );
 	}
 
-	public function value_POST_int( $name, $default = 0 )
+	public function value_int_POST( $name, $default = 0 )
 	{
 		return $this->_value_xxx_int( $_POST, $name, $default );
 	}
 
-	public function value_POST_bool( $name, $default = false, $int = false )
+	public function value_bool_POST( $name, $default = false, $int = false )
 	{
 		return $this->_value_xxx_bool( $_POST, $name, $default, $int );
 	}
 
-	public function value_GET_str( $name, $default = '' )
+	public function value_str_GET( $name, $default = '' )
 	{
 		return $this->_value_xxx_str( $_GET, $name, $default );
 	}
 
-	public function value_GET_int( $name, $default = 0 )
+	public function value_int_GET( $name, $default = 0 )
 	{
 		return $this->_value_xxx_int( $_GET, $name, $default );
 	}
 
-	public function value_GET_bool( $name, $default = false, $int = false )
+	public function value_bool_GET( $name, $default = false, $int = false )
 	{
 		return $this->_value_xxx_bool( $_GET, $name, $default, $int );
 	}
@@ -42,7 +42,7 @@ class RawInput
 		return trim( $array[ $name ] );
 	}
 
-	private function _value_xxx_int( $array, $name, $default )
+	private function _value_xxx_int( &$array, $name, $default )
 	{
 		if ( !isset( $array[ $name ] ) )
 		{

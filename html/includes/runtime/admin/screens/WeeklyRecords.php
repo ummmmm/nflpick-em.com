@@ -4,8 +4,8 @@ class Screen_WeeklyRecords extends Screen_Admin
 {
 	public function content()
 	{
-		$week_id	= $this->input()->value_GET_int( 'week' );
-		$user_id	= $this->input()->value_GET_int( 'user' );
+		$week_id	= $this->input()->value_int_GET( 'week' );
+		$user_id	= $this->input()->value_int_GET( 'user' );
 		$db_weeks	= $this->db()->weeks();
 		$db_users	= $this->db()->users();
 

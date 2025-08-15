@@ -10,7 +10,7 @@ require_once( 'includes/classes/Input.php' );
 
 $setup	= new Setup();
 $input	= new RawInput();
-$action	= $input->value_GET_str( 'Action' );
+$action	= $input->value_str_GET( 'Action' );
 
 try
 {
@@ -30,17 +30,17 @@ catch ( Exception $e )
 
 function install( Setup &$setup, RawInput &$input )
 {
-	$install = $input->value_POST_str( 'install' );
+	$install = $input->value_str_POST( 'install' );
 
 	if ( $install != '' )
 	{
 		$db_games		= $setup->db()->games();
 		$db_settings	= $setup->db()->settings();
 		$db_weeks		= $setup->db()->weeks();
-		$site_title		= $input->value_POST_str( 'site_title' );
-		$domain_url 	= $input->value_POST_str( 'domain_url' );
-		$domain_email	= $input->value_POST_str( 'domain_email' );
-		$start_date		= $input->value_POST_str( 'start_date' );
+		$site_title		= $input->value_str_POST( 'site_title' );
+		$domain_url 	= $input->value_str_POST( 'domain_url' );
+		$domain_email	= $input->value_str_POST( 'domain_email' );
+		$start_date		= $input->value_str_POST( 'start_date' );
 
 		if ( $site_title == '' )		throw new NFLPickEmException( 'A site title is required' );
 		else if ( $domain_url == '' )	throw new NFLPickEmException( 'A domain URL is required' );
@@ -101,12 +101,12 @@ function install( Setup &$setup, RawInput &$input )
 
 function uninstall( Setup &$setup, RawInput &$input )
 {
-	$uninstall = $input->value_POST_str( 'uninstall' );
+	$uninstall = $input->value_str_POST( 'uninstall' );
 
 	if ( $uninstall != '' )
 	{
-		$email 		= $input->value_POST_str( 'email' );
-		$password 	= $input->value_POST_str( 'password' );
+		$email 		= $input->value_str_POST( 'email' );
+		$password 	= $input->value_str_POST( 'password' );
 
 		if ( !$setup->auth()->validate_login( $email, $password, $user ) )	throw new NFLPickEmException( 'Invalid email / password' );
 		else if ( $user[ 'admin' ] != 1 )									throw new NFLPickEmException( 'You must be an admin to uninstall the site' );

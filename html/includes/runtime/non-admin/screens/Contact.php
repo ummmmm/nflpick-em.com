@@ -16,11 +16,11 @@ EOF );
 	{
 		$settings	= $this->settings();
 
-		$name 		= $this->input()->value_POST_str( "name" );
-		$email		= $this->input()->value_POST_str( "email" );
-		$subject	= $this->input()->value_POST_str( "subject" );
-		$message	= $this->input()->value_POST_str( "message" );
-		$turnstile	= $this->input()->value_POST_str( "cf-turnstile-response" );
+		$name 		= $this->input()->value_str_POST( "name" );
+		$email		= $this->input()->value_str_POST( "email" );
+		$subject	= $this->input()->value_str_POST( "subject" );
+		$message	= $this->input()->value_str_POST( "message" );
+		$turnstile	= $this->input()->value_str_POST( "cf-turnstile-response" );
 
 		if ( $name == "" )
 		{
@@ -74,10 +74,10 @@ EOF );
 	public function content()
 	{
 		$settings	= $this->settings();
-		$name 		= $this->input()->value_POST_str( 'name' );
-		$email		= $this->input()->value_POST_str( 'email' );
-		$subject	= $this->input()->value_POST_str( 'subject' );
-		$message	= $this->input()->value_POST_str( 'message' );
+		$name 		= $this->input()->value_str_POST( 'name' );
+		$email		= $this->input()->value_str_POST( 'email' );
+		$subject	= $this->input()->value_str_POST( 'subject' );
+		$message	= $this->input()->value_str_POST( 'message' );
 
 		if ( $this->auth()->getUserID() )
 		{
