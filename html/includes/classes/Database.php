@@ -65,28 +65,29 @@ class DatabaseManager
 	private function _load_tables()
 	{
 		$loaded_classes = array();
+		$before_classes = get_declared_classes();
 
 		foreach ( glob( 'includes/db/*.php' ) as $file )
 		{
-			$before_classes = get_declared_classes();
 			require_once( $file );
-			$after_classes	= get_declared_classes();
-			$new_classes	= array_diff( $after_classes, $before_classes );
+		}
 
-			foreach ( $new_classes as $new_class )
-			{
-				$reflection = new ReflectionClass( $new_class );
+		$after_classes	= get_declared_classes();
+		$new_classes	= array_diff( $after_classes, $before_classes );
 
-				if ( $reflection->isInstantiable() && $reflection->isSubclassOf( DatabaseTable::class ) )
-				{						
-					$name		= strtolower( str_replace( 'DatabaseTable', '', $reflection->getShortName() ) );
-					$instance	= new $new_class( $this );
+		foreach ( $new_classes as $new_class )
+		{
+			$reflection = new ReflectionClass( $new_class );
 
-					$this->_dynamic_tables[ $name ] = function () use ( $instance )
-					{
-						return $instance;
-					};
-				}
+			if ( $reflection->isInstantiable() && $reflection->isSubclassOf( DatabaseTable::class ) )
+			{						
+				$name		= strtolower( str_replace( 'DatabaseTable', '', $reflection->getShortName() ) );
+				$instance	= new $new_class( $this );
+
+				$this->_dynamic_tables[ $name ] = function () use ( $instance )
+				{
+					return $instance;
+				};
 			}
 		}
 	}
