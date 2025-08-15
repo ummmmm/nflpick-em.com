@@ -326,6 +326,8 @@ $( document ).ready( function()
 
 	$.fn.edit_games = function( game )
 	{
+		var date = new Date( game.date );
+
 		$( '#games_addedit_cancel' ).unbind( 'click' );
 		$( '#games_addedit_update' ).unbind( 'click' );
 		$( '#games_addedit_switch' ).unbind( 'click' );
@@ -338,15 +340,14 @@ $( document ).ready( function()
 			$.fn.show_games( game.week );
 		}
 
-		var date 	= new Date( game.date );
-		var now 	= new Date();
-
-		if ( now > date )
+		if ( game.final )
 		{
 			$( '#scores' ).show();
 			$( '#games' ).hide();
 			$( '#scored' ).val( '1' );
-		} else {
+		}
+		else
+		{
 			$( '#games' ).show();
 			$( '#scores' ).hide();
 			$( '#scored' ).val( '0' );
