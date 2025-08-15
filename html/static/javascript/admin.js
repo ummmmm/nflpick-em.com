@@ -271,11 +271,18 @@ $( document ).ready( function()
 
 			$.each( weeks, function( i, week )
 			{
+				var text = `Week ${week.id}`;
+
+				if ( week.id <= response.data.current_week )
+				{
+					text += ` - ${week.games.filter( game => game.final ).length}/${week.games.length} Final`;
+				}
+
 				$( '<p/>', {
 					id: 'week' + week.id,
 					html: $( '<a/>', {
 								href: 'javascript:;',
-								text: 'Week ' + week.id
+								text: text
 							} ).bind( 'click', function() { $.fn.show_games( week.id ); } )
 				} ).appendTo( div );
 
