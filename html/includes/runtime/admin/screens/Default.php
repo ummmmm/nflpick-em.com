@@ -14,6 +14,7 @@ class Screen_Default extends Screen_Admin
 		print '<p><a href="?view=admin&screen=update_scores">Update Scores</a></p>';
 		print '<p><a href="?view=admin&screen=weekly_records">Weekly Records</a></p>';
 		print '<p><a href="?view=admin&screen=perfect_weeks">Perfect Weeks</a></p>';
+		print '<p><a href="?view=admin&screen=failed_logins">Failed Logins</a></p>';
 
 		return true;
 	}

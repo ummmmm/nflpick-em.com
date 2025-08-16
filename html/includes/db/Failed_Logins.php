@@ -22,4 +22,9 @@ class DatabaseTableFailedLogins extends DatabaseTable
 
 		return $this->query( 'INSERT INTO failed_logins ( email, date, ip ) VALUES ( ?, ?, ? )', $values[ 'email' ], $values[ 'date' ], $values[ 'ip' ] );
 	}
+
+	public function List_Load( &$logins )
+	{
+		return $this->select( 'SELECT * FROM failed_logins ORDER BY id DESC', $logins );
+	}
 }
