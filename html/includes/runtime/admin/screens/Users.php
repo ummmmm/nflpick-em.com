@@ -35,6 +35,14 @@ class Screen_Users extends Screen_Admin
 		print '<td width="100%"><input type="text" id="user_edit_last_name" /></td>';
 		print '</tr>';
 		print '<tr>';
+		print '<td valign="top" nowrap>Password:</td>';
+		print '<td width="100%"><input type="password" id="user_edit_password" /></td>';
+		print '</tr>';
+		print '<tr>';
+		print '<td valign="top" nowrap>Verify Password:</td>';
+		print '<td width="100%"><input type="password" id="user_edit_verify_password" /></td>';
+		print '</tr>';
+		print '<tr>';
 		print '<td valign="top" nowrap>Message:</td>';
 		print '<td width="100%"><textarea id="user_edit_message" cols="50"></textarea><br />Enter any message to deactivate the user</td>';
 		print '</tr>';
@@ -44,6 +52,23 @@ class Screen_Users extends Screen_Admin
 		</div>
 		<div class="buttons_right">
 			<input type="button" id="user_edit_update" value="Update" />
+		</div>';
+		print '</div>';
+		print '<div id="user_delete">';
+		print '<div id="user_delete_dialog">Delete User</div>';
+		print '<p>Are you absolutely sure you wish to delete this user?  This action cannot be undone.</p>';
+		print '<table>';
+		print '<tr>';
+		print '<tr>';
+		print '<td valign="top" nowrap>Password:</td>';
+		print '<td width="100%"><input type="password" id="user_delete_password" /></td>';
+		print '</tr>';
+		print '</table>';
+		print '<div class="buttons_left">
+			<input type="button" id="user_delete_cancel" value="Cancel" />
+		</div>
+		<div class="buttons_right">
+			<input type="button" id="user_delete_delete" value="Delete" />
 		</div>';
 		print '</div>';
 

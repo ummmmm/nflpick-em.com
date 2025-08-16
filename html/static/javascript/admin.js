@@ -124,23 +124,29 @@ $( document ).ready( function()
 
 	$.fn.deleteUser = function( user )
 	{
-		var password;
+		$.fn.modalShow( 'user_delete', null, () => $.fn.modalHide( 'user_delete' ) );
 
-		if ( !confirm( "Are you absolutely sure you want to delete " + user.name + "?\n\nThis action cannot be undone." ) )
+		$( '#user_delete_password' ).val( '' ).focus();
+		$( '#user_delete_cancel' ).bind( 'click', () => $.fn.modalHide( 'user_delete' ) );
+		$( '#user_delete_delete' ).bind( 'click', () =>
 		{
-			return;
-		}
+			$( '#user_delete_delete' ).prop( 'disabled', true ).val( 'Deleting...' );
 
-		password = prompt( "Please enter your password" );
-
-		$.fn.json_admin( 'DeleteUser', { password: password, user_id: user.id }, function( response )
-		{
-			if ( !response.success )
+			$.fn.json_admin( 'DeleteUser',
 			{
-				return $.fn.error( response.error_message );
-			}
+				user_id:	user.id,
+				password:	$( '#user_delete_password' ).val()
+			}, function( response )
+			{
+				$( '#user_delete_delete' ).prop( 'disabled', false ).val( 'Delete' );
 
-			location.reload();
+				if ( !response.success )
+				{
+					return $.fn.error( response.error_message );
+				}
+
+				location.reload();
+			} );
 		} );
 	}
 
@@ -152,6 +158,8 @@ $( document ).ready( function()
 		$( '#user_edit_first_name' ).val( user.fname );
 		$( '#user_edit_last_name' ).val( user.lname );
 		$( '#user_edit_message' ).val( user.message );
+		$( '#user_edit_password' ).val( '' );
+		$( '#user_edit_verify_password' ).val( '' );
 	}
 
 	$.fn.update_user = function( user )
@@ -168,7 +176,15 @@ $( document ).ready( function()
 			return $.fn.error( 'Last name cannot be blank' );
 		}
 
-		$.fn.json_admin( 'UpdateUser', { user_id: user.id, first_name: $( '#user_edit_first_name' ).val(), last_name: $( '#user_edit_last_name' ).val(), message: $( '#user_edit_message' ).val() }, function( response )
+		$.fn.json_admin( 'UpdateUser',
+		{
+			user_id:			user.id,
+			first_name:			$( '#user_edit_first_name' ).val(),
+			last_name:			$( '#user_edit_last_name' ).val(),
+			password:			$( '#user_edit_password' ).val(),
+			verify_password:	$( '#user_edit_verify_password' ).val(),
+			message:			$( '#user_edit_message' ).val()
+		}, function( response )
 		{
 			if ( !response.success )
 			{
@@ -823,8 +839,6 @@ $( document ).ready( function()
 		element.css( 'left', position.left );
 		element.css( 'min-width' , content.width() + 'px' );
 		element.show();
-
-		//$( 'html, body' ).animate( { scrollTop: 0 }, 'slow' );
 
 		$( '<div/>', {
 			'class': 'modal',
