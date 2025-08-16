@@ -835,6 +835,8 @@ $( document ).ready( function()
 		var content	= $( '.content' );
 		var position = content.position();
 
+		$( `#${element_id} *` ).unbind();
+
 		element.css( 'top', position.top + 10 );
 		element.css( 'left', position.left );
 		element.css( 'min-width' , content.width() + 'px' );
