@@ -49,12 +49,12 @@ class Screen_ViewPicks extends Screen_User
 		$db_weeks			= $this->db()->weeks();
 		$db_weekly_records	= $this->db()->weeklyrecords();
 
-		$this->_Users_List_Load( $users );
-
-		$db_games->List_Load_Week( $week_id, $games );
+		$game_count				= $db_games->List_Load_Week( $week_id, $games );
 
 		$previous_week_result	= $db_weeks->Load( $week[ 'id' ] - 1, $previous_week );
 		$next_week_result		= $db_weeks->Load( $week[ 'id' ] + 1, $next_week );
+
+		$this->_Users_List_Load( $users );
 
 		print( '<h1><div style="text-align:center;">' );
 
@@ -133,7 +133,11 @@ class Screen_ViewPicks extends Screen_User
 				printf( '<td userid="%d" gameid="%d">%s</td>', $loaded_user[ 'id' ], $game[ 'id' ], $output );
 			}
 
-			if ( $missing_count == 0 ) // no missing picks, the weely record is correct
+			if ( $game_count == $weekly_record[ 'wins' ] && !$loaded_user[ 'pw_opt_out' ] ) // perfect week and the user is in the perfect week pool
+			{
+				printf( '<td style="color:green;"><b>%d - %d</b></td>', $weekly_record[ 'wins' ], $weekly_record[ 'losses' ] );
+			}
+			else if ( $missing_count == 0 ) // no missing picks, the weely record is correct
 			{
 				printf( '<td><b>%d - %d</b></td>', $weekly_record[ 'wins' ], $weekly_record[ 'losses' ] );
 			}
@@ -176,6 +180,10 @@ class Screen_ViewPicks extends Screen_User
 				<tr>
 					<td><span style="color:red;">N/A</td>
 					<td>Pick not submitted</td>
+				</tr>
+					<tr>
+					<td><span style="color:green;"><b>16-0</b></span></td>
+					<td>Perfect week and user is in the perfect week pool</td>
 				</tr>
 				<tr>
 					<td><b>11-5</b></td>
