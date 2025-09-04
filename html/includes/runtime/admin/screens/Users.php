@@ -11,7 +11,9 @@ class Screen_Users extends Screen_Admin
 
 	public function content()
 	{
-		print '<h1>Users</h1>';
+		$count = $this->db()->users()->List_Load( $null );
+
+		printf( '<h1>Users (%d)</h1>', $count );
 		print '<div class="sortby">Sort By: ';
 		print '<a href="javascript:;" id="name" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'name\', $.fn.sort_user_callback );">Name</a>';
 		print '<a href="javascript:;" id="current_place" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'current_place\', $.fn.sort_user_callback );">Current Place</a>';
