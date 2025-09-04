@@ -348,8 +348,6 @@ $( document ).ready( function()
 		$( '#games_addedit_update' ).unbind( 'click' );
 		$( '#games_addedit_switch' ).unbind( 'click' );
 
-		window.scrollTo( 0, 0 );
-
 		if ( game.key - 1 > 0 && games[ game.key - 1 ].week != game.week )
 		{
 			$.fn.show_games( games[ game.key - 1 ].week );
@@ -839,6 +837,8 @@ $( document ).ready( function()
 		element.css( 'left', position.left );
 		element.css( 'min-width' , content.width() + 'px' );
 		element.show();
+
+		window.scrollTo( 0, 0 );
 
 		$( '<div/>', {
 			'class': 'modal',
