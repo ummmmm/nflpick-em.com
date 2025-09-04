@@ -2,3 +2,4 @@
 
 date_default_timezone_set( "America/Los_Angeles" );
 define( "CONFIG_INI", "path_to_data/data/config.ini" ); // path to config.ini file outside of the web root
+define( "HTML_ROOT", "path_to_html_root" ); // path to HTML root directory

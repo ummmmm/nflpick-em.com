@@ -67,7 +67,7 @@ class DatabaseManager
 		$loaded_classes = array();
 		$before_classes = get_declared_classes();
 
-		foreach ( glob( 'includes/db/*.php' ) as $file )
+		foreach ( glob( sprintf( '%s/includes/db/*.php', HTML_ROOT ) ) as $file )
 		{
 			require_once( $file );
 		}
