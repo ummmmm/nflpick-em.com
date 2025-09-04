@@ -64,7 +64,7 @@ foreach ( $users as &$user )
 		continue;
 	}
 
-	GameList_Load_Missing( $db, $current, $user[ 'id' ], $start_time_t, $end_time_t, $games );
+	GameList_Load_Missing( $db_manager, $current, $user[ 'id' ], $start_time_t, $end_time_t, $games );
 
 	if ( count( $games ) == 0 )
 	{
