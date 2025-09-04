@@ -83,6 +83,6 @@ try
 }
 catch( Exception $e )
 {
-	print( $e )
+	print( $e );
 	exit( 1 );
 }
