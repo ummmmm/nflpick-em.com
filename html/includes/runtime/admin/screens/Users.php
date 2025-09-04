@@ -48,6 +48,10 @@ class Screen_Users extends Screen_Admin
 		print '<td valign="top" nowrap>Message:</td>';
 		print '<td width="100%"><textarea id="user_edit_message" cols="50"></textarea><br />Enter any message to deactivate the user</td>';
 		print '</tr>';
+		print '<tr>';
+		print '<td nowrap>&nbsp;</td>';
+		print '<td width="100%"><label><input type="checkbox" id="user_edit_pw_opt_out" /> Perfect Week Opt-Out</label></td>';
+		print '</tr>';
 		print '</table>';
 		print '<div class="buttons_left">
 			<input type="button" id="user_edit_cancel" value="Cancel" />
