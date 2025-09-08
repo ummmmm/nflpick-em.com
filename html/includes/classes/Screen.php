@@ -70,6 +70,11 @@ abstract class Screen
 		return $this->_screen_manager->settings();
 	}
 
+	protected function version()
+	{
+		return $this->_screen_manager->version();
+	}
+
 	protected function addValidationError( string $message )
 	{
 		array_push( $this->_validation_errors, $message );
@@ -151,6 +156,7 @@ class ScreenManager
 	private $_error;
 	private $_error_level;
 	private $_settings;
+	private $_version;
 
 	private $_head_data;
 	private $_jquery_data;
@@ -169,6 +175,7 @@ class ScreenManager
 		$this->_error_level			= 0x0;
 
 		$this->_settings			= null;
+		$this->_version				= null;
 
 		$this->_jquery_data			= null;
 		$this->_head_data			= null;
@@ -305,6 +312,16 @@ class ScreenManager
 		}
 
 		return $this->_settings;
+	}
+
+	public function version()
+	{
+		if ( $this->_version == null )
+		{
+			$this->_version = file_get_contents( sprintf( '%s/version', dirname( CONFIG_INI ) ) );
+		}
+
+		return $this->_version;
 	}
 
 	public function _build()

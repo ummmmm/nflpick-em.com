@@ -30,16 +30,16 @@ catch ( Exception $e )
 	<base href="<?php print $settings[ 'domain_url' ]; ?>" />
 	<link rel="icon" type="image/x-icon" href="static/favicon.ico" />
 	<link rel="stylesheet" type="text/css" href="static/css/styles.css" media="screen" />
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
-	<script src="static/javascript/jqueryui.js" type="text/javascript"></script>
-	<script src="static/javascript/javascript.js" type="text/javascript"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<script type="text/javascript" src="static/javascript/jqueryui.js"></script>
+	<script type="text/javascript" src="static/javascript/javascript.js?T=<?php print( md5( $screen_manager->version() ) ); ?>"></script>
 	<script type="text/javascript">
 		const token = <?php print json_encode( $auth->getToken() ); ?>;
 	</script>
 	<?php
 		if ( $auth->isAdmin() )
 		{
-			print '<script type="text/javascript" src="static/javascript/admin.js"></script>';
+			printf( '<script type="text/javascript" src="static/javascript/admin.js?T=%s"></script>', md5( $screen_manager->version() ) );
 		}
 
 		print $screen_manager->head();

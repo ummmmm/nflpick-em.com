@@ -4,7 +4,7 @@ class Screen_Default extends Screen_Admin
 {
 	public function content()
 	{
-		printf( '<h1>Admin Panel: Version %s</h1>', $this->_version() );
+		printf( '<h1>Admin Panel: Version %s</h1>', $this->version() );
 		print '<p><a href="?view=admin&screen=games">Games</a></p>';
 		print '<p><a href="?view=admin&screen=users">Users</a></p>';
 		print '<p><a href="?view=admin&screen=weeks">Weeks</a></p>';
@@ -17,10 +17,5 @@ class Screen_Default extends Screen_Admin
 		print '<p><a href="?view=admin&screen=failed_logins">Failed Logins</a></p>';
 
 		return true;
-	}
-
-	private function _version()
-	{
-		return file_get_contents( sprintf( '%s/version', dirname( CONFIG_INI ) ) );
 	}
 }
