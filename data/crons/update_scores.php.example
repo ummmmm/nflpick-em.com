@@ -79,7 +79,7 @@ try
 	}
 
 	$db_teams->Recalculate_Records();
-	Functions::Update_Records( $db );
+	Functions::Update_Records( $db_manager );
 }
 catch( Exception $e )
 {
