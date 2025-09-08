@@ -86,6 +86,8 @@ class DatabaseTableWeeks extends DatabaseTable
 					$week[ 'date' ]		= $start_date;
 					$week[ 'locked' ]	= 0;
 
+					$start_date			= strtotime( '+1 week', $start_date );
+
 					$this->Insert( $week );
 				}
 
