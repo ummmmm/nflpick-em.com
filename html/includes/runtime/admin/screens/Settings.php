@@ -27,7 +27,7 @@ class Screen_Settings extends Screen_Admin
 		print '</tr>';
 		print '<tr>';
 		print '<td>Login Sleep: </td>';
-		print '<td><input type="text" name="login_sleep" size="1" value="' . htmlentities( $settings[ 'login_sleep' ] ) . '" /> milliseconds</td>';
+		print '<td><input type="text" name="login_sleep" size="3" value="' . htmlentities( $settings[ 'login_sleep' ] ) . '" /> milliseconds</td>';
 		print '</tr>';
 		print '<tr>';
 		print '<td>Domain URL: </td>';
