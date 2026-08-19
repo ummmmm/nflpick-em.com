@@ -112,11 +112,17 @@ class Authentication
 	{
 		$db_sessions	= $this->db()->sessions();
 
-		$cookieid		= hash( 'sha256', openssl_random_pseudo_bytes( 64 ) );
-		$token			= hash( 'sha256', openssl_random_pseudo_bytes( 64 ) );
+		$cookieid		= hash( 'sha256', random_bytes( 64 ) );
+		$token			= hash( 'sha256', random_bytes( 64 ) );
 		$session		= array( 'token' => $token, 'cookieid' => $cookieid, 'userid' => $user_id );
 
-		setcookie( 'session', $cookieid, time() + 60 * 60 * 24 * 30, '', '', true, true );
+		setcookie( 'session', $cookieid, array(
+			'expires'	=> time() + 60 * 60 * 24 * 30,
+			'path'		=> '/',
+			'secure'	=> true,
+			'httponly'	=> true,
+			'samesite'	=> 'Lax'
+		) );
 
 		$db_sessions->Insert( $session );
 
@@ -134,7 +140,13 @@ class Authentication
 		$this->_token	= 0;
 		$this->_reload	= false;
 
-		setcookie( 'session', '', -1, '' );
+		setcookie( 'session', '', array(
+			'expires'	=> 1,
+			'path'		=> '/',
+			'secure'	=> true,
+			'httponly'	=> true,
+			'samesite'	=> 'Lax'
+		) );
 	}
 
 	public function forceUserReload()
