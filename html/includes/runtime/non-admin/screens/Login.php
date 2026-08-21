@@ -2,11 +2,26 @@
 
 class Screen_Login extends Screen
 {
+	public function head()
+	{
+		print( <<<EOF
+			<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+EOF );
+		return true;
+	}
+
 	public function validate()
 	{
 		$db_users	= $this->db()->users();
 		$email 		= $this->input()->value_str_POST( "email" );
 		$password	= $this->input()->value_str_POST( "password" );
+		$turnstile	= $this->input()->value_str_POST( "cf-turnstile-response" );
+		$settings	= $this->settings();
+
+		if ( Functions::Turnstile_Active( $settings ) && !Functions::Turnstile_Validate( $settings, $turnstile ) )
+		{
+			$this->addValidationError( "Invalid validation token" );
+		}
 
 		if ( !$this->auth()->validate_login( $email, $password, $user ) )
 		{
@@ -47,10 +62,10 @@ class Screen_Login extends Screen
 
 	public function content()
 	{
+		$settings = $this->settings();
+
 		if ( $this->auth()->getUserID() )
 		{
-			$settings = $this->settings();
-
 			header( sprintf( 'Location: %s', $settings[ 'domain_url' ] ) );
 			return true;
 		}
@@ -67,6 +82,7 @@ class Screen_Login extends Screen
 			<label for="password">Password</label>
 			<input type="password" name="password" id="loginPassword" value="" />
 			<br />
+			<div class="cf-turnstile" data-sitekey="<?php print htmlentities( $settings[ 'turnstile_sitekey' ] ); ?>" data-appearance="interaction-only"></div>
 			<input type="hidden" name="update" value="1" />
 			<input type="submit" name="login" id="login" value="Login" /><br />
 			<a href="?screen=forgot_password" title="Forgotten Password?">Forgotten Password?</a>

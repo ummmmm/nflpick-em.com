@@ -4,6 +4,14 @@ require_once( "includes/classes/Mail.php" );
 
 class Screen_ForgotPassword extends Screen
 {
+	public function head()
+	{
+		print( <<<EOF
+			<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+EOF );
+		return true;
+	}
+
 	public function validate()
 	{
 		$action = $this->input()->value_str_GET( "action" );
@@ -39,11 +47,23 @@ class Screen_ForgotPassword extends Screen
 		{
 			$db_users	= $this->db()->users();
 			$email 		= $this->input()->value_str_POST( "email" );
+			$turnstile	= $this->input()->value_str_POST( "cf-turnstile-response" );
 			$user		= null;
+			$settings	= $this->settings();
+
+			if ( Functions::Turnstile_Active( $settings ) && !Functions::Turnstile_Validate( $settings, $turnstile ) )
+			{
+				$this->addValidationError( "Invalid validation token" );
+			}
 
 			$db_users->Load_Email( $email, $user );
 
-			return $this->setValidationData( $user );
+			if ( !$this->hasValidationErrors() )
+			{
+				$this->setValidationData( $user );
+			}
+
+			return true;
 		}
 
 		throw new NFLPickEmException( 'Invalid action' );
@@ -119,6 +139,8 @@ class Screen_ForgotPassword extends Screen
 
 	private function _ForgotPassword()
 	{
+		$turnstile_key = htmlentities( $this->settings()[ 'turnstile_sitekey' ] );
+
 		print <<<EOT
 		<form name="forgotPass" action="" method="post" id="forgotPass">
 			<fieldset>
@@ -126,6 +148,7 @@ class Screen_ForgotPassword extends Screen
 				<label for="email">Email Address</label>
 				<input type="text" name="email" id="email" />
 				<br />
+				<div class="cf-turnstile" data-sitekey="$turnstile_key" data-appearance="interaction-only"></div>
 				<input type="hidden" name="update" value="1" />
 				<input type="submit" name="forgotPass" id="forgotPass" value="Get Password Now!" />
 			</fieldset>
