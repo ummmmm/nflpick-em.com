@@ -85,10 +85,6 @@ class Screen_ForgotPassword extends Screen
 			$db_reset_passwords->Delete_User( $user[ 'id' ] );
 			$db_reset_passwords->Insert( $record );
 
-			$user[ 'force_password' ]	= 1;
-
-			$db_users->Update( $user );
-
 			$email = new Mail( $user[ 'email' ], "Forgot Password", sprintf( 'Your temporary password is <span style="font-weight: bold;">%s</span>', $temp_password ) );
 
 			if ( !$email->send() )
