@@ -12,7 +12,6 @@ EOF );
 
 	public function validate()
 	{
-		$db_users	= $this->db()->users();
 		$email 		= $this->input()->value_str_POST( "email" );
 		$password	= $this->input()->value_str_POST( "password" );
 		$turnstile	= $this->input()->value_str_POST( "cf-turnstile-response" );
