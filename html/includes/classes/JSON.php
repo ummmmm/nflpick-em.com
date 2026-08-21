@@ -140,8 +140,21 @@ class JSONManager
 		$action = $this->input()->value_str( 'action' );
 		$token	= $this->input()->value_str( 'token' );
 
+		if ( $admin )	$base_path = realpath( 'includes/runtime/admin/JSON' );
+		else			$base_path = realpath( 'includes/runtime/non-admin/JSON' );
+
+		if ( $base_path === false )
+		{
+			throw new NFLPickEmException( 'Invalid base path' );
+		}
+
+		$file_path	= realpath( sprintf( '%s/%s.php', $base_path, $action ) );
 		$class 		= sprintf( 'JSON_%s', $action );
-		$file_path 	= $this->_filePath( $admin, $action );
+
+		if ( $file_path === false || !str_starts_with( $file_path, $base_path ) )
+		{
+			throw new NFLPickEmException( 'Invalid screen' );
+		}
 
 		if ( !file_exists( $file_path ) )		throw new NFLPickEmException( 'Action not found' );
 		else if ( !require_once( $file_path ) )	throw new NFLPickEmException( 'Failed to load action' );
@@ -180,13 +193,5 @@ class JSONManager
 		}
 
 		return $this->_settings;
-	}
-
-	private function _filePath( $admin, $action )
-	{
-		if ( $admin )	$path = 'includes/runtime/admin/JSON';
-		else			$path = 'includes/runtime/non-admin/JSON';
-
-		return Functions::Strip_Nulls( sprintf( '%s/%s.php', $path, $action ) );
 	}
 }

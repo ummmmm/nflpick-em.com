@@ -31,23 +31,6 @@ class Functions
 		return $date->format( 'm/d/y' ) . ' at '. $date->format( 'h:i a' );
 	}
 
-	public static function Strip_Nulls( $string )
-	{
-		$string_ns = "";
-
-		for ( $i = 0; $i < strlen( $string ); $i++ )
-		{
-			$char = substr( $string, $i, 1 );
-
-			if ( ord( $char ) != 0 )
-			{
-				$string_ns .= $char;
-			}
-		}
-
-		return $string_ns;
-	}
-
 	public static function Update_Records( DatabaseManager $db_manager )
 	{
 		return Functions::Update_Weekly_Records( $db_manager ) && Functions::Update_User_Records( $db_manager );

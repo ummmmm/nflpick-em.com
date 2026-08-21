@@ -401,12 +401,22 @@ class ScreenManager
 
 		try
 		{
-			if ( $admin )	$path = "includes/runtime/admin/screens";
-			else			$path = "includes/runtime/non-admin/screens";
+			if ( $admin )	$base_path = realpath( 'includes/runtime/admin/screens' );
+			else			$base_path = realpath( 'includes/runtime/non-admin/screens' );
+
+			if ( $base_path === false )
+			{
+				throw new NFLPickEmException( 'Invalid base path' );
+			}
 
 			$screen_name 	= $this->_screenName( $screen );
+			$file_path		= realpath( sprintf( '%s/%s.php', $base_path, $screen_name ) );
 			$class 			= sprintf( "Screen_%s", $screen_name );
-			$file_path		= sprintf( "%s/%s.php", $path, Functions::Strip_Nulls( $screen_name ) );
+
+			if ( $file_path === false || !str_starts_with( $file_path, $base_path ) )
+			{
+				throw new NFLPickEmException( 'Invalid screen' );
+			}
 
 			if ( !file_exists( $file_path ) )		throw new NFLPickEmException( 'Screen not found' );
 			else if ( !require_once( $file_path ) )	throw new NFLPickEmException( 'Failed to load screen' );
