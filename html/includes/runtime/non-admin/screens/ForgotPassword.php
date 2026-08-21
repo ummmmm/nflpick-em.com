@@ -100,7 +100,7 @@ EOF );
 
 			$user 			= $data;
 			$temp_password	= $this->_generateRandomString( 12 );
-			$record			= array( 'userid' => $user[ 'id' ], 'password' => Security::password_hash( $temp_password ) );
+			$record			= array( 'userid' => $user[ 'id' ], 'password' => Security::password_hash( $temp_password ), 'expires' => time() + ( 60 * 60 * 12 ) );
 
 			$db_reset_passwords->Delete_User( $user[ 'id' ] );
 			$db_reset_passwords->Insert( $record );

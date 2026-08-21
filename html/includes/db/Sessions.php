@@ -9,7 +9,7 @@ class DatabaseTableSessions extends DatabaseTable
 					cookieid 	char( 64 ),
 					token 		char( 64 ),
 					userid 		int( 11 ),
-					date 		int( 11 ),
+					expires 	int( 11 ),
 					last_active int( 11 ),
 					UNIQUE KEY cookieid_1( cookieid ),
 					UNIQUE KEY sessions_1 ( token )
@@ -20,7 +20,7 @@ class DatabaseTableSessions extends DatabaseTable
 
 	public function Load( $cookieid, &$session )
 	{
-		return $this->single( 'SELECT * FROM sessions WHERE cookieid = ?', $session, $cookieid );
+		return $this->single( 'SELECT * FROM sessions WHERE cookieid = ? AND expires >= ?', $session, $cookieid, time() );
 	}
 
 	public function Delete_User( $user_id )
@@ -35,10 +35,7 @@ class DatabaseTableSessions extends DatabaseTable
 
 	public function Insert( $session )
 	{
-		$session[ 'date' ] 			= time();
-		$session[ 'last_active' ]	= time();
-
-		return $this->query( 'INSERT INTO sessions ( token, cookieid, userid, date, last_active ) VALUES ( ?, ?, ?, ?, ? )', $session[ 'token' ], $session[ 'cookieid' ], $session[ 'userid' ], $session[ 'date' ], $session[ 'last_active' ] );
+		return $this->query( 'INSERT INTO sessions ( token, cookieid, userid, expires, last_active ) VALUES ( ?, ?, ?, ?, ? )', $session[ 'token' ], $session[ 'cookieid' ], $session[ 'userid' ], $session[ 'expires' ], $session[ 'last_active' ] );
 	}
 
 	public function Delete( $token )
@@ -49,6 +46,11 @@ class DatabaseTableSessions extends DatabaseTable
 	public function Delete_Cookie( $cookieid )
 	{
 		return $this->query( 'DELETE FROM sessions WHERE cookieid = ?', $cookieid );
+	}
+
+	public function Delete_All_Expired()
+	{
+		return $this->query( 'DELETE FROM sessions WHERE expires < ?', time() );
 	}
 
 	public function Update_Cookie_Last_Active( $cookieid )

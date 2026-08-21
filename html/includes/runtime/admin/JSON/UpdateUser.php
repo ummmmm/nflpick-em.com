@@ -30,7 +30,7 @@ class JSON_UpdateUser extends JSONAdminAction
 			if ( strlen( $password ) < 5 )				throw new NFLPickEmException( 'Password must be at least 5 characters' );
 			else if ( $password !== $verify_password )	throw new NFLPickEmException( 'Passwords do not match' );
 
-			$record	= array( 'userid' => $user[ 'id' ], 'password' => Security::password_hash( $password ) );
+			$record	= array( 'userid' => $user[ 'id' ], 'password' => Security::password_hash( $password ), 'expires' => time() + ( 60 * 60 * 12 ) );
 
 			$db_reset_passwords->Delete_User( $user[ 'id' ] );
 			$db_reset_passwords->Insert( $record );

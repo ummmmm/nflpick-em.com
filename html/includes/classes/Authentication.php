@@ -63,11 +63,6 @@ class Authentication
 	{
 		$validate = function() use ( $email, $password, &$user )
 		{
-			if ( !$this->db()->resetpasswords()->Delete_All_OlderThan( time() - ( 60 * 60 * 12 ) ) ) // delete all reset passwords older than 12 hours
-			{
-				return false;
-			}
-
 			if ( !$this->db()->users()->Load_Email( $email, $loaded_user ) )
 			{
 				return false;
@@ -109,7 +104,11 @@ class Authentication
 
 			return true;
 		};
-		
+
+		if ( !$this->db()->resetpasswords()->Delete_All_Expired() || !$this->db()->sessions()->Delete_All_Expired() )
+		{
+			return false;
+		}
 
 		if ( !$validate( $email, $password, $user ) )
 		{
@@ -132,12 +131,13 @@ class Authentication
 	{
 		$db_sessions	= $this->db()->sessions();
 
+		$expires		= time() + 60 * 60 * 24 * 30;
 		$cookieid		= hash( 'sha256', random_bytes( 64 ) );
 		$token			= hash( 'sha256', random_bytes( 64 ) );
-		$session		= array( 'token' => $token, 'cookieid' => $cookieid, 'userid' => $user_id );
+		$session		= array( 'token' => $token, 'cookieid' => $cookieid, 'userid' => $user_id, 'expires' => $expires, 'last_active' => time() );
 
 		setcookie( 'session', $cookieid, array(
-			'expires'	=> time() + 60 * 60 * 24 * 30,
+			'expires'	=> $expires,
 			'path'		=> '/',
 			'secure'	=> true,
 			'httponly'	=> true,
