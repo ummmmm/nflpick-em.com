@@ -2,6 +2,11 @@
 
 class Screen_ControlPanel extends Screen_User
 {
+	public function requirements()
+	{
+		return array( 'user' => true, 'token' => true );
+	}
+
 	public function validate()
 	{
 		$action = $this->input()->value_str_GET( "action" );
@@ -125,6 +130,8 @@ EOT;
 
 	private function _ChangeEmail()
 	{
+		$token = htmlentities( $this->auth()->getToken() );
+
 		print <<<EOT
 		<form name="email" action="" method="post" id="email">
 			<fieldset>
@@ -138,6 +145,7 @@ EOT;
 				<label for="pass">Current Password</label>
 				<input type="password" name="pass" id="pass" /><br />
 				<input type="hidden" name="update" value="1" />
+				<input type="hidden" name="token" value="$token" />
 				<input type="hidden" name="action" value="update" />
 				<input type="submit" name="changeEmail" id="changeEmail" value="Update Email" />
 			</fieldset>
@@ -148,6 +156,8 @@ EOT;
 
 	private function _ChangePassword()
 	{
+		$token = htmlentities( $this->auth()->getToken() );
+
 		print <<<EOT
 		<form name="change" action="" method="post" id="change">
 			<fieldset>
@@ -162,6 +172,7 @@ EOT;
 				<input type="password" name="c_new_password" id="confirmPass" />
 				<br />
 				<input type="hidden" name="update" value="1" />
+				<input type="hidden" name="token" value="$token" />
 				<input type="hidden" name="action" value="update" />
 				<input type="submit" name="changePass" id="changePass" value="Update Password" />
 			</fieldset>
