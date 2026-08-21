@@ -8,7 +8,7 @@ class DatabaseTableResetPasswords extends DatabaseTable
 				(
 					userid 		int( 11 ),
 					password 	varchar( 255 ),
-					date 		int( 11 ),
+					expires 	int( 11 ),
 					UNIQUE KEY reset_password_1 ( userid )
 				)";
 
@@ -17,9 +17,7 @@ class DatabaseTableResetPasswords extends DatabaseTable
 
 	public function Insert( &$insert )
 	{
-		$insert[ 'date' ] = time();
-
-		return $this->query( 'INSERT INTO reset_password ( userid, password, date ) VALUES ( ?, ?, ? )', $insert[ 'userid' ], $insert[ 'password' ], $insert[ 'date' ] );
+		return $this->query( 'INSERT INTO reset_password ( userid, password, expires ) VALUES ( ?, ?, ? )', $insert[ 'userid' ], $insert[ 'password' ], $insert[ 'expires' ] );
 	}
 
 	public function Delete_User( $user_id )
@@ -29,11 +27,11 @@ class DatabaseTableResetPasswords extends DatabaseTable
 
 	public function Load_User( $user_id, &$record )
 	{
-		return $this->single( "SELECT * FROM reset_password WHERE userid = ?", $record, $user_id );
+		return $this->single( "SELECT * FROM reset_password WHERE userid = ? AND expires >= ?", $record, $user_id, time() );
 	}
 
-	public function Delete_All_OlderThan( $time_t )
+	public function Delete_All_Expired()
 	{
-		return $this->query( 'DELETE FROM reset_password WHERE date < ?', $time_t );
+		return $this->query( 'DELETE FROM reset_password WHERE expires < ?', time() );
 	}
 }
