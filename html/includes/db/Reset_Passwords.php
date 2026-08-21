@@ -31,4 +31,9 @@ class DatabaseTableResetPasswords extends DatabaseTable
 	{
 		return $this->single( "SELECT * FROM reset_password WHERE userid = ?", $record, $user_id );
 	}
+
+	public function Delete_All_OlderThan( $time_t )
+	{
+		return $this->query( 'DELETE FROM reset_password WHERE date < ?', $time_t );
+	}
 }

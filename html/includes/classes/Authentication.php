@@ -63,25 +63,45 @@ class Authentication
 	{
 		$validate = function() use ( $email, $password, &$user )
 		{
+			if ( !$this->db()->resetpasswords()->Delete_All_OlderThan( time() - ( 60 * 60 * 12 ) ) ) // delete all reset passwords older than 12 hours
+			{
+				return false;
+			}
+
 			if ( !$this->db()->users()->Load_Email( $email, $loaded_user ) )
 			{
 				return false;
 			}
 
-			if ( $loaded_user[ 'force_password' ] == 0 )
+			if ( !Security::password_verify( $password, $loaded_user[ 'password' ] ) )
 			{
-				if ( !Security::password_verify( $password, $loaded_user[ 'password' ] ) )
+				if ( !$this->db()->resetpasswords()->Load_User( $loaded_user[ 'id' ], $reset_password ) || !Security::password_verify( $password, $reset_password[ 'password' ] ) )
+				{
+					return false;
+				}
+
+				$loaded_user[ 'force_password' ] = 1;
+
+				if ( !$this->db()->users()->Update( $loaded_user ) || !$this->db()->resetpasswords()->Delete_User( $loaded_user[ 'id' ] ) )
 				{
 					return false;
 				}
 			}
 			else
 			{
-				$db_reset_password = $this->db()->resetpasswords();
-
-				if ( !$db_reset_password->Load_User( $loaded_user[ 'id' ], $reset_password ) || !Security::password_verify( $password, $reset_password[ 'password' ] ) )
+				if ( !$this->db()->resetpasswords()->Delete_User( $loaded_user[ 'id' ] ) )
 				{
 					return false;
+				}
+
+				if ( $loaded_user[ 'force_password' ] )
+				{
+					$loaded_user[ 'force_password' ] = 0;
+
+					if ( !$this->db()->users()->Update( $loaded_user ) )
+					{
+						return false;
+					}
 				}
 			}
 
