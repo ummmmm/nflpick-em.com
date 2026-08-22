@@ -19,7 +19,7 @@ class Screen_Users extends Screen_Admin
 		print '<a href="javascript:;" id="current_place" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'current_place\', $.fn.sort_user_callback );">Current Place</a>';
 		print '<a href="javascript:;" id="last_on" direction="desc" onclick="$.fn.sort( \'LoadUsers\', \'last_on\', $.fn.sort_user_callback );">Last Active</a>';
 		print '<a href="javascript:;" id="paid" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'paid\', $.fn.sort_user_callback );">Paid</a>';
-		print '<a href="javascript:;" id="pw_opt_out" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'pw_opt_out\', $.fn.sort_user_callback );">Perfect Week</a>';
+		print '<a href="javascript:;" id="pw_opt_in" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'pw_opt_in\', $.fn.sort_user_callback );">Perfect Week</a>';
 		print '<a href="javascript:;" id="failed_logins" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'failed_logins\', $.fn.sort_user_callback );">Failed Logins</a>';
 		print '<a href="javascript:;" id="active_sessions" direction="desc" onclick="$.fn.sort( \'LoadUsers\', \'active_sessions\', $.fn.sort_user_callback );">Active Sessions</a>';
 		print '<a href="javascript:;" id="remaining" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'remaining\', $.fn.sort_user_callback );">Remaining Picks</a>';
@@ -50,7 +50,7 @@ class Screen_Users extends Screen_Admin
 		print '</tr>';
 		print '<tr>';
 		print '<td nowrap>&nbsp;</td>';
-		print '<td width="100%"><label><input type="checkbox" id="user_edit_pw_opt_out" /> Perfect Week Opt-Out</label></td>';
+		print '<td width="100%"><label><input type="checkbox" id="user_edit_pw_opt_in" /> Perfect Week Opt-In</label></td>';
 		print '</tr>';
 		print '</table>';
 		print '<div class="buttons_left">

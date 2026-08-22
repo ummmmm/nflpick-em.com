@@ -149,12 +149,12 @@ class Screen_PerfectWeeks extends Screen_Admin
 
 	private function _PerfectWeekUserList_Load( $week_id, &$users )
 	{
-		return $this->db()->select( 'SELECT u.* FROM users u, weekly_records wr WHERE u.pw_opt_out = 0 AND u.id = wr.user_id AND wr.week_id = ? AND wr.wins = ( SELECT COUNT( * ) FROM games g WHERE g.week = wr.week_id ) AND wr.losses = 0 ORDER BY u.fname, u.lname', $users, $week_id );
+		return $this->db()->select( 'SELECT u.* FROM users u, weekly_records wr WHERE u.pw_opt_in = 1 AND u.id = wr.user_id AND wr.week_id = ? AND wr.wins = ( SELECT COUNT( * ) FROM games g WHERE g.week = wr.week_id ) AND wr.losses = 0 ORDER BY u.fname, u.lname', $users, $week_id );
 	}
 
 	private function _PerfectWeekUserOptOutList_Load( $week_id, &$users )
 	{
-		return $this->db()->select( 'SELECT u.* FROM users u, weekly_records wr WHERE u.pw_opt_out = 1 AND u.id = wr.user_id AND wr.week_id = ? AND wr.wins = ( SELECT COUNT( * ) FROM games g WHERE g.week = wr.week_id ) AND wr.losses = 0 ORDER BY u.fname, u.lname', $users, $week_id );
+		return $this->db()->select( 'SELECT u.* FROM users u, weekly_records wr WHERE u.pw_opt_in = 0 AND u.id = wr.user_id AND wr.week_id = ? AND wr.wins = ( SELECT COUNT( * ) FROM games g WHERE g.week = wr.week_id ) AND wr.losses = 0 ORDER BY u.fname, u.lname', $users, $week_id );
 	}
 
 	private function _PerfectWeekUserPaidList_Load( $week_id, &$users )
@@ -171,8 +171,8 @@ class Screen_PerfectWeeks extends Screen_Admin
 										LEFT OUTER JOIN perfect_week_paid pwp ON u.id = pwp.user_id AND pwp.week_id = ?,
 										weekly_records wr
 									WHERE
-										pwp.user_id IS NULL		AND
-										u.pw_opt_out	= 0		AND
+										pwp.user_id		IS NULL	AND
+										u.pw_opt_in		= 1		AND
 										wr.user_id		= u.id	AND
 										wr.week_id		= ?		AND
 										wr.wins			<> ( SELECT COUNT( * ) FROM games g WHERE g.week = wr.week_id )

@@ -133,7 +133,7 @@ class Screen_ViewPicks extends Screen_User
 				printf( '<td userid="%d" gameid="%d">%s</td>', $loaded_user[ 'id' ], $game[ 'id' ], $output );
 			}
 
-			if ( $game_count == $weekly_record[ 'wins' ] && !$loaded_user[ 'pw_opt_out' ] ) // perfect week and the user is in the perfect week pool
+			if ( $game_count == $weekly_record[ 'wins' ] && $loaded_user[ 'pw_opt_in' ] ) // perfect week and the user is in the perfect week pool
 			{
 				printf( '<td style="color:green;"><b>%d - %d</b></td>', $weekly_record[ 'wins' ], $weekly_record[ 'losses' ] );
 			}
