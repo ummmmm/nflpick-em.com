@@ -83,8 +83,9 @@ EOF );
 
 			$db_users->Update( $user );
 			$db_reset_passwords->Delete_User( $this->auth()->getUserID() );
+			$this->db()->sessions()->Delete_All_User_Other( $user[ 'id' ], $this->auth()->getSession()[ 'cookieid' ] );
 
-			return $this->setUpdateMessage( "Your password has been updated" );
+			return $this->setUpdateMessage( "Your password has been updated." );
 		}
 
 		if ( $action == '' )

@@ -96,6 +96,7 @@ class Screen_ControlPanel extends Screen_User
 			$user[ 'password' ]	= $data[ 'password' ];
 
 			$db_users->Update( $user );
+			$this->db()->sessions()->Delete_All_User_Other( $user[ 'id' ], $this->auth()->getSession()[ 'cookieid' ] );
 
 			return $this->setUpdateMessage( "Your password has been updated." );
 		}
