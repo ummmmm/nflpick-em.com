@@ -12,7 +12,7 @@ class JSON_UpdateUser extends JSONAdminAction
 		$password			= $this->input()->value_str( 'password' );
 		$verify_password	= $this->input()->value_str( 'verify_password' );
 		$message			= $this->input()->value_str( 'message' );
-		$pw_opt_out			= $this->input()->value_bool( 'pw_opt_out', int: true );
+		$pw_opt_in			= $this->input()->value_bool( 'pw_opt_in', int: true );
 
 		if ( !$db_users->Load( $user_id, $user ) )	throw new NFLPickEmException( 'User does not exist' );
 		else if ( $first_name === '' )				throw new NFLPickEmException( 'First name cannot be blank' );
@@ -23,7 +23,7 @@ class JSON_UpdateUser extends JSONAdminAction
 
 		$user[ 'active' ]		= ( $message === '' ) ? 1 : 0;
 		$user[ 'message' ]		= $message;
-		$user[ 'pw_opt_out' ]	= $pw_opt_out;
+		$user[ 'pw_opt_in' ]	= $pw_opt_in;
 
 		if ( $password != '' )
 		{

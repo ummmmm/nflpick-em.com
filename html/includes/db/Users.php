@@ -22,7 +22,7 @@ class DatabaseTableUsers extends DatabaseTable
 					force_password 		tinyint( 1 ),
 					active				tinyint( 1 ),
 					message				varchar( 255 ),
-					pw_opt_out			tinyint( 1 ),
+					pw_opt_in			tinyint( 1 ),
 					PRIMARY KEY ( id )
 				)";
 
@@ -100,12 +100,12 @@ class DatabaseTableUsers extends DatabaseTable
 	private function _Insert_LowLevel( &$user )
 	{
 		$result = $this->query( 'INSERT INTO users
-								 ( fname, lname, email, password, admin, sign_up, last_on, wins, losses, paid, current_place, email_preference, force_password, active, message, pw_opt_out )
+								 ( fname, lname, email, password, admin, sign_up, last_on, wins, losses, paid, current_place, email_preference, force_password, active, message, pw_opt_in )
 								 VALUES
 								 ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )',
 								 $user[ 'fname' ], $user[ 'lname' ], $user[ 'email' ], $user[ 'password' ], $user[ 'admin' ], $user[ 'sign_up' ], $user[ 'last_on' ],
 								 $user[ 'wins' ], $user[ 'losses' ], $user[ 'paid' ], $user[ 'current_place' ], $user[ 'email_preference' ], $user[ 'force_password' ],
-								 $user[ 'active' ], $user[ 'message' ], $user[ 'pw_opt_out' ] );
+								 $user[ 'active' ], $user[ 'message' ], $user[ 'pw_opt_in' ] );
 
 		if ( !$result )
 		{
@@ -135,12 +135,12 @@ class DatabaseTableUsers extends DatabaseTable
 										force_password		= ?,
 										active				= ?,
 										message				= ?,
-										pw_opt_out			= ?
+										pw_opt_in			= ?
 									WHERE
 										id					= ?',
 								$user[ 'fname' ], $user[ 'lname' ], $user[ 'email' ], $user[ 'password' ], $user[ 'last_on' ],
 								$user[ 'wins' ], $user[ 'losses' ],	$user[ 'paid' ], $user[ 'current_place' ], $user[ 'email_preference' ],
-								$user[ 'force_password' ], $user[ 'active' ], $user[ 'message' ], $user[ 'pw_opt_out' ],
+								$user[ 'force_password' ], $user[ 'active' ], $user[ 'message' ], $user[ 'pw_opt_in' ],
 								$user[ 'id' ] );
 	}
 

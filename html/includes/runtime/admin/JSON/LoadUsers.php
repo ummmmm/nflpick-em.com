@@ -31,7 +31,7 @@ class JSON_LoadUsers extends JSONAdmin
 			case 'current_place'	:
 			case 'last_on'			:
 			case 'paid'				:
-			case 'pw_opt_out'		:
+			case 'pw_opt_in'		:
 			case 'failed_logins'	:
 			case 'active_sessions'	:
 			case 'remaining'		:

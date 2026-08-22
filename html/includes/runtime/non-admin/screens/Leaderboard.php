@@ -27,7 +27,7 @@ class Screen_Leaderboard extends Screen_User
 			if ( $leader[ 'current_place' ] <= 5 )	printf( '<td style="color:green;font-weight:bold;">%s</td>', Functions::Place( $leader[ 'current_place' ] ) );
 			else									printf( '<td>%s</td>', Functions::Place( $leader[ 'current_place' ] ) );
 
-			printf( '<td>%s%s</td>', htmlentities( ucwords( $leader[ 'name' ] ) ), $leader[ 'pw_opt_out' ] ? '*' : '' );
+			printf( '<td>%s%s</td>', htmlentities( ucwords( $leader[ 'name' ] ) ), $leader[ 'pw_opt_in' ] ? '' : '*' );
 			printf( '<td>%d</td>', $leader[ 'wins' ] );
 			printf( '<td>%d</td>', $leader[ 'losses' ] );
 			print( '</tr>' );

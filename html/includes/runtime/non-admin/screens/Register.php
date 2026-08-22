@@ -30,7 +30,7 @@ EOF );
 		$register[ 'cemail' ] 		= $this->input()->value_str_POST( 'cemail' );
 		$register[ 'password' ] 	= $this->input()->value_str_POST( 'password' );
 		$register[ 'cpass' ] 		= $this->input()->value_str_POST( 'cpass' );
-		$register[ 'pw_opt_out'	]	= $this->input()->value_bool_POST( 'pw_opt_out', int: true );
+		$register[ 'pw_opt_in'	]	= $this->input()->value_bool_POST( 'pw_opt_in', int: true );
 
 		if ( !$agree )
 		{
@@ -112,7 +112,7 @@ EOF );
 							 'force_password' 	=> 0,
 							 'active'			=> 1,
 							 'message'			=> '',
-							 'pw_opt_out'		=> $data[ 'pw_opt_out' ] );
+							 'pw_opt_in'		=> $data[ 'pw_opt_in' ] );
 
 		$db_users->Insert( $user );
 
@@ -140,7 +140,7 @@ EOF );
 			return $this->outputInformation( "Registration Disabled", "You currently cannot sign up for the NFL Pick-Em League." );
 		}
 
-		$pw_opt_out_checked = $this->input()->value_bool_POST( 'pw_opt_out' ) ? ' checked' : '';
+		$pw_opt_in_checked = $this->input()->value_bool_POST( 'pw_opt_in' ) ? ' checked' : '';
 ?>
 <form action="?screen=register" method="post">
   <fieldset>
@@ -173,7 +173,7 @@ EOF );
   <fieldset>
   	<legend>Additional</legend>
   	<label><input type="checkbox" name="agree" value="1" /> I have read and agree to the <a href="rules.pdf" target="_blank">Rules</a></label>
-  	<label><input type="checkbox" name="pw_opt_out" value="1" <?php print $pw_opt_out_checked; ?> /> Opt-out of the perfect week pool</label>
+  	<label><input type="checkbox" name="pw_opt_in" value="1" <?php print $pw_opt_in_checked; ?> /> Opt-into the perfect week pool</label>
   </fieldset>
 
   <div class="cf-turnstile" data-sitekey="<?php print htmlentities( $settings[ 'turnstile_sitekey' ] ); ?>" data-appearance="interaction-only"></div>

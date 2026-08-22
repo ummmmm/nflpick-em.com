@@ -106,7 +106,7 @@ $( document ).ready( function()
 															'id':	'paid' + user.id,
 															'href': 'javascript:;',
 															'text': ( user.paid ? 'Yes' : 'No' ) } ).bind( 'click', function() { $.fn.update_users( user ); } ) ).appendTo( fieldset );
-			$( '<div/>', { 'text': 'Perfect Week Pool: ' + ( user.pw_opt_out ? 'No' : 'Yes' )	} ).appendTo( fieldset );
+			$( '<div/>', { 'text': 'Perfect Week Pool: ' + ( user.pw_opt_in ? 'Yes' : 'No' )	} ).appendTo( fieldset );
 
 			$( '<div/>', { 'text': '# of Failed Logins: ' + user.failed_logins } ).appendTo( fieldset );
 			$( '<div/>', { 'text': '# of Active Sessions: ' + user.active_sessions + ' - ' } ).
@@ -157,7 +157,7 @@ $( document ).ready( function()
 		$( '#user_edit_message' ).val( user.message );
 		$( '#user_edit_password' ).val( '' );
 		$( '#user_edit_verify_password' ).val( '' );
-		$( '#user_edit_pw_opt_out' ).prop( 'checked', user.pw_opt_out );
+		$( '#user_edit_pw_opt_in' ).prop( 'checked', user.pw_opt_in );
 	}
 
 	$.fn.update_user = function( user )
@@ -182,7 +182,7 @@ $( document ).ready( function()
 			password:			$( '#user_edit_password' ).val(),
 			verify_password:	$( '#user_edit_verify_password' ).val(),
 			message:			$( '#user_edit_message' ).val(),
-			pw_opt_out:			$( '#user_edit_pw_opt_out' ).val_bool()
+			pw_opt_in:			$( '#user_edit_pw_opt_in' ).val_bool()
 		}, function( response )
 		{
 			if ( !response.success )
