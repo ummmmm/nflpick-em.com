@@ -195,6 +195,11 @@ class Authentication
 		return $this->_token;
 	}
 
+	public function getSession()
+	{
+		return $this->_session;
+	}
+
 	public function isUser()
 	{
 		return $this->_userID ? true : false;
