@@ -40,6 +40,11 @@ class JSON_UpdateUser extends JSONAdminAction
 
 		$db_users->Update( $user );
 
+		if ( $message != '' || $password != '' )
+		{
+			$this->db()->sessions()->Delete_User( $user[ 'id' ] );
+		}
+
 		return true;
 	}
 }

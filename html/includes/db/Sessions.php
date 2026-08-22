@@ -28,6 +28,11 @@ class DatabaseTableSessions extends DatabaseTable
 		return $this->query( 'DELETE FROM sessions WHERE userid = ?', $user_id );
 	}
 
+	public function Delete_All_User_Other( $user_id, $cookieid )
+	{
+		return $this->query( 'DELETE FROM sessions WHERE userid = ? AND cookieid <> ?', $user_id, $cookieid );
+	}
+
 	public function Load_User_Token( $user_id, $token, &$session )
 	{
 		return $this->single( 'SELECT * FROM sessions WHERE userid = ? AND token = ?', $session, $user_id, $token );
