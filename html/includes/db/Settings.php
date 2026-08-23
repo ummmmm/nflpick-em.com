@@ -17,21 +17,17 @@ class DatabaseTableSettings extends DatabaseTable
 					turnstile_secretkey	char( 100 )
 				)";
 
-		$this->query( $sql );
+		return $this->query( $sql );
+	}
 
-		$default_settings = array( 'registration' 			=> 1,
-								   'max_news' 				=> 4,
-								   'domain_url' 			=> '',
-								   'domain_email' 			=> '',
-								   'online' 				=> 30,
-								   'site_title' 			=> '',
-								   'login_sleep' 			=> 3000,
-								   'turnstile_sitekey'		=> '',
-								   'turnstile_secretkey'	=> '' );
-
-		return $this->query( 'INSERT INTO settings ( registration, max_news, domain_url, domain_email, online, site_title, login_sleep, turnstile_sitekey, turnstile_secretkey ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )',
-							  $default_settings[ 'registration' ], $default_settings[ 'max_news' ], $default_settings[ 'domain_url' ], $default_settings[ 'domain_email' ], $default_settings[ 'online' ],
-							  $default_settings[ 'site_title' ], $default_settings[ 'login_sleep' ], $default_settings[ 'turnstile_sitekey' ], $default_settings[ 'turnstile_secretkey' ] );
+	public function Insert( &$settings )
+	{
+		return $this->query( 'INSERT INTO settings
+							  ( registration, max_news, domain_url, domain_email, online, site_title, login_sleep, turnstile_sitekey, turnstile_secretkey )
+							  VALUES
+							  ( ?, ?, ?, ?, ?, ?, ?, ?, ? )',
+							  $settings[ 'registration' ], $settings[ 'max_news' ], $settings[ 'domain_url' ], $settings[ 'domain_email' ], $settings[ 'online' ],
+							  $settings[ 'site_title' ], $settings[ 'login_sleep' ], $settings[ 'turnstile_sitekey' ], $settings[ 'turnstile_secretkey' ] );
 	}
 
 	public function Load( &$settings )

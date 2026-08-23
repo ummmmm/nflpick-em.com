@@ -15,25 +15,10 @@ class DatabaseTableTeams extends DatabaseTable
 					PRIMARY KEY ( id )
 				)";
 
-		if ( !$this->query( $sql ) )
-		{
-			return false;
-		}
-
-		$teams = $this->_Default_Teams();
-
-		foreach ( $teams as $team )
-		{
-			if ( !$this->_Insert( $team ) )
-			{
-				return false;
-			}
-		}
-
-		return true;
+		return $this->query( $sql );
 	}
 
-	public function _Insert( $team )
+	public function Insert( $team )
 	{
 		$team[ 'wins' ] 	= 0;
 		$team[ 'losses' ]	= 0;
@@ -112,22 +97,5 @@ class DatabaseTableTeams extends DatabaseTable
 									t.wins 		= ( SELECT COUNT( g.id ) FROM games g WHERE g.winner 	= t.id AND g.final = 1 AND g.tied = 0 ),
 									t.losses	= ( SELECT COUNT( g.id ) FROM games g WHERE g.loser		= t.id AND g.final = 1 AND g.tied = 0 ),
 									t.ties		= ( SELECT COUNT( g.id ) FROM games g WHERE ( g.away	= t.id OR g.home = t.id ) AND g.final = 1 AND g.tied = 1 )' );
-	}
-
-	private function _Default_Teams()
-	{
-		$teams		= array();
-		$team_url 	= 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/%d';
-		$data		= json_decode( file_get_contents( 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams?limit=100' ) );
-
-		foreach ( $data->sports[ 0 ]->leagues[ 0 ]->teams as $entry )
-		{
-			$team_data = json_decode( file_get_contents( sprintf( $team_url, $entry->team->id ) ) );
-
-			array_push( $teams, array( 'team' => $team_data->team->displayName, 'abbr' => $team_data->team->abbreviation ) );
-
-		}
-
-		return $teams;
 	}
 }
