@@ -1,16 +1,19 @@
 <?php
 require_once( 'Database.php' );
 require_once( 'Authentication.php' );
+require_once( 'API.php' );
 
 class Setup
 {
 	private $_db_manager;
 	private $_auth;
+	private $_api;
 
 	public function __construct()
 	{
 		$this->_db_manager	= new DatabaseManager();
 		$this->_auth		= new Authentication( $this->_db_manager );
+		$this->_api			= new API( $this->_db_manager );
 	}
 
 	public function initialize()
@@ -64,5 +67,24 @@ class Setup
 		{
 			$func()->Create();
 		}
+	}
+
+	public function configure_defaults( $domain_url, $domain_email )
+	{
+		$settings = array( 'registration' 			=> 1,
+						   'max_news' 				=> 4,
+						   'domain_url' 			=> $domain_url,
+						   'domain_email' 			=> $domain_email,
+						   'online' 				=> 30,
+						   'site_title' 			=> 'NFL Pick-Em ' . date( 'Y' ),
+						   'login_sleep' 			=> 3000,
+						   'turnstile_sitekey'		=> '',
+						   'turnstile_secretkey'	=> '' );
+
+		$this->db()->settings()->Insert( $settings );
+
+		$this->_api->create_weeks();
+		$this->_api->create_teams();
+		$this->_api->create_games();
 	}
 }

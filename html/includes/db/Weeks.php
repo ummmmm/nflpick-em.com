@@ -71,30 +71,4 @@ class DatabaseTableWeeks extends DatabaseTable
 
 		return $week[ 'id' ];
 	}
-
-	public function Create_Weeks( $start_date )
-	{
-		$data = json_decode( file_get_contents( 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?week=0' ) ); 
-
-		foreach ( $data->leagues[ 0 ]->calendar as $entry )
-		{
-			if ( $entry->label == 'Regular Season' )
-			{
-				foreach ( $entry->entries as $entry )
-				{
-					$week[ 'id' ]		= $entry->value;
-					$week[ 'date' ]		= $start_date;
-					$week[ 'locked' ]	= 0;
-
-					$start_date			= strtotime( '+1 week', $start_date );
-
-					$this->Insert( $week );
-				}
-
-				return true;
-			}
-		}
-
-		throw new NFLPickEmException( 'Failed to get the regular season weeks' );
-	}
 }
