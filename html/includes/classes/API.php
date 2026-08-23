@@ -93,9 +93,8 @@ class API
 
 	public function create_games()
 	{
-		$games		= array();
-		$db_teams	= $this->db()->teams();
-		$db_weeks	= $this->db()->weeks();
+		$db_teams = $this->db()->teams();
+		$db_weeks = $this->db()->weeks();
 
 		$db_weeks->List_Load( $weeks );
 
@@ -236,5 +235,58 @@ class API
 		printf( '<p><b>Games Updated</b></p>' );
 
 		return true;
+	}
+
+	public function update_game_times()
+	{
+		$this->db()->weeks()->List_Load( $weeks );
+
+		foreach ( $weeks as $week )
+		{
+			$data = $this->get_data( sprintf( 'scoreboard?week=%d', $week[ 'id' ] ) );
+
+			foreach ( $data->events as $event )
+			{
+				$competition	= $event->competitions[ 0 ];
+				$team1			= $competition->competitors[ 0 ];
+				$team2			= $competition->competitors[ 1 ];
+
+				if ( $team1->homeAway == 'home' )
+				{
+					$home = $team1;
+					$away = $team2;
+				}
+				else
+				{
+					$home = $team2;
+					$away = $team1;
+				}
+
+				$away_abbr	= $away->team->abbreviation;
+				$home_abbr	= $home->team->abbreviation;
+				$date		= new DateTime( $event->date );
+
+				if ( !$this->db()->teams()->Load_Abbr( $away_abbr, $away_team ) )
+				{
+					throw new NFLPickEmException( sprintf( 'Failed to load away team %s', $away_abbr ) );
+				}
+
+				if ( !$this->db()->teams()->Load_Abbr( $home_abbr, $home_team ) )
+				{
+					throw new NFLPickEmException( sprintf( 'Failed to load home team %s', $home_abbr ) );
+				}
+
+				if ( !$this->db()->games()->Load_Week_Teams( $week[ 'id' ], $away_team[ 'id' ], $home_team[ 'id' ], $game ) )
+				{
+					throw new NFLPickEmException( sprintf( 'Failed to find game %s vs. %s for week %d', $away_team[ 'team' ], $home_team[ 'team' ], $week[ 'id' ] ) );
+				}
+
+				if ( $game[ 'date' ] != $date->getTimestamp() )
+				{
+					$game[ 'date' ] = $date->getTimestamp();
+					$this->db()->games()->Update( $game );
+				}
+			}
+		}
 	}
 }
