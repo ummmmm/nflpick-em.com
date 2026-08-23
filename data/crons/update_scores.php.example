@@ -10,7 +10,7 @@ try
 	$db_manager = new DatabaseManager();
 	$db_manager->initialize();
 
-	$api		= new API( $db_manager );
+	$api = new API( $db_manager );
 	$api->update_scores();
 }
 catch( Exception $e )
