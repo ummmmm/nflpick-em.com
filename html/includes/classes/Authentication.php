@@ -105,11 +105,6 @@ class Authentication
 			return true;
 		};
 
-		if ( !$this->db()->resetpasswords()->Delete_All_Expired() || !$this->db()->sessions()->Delete_All_Expired() )
-		{
-			return false;
-		}
-
 		if ( !$validate( $email, $password, $user ) )
 		{
 			$db_settings		= $this->db()->settings();
