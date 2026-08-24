@@ -64,12 +64,25 @@ $( document ).ready( function()
 
 	$.fn.sort = function( action, sort, callback )
 	{
-		var field 		= $( '#' + sort );
-		var direction 	= field.attr( 'direction' );
+		var cookie_users_last_sort = '';
 
-		field.attr( 'direction', ( direction == 'asc' ) ? 'desc' : 'asc' );
+		for ( const cookie of document.cookie.split( ';' ) )
+		{
+			const [ name, value ] = cookie.split( '=' ).map( item => item.trim() );
 
-		$.fn.json_admin( action, { sort: sort, direction: direction }, callback );
+			if ( name == 'users_last_sort' )
+			{
+				cookie_users_last_sort = value;
+				break;
+			}
+		}
+
+		if ( sort.length == 0 )						sort = cookie_users_last_sort.length ? cookie_users_last_sort : 'name';
+		else if ( cookie_users_last_sort == sort )	sort = sort.startsWith( '-' ) ? sort.slice( 1 ) : `-${sort}`;
+
+		document.cookie = `users_last_sort=${sort}`;
+
+		$.fn.json_admin( action, { sort: sort }, callback );
 	}
 
 	$.fn.sort_user_callback = function( response )
@@ -191,7 +204,7 @@ $( document ).ready( function()
 			}
 
 			$.fn.hide_edit_user();
-			$.fn.sort( 'LoadUsers', 'name', $.fn.sort_user_callback );
+			$.fn.sort( 'LoadUsers', '', $.fn.sort_user_callback );
 		} );
 	}
 

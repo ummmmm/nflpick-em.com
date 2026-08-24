@@ -4,7 +4,7 @@ class Screen_Users extends Screen_Admin
 {
 	public function jquery()
 	{
-		print "$.fn.sort( 'LoadUsers', 'name', $.fn.sort_user_callback );";
+		print "$.fn.sort( 'LoadUsers', '', $.fn.sort_user_callback );";
 
 		return true;
 	}
@@ -15,14 +15,14 @@ class Screen_Users extends Screen_Admin
 
 		printf( '<h1>Users (%d)</h1>', $count );
 		print '<div class="sortby">Sort By: ';
-		print '<a href="javascript:;" id="name" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'name\', $.fn.sort_user_callback );">Name</a>';
-		print '<a href="javascript:;" id="current_place" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'current_place\', $.fn.sort_user_callback );">Current Place</a>';
-		print '<a href="javascript:;" id="last_on" direction="desc" onclick="$.fn.sort( \'LoadUsers\', \'last_on\', $.fn.sort_user_callback );">Last Active</a>';
-		print '<a href="javascript:;" id="paid" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'paid\', $.fn.sort_user_callback );">Paid</a>';
-		print '<a href="javascript:;" id="pw_opt_in" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'pw_opt_in\', $.fn.sort_user_callback );">Perfect Week</a>';
-		print '<a href="javascript:;" id="failed_logins" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'failed_logins\', $.fn.sort_user_callback );">Failed Logins</a>';
-		print '<a href="javascript:;" id="active_sessions" direction="desc" onclick="$.fn.sort( \'LoadUsers\', \'active_sessions\', $.fn.sort_user_callback );">Active Sessions</a>';
-		print '<a href="javascript:;" id="remaining" direction="asc" onclick="$.fn.sort( \'LoadUsers\', \'remaining\', $.fn.sort_user_callback );">Remaining Picks</a>';
+		print '<a href="javascript:;" id="name" onclick="$.fn.sort( \'LoadUsers\', \'name\', $.fn.sort_user_callback );">Name</a>';
+		print '<a href="javascript:;" id="current_place" onclick="$.fn.sort( \'LoadUsers\', \'current_place\', $.fn.sort_user_callback );">Current Place</a>';
+		print '<a href="javascript:;" id="last_on" onclick="$.fn.sort( \'LoadUsers\', \'-last_on\', $.fn.sort_user_callback );">Last Active</a>';
+		print '<a href="javascript:;" id="paid" onclick="$.fn.sort( \'LoadUsers\', \'paid\', $.fn.sort_user_callback );">Paid</a>';
+		print '<a href="javascript:;" id="pw_opt_in" onclick="$.fn.sort( \'LoadUsers\', \'pw_opt_in\', $.fn.sort_user_callback );">Perfect Week</a>';
+		print '<a href="javascript:;" id="failed_logins" onclick="$.fn.sort( \'LoadUsers\', \'failed_logins\', $.fn.sort_user_callback );">Failed Logins</a>';
+		print '<a href="javascript:;" id="active_sessions" onclick="$.fn.sort( \'LoadUsers\', \'-active_sessions\', $.fn.sort_user_callback );">Active Sessions</a>';
+		print '<a href="javascript:;" id="remaining" onclick="$.fn.sort( \'LoadUsers\', \'remaining\', $.fn.sort_user_callback );">Remaining Picks</a>';
 		print '</div>';
 		print '<div id="users_loading">Loading...</div>';
 		print '<div id="user_edit">';
