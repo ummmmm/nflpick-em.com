@@ -904,7 +904,7 @@ $( document ).ready( function()
 				return $.fn.error( response.error_message );
 			}
 
-			alert( 'Updated' );
+			window.location = `/?view=admin&screen=weekly_records&week=${encodeURIComponent( week_id )}`;
 		} );
 	}
 
