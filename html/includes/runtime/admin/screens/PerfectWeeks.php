@@ -94,7 +94,7 @@ class Screen_PerfectWeeks extends Screen_Admin
 			print( '<ol>' );
 			foreach ( $users as $user )
 			{
-				printf( '<li><a href="javascript:;" onclick="$.fn.update_perfect_week_paid( %d, %d );">%s %s</a></li>', $user[ 'id' ], $week[ 'id' ], htmlentities( $user[ 'fname' ] ), htmlentities( $user[ 'lname' ] ) );
+				printf( '<li><a href="javascript:;" onclick="$.fn.update_perfect_week_paid( %d, %d );">%s %s</a></li>', $week[ 'id' ], $user[ 'id' ], htmlentities( $user[ 'fname' ] ), htmlentities( $user[ 'lname' ] ) );
 			}
 			print( '</ol>' );
 		}
@@ -113,7 +113,7 @@ class Screen_PerfectWeeks extends Screen_Admin
 			print( '<ol>' );
 			foreach ( $users as $user )
 			{
-				printf( '<li><a href="javascript:;" onclick="$.fn.update_perfect_week_paid( %d, %d );">%s %s</a></li>', $user[ 'id' ], $week[ 'id' ], htmlentities( $user[ 'fname' ] ), htmlentities( $user[ 'lname' ] ) );
+				printf( '<li><a href="javascript:;" onclick="$.fn.update_perfect_week_paid( %d, %d );">%s %s</a></li>', $week[ 'id' ], $user[ 'id' ], htmlentities( $user[ 'fname' ] ), htmlentities( $user[ 'lname' ] ) );
 			}
 			print( '</ol>' );
 		}
@@ -176,6 +176,7 @@ class Screen_PerfectWeeks extends Screen_Admin
 										wr.user_id		= u.id	AND
 										wr.week_id		= ?		AND
 										wr.wins			<> ( SELECT COUNT( * ) FROM games g WHERE g.week = wr.week_id )
-										', $users, $week_id, $week_id );
+									ORDER BY
+										u.fname, u.lname', $users, $week_id, $week_id );
 	}
 }
